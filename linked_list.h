@@ -6,7 +6,7 @@ typedef struct linked_list *list_ptr;
 
 list_ptr LL_create( int (*match)( const void *a, const void *b) );
 
-void LL_destroy( list_ptr this, int deep );
+void LL_destroy( list_ptr this, void (*destroy)(void*) );
 
 void LL_insert( list_ptr this, void *element );
 

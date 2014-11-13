@@ -18,7 +18,7 @@ struct edge
 };
 
 
-ptr_entry create_entry(int id,void* properties)      //create node
+ptr_entry create_entry(int id,void* properties,int (*match)( const void *a, const void *b))      //create node
 {
 	ptr_entry node;
 
@@ -26,10 +26,27 @@ ptr_entry create_entry(int id,void* properties)      //create node
 
 	node->id = id;
 	node->properties = properties;
-	node->friends = NULL;
-	//node->friends = (void*) LL_create(match);   na to doume
+	//node->friends = NULL;
+	node->friends = (void*) LL_create(match);
 
 	return node;
+
+}
+
+
+void destroy_entry(ptr_entry this)
+{
+	if(this->properties != NULL)
+	{
+		LL_destroy((list_ptr)this->properties,NULL);     //sto null xreiazete mia destroy gia tin lista idiotiton
+	}
+
+	if(this->properties != NULL)
+	{
+		LL_destroy((list_ptr)this->friends,destroy_edge);
+	}
+
+	free(this);
 
 }
 
@@ -46,3 +63,14 @@ ptr_edge create_edge(int id, void* lista_idiotiton)
 
 	return akmh;
 }
+
+
+void destroy_edge(ptr_edge this)
+{
+	if(this->lista_idiotiton != NULL)
+	{
+		LL_destroy((list_ptr)this->lista_idiotiton,NULL);    //sto null xreiazete mia destroy gia tin lista idiotiton
+	}
+	free(this);
+}
+

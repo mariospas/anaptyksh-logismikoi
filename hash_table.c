@@ -35,10 +35,10 @@ struct hash_table {
     int bucket_size;
 
     /* Changes any time a new hashing is applied */
-	int level;
+	int level;     // i
 
     /* Splitting bucket index */
-	int next;
+	int next;     // p
 
     /* Assignment */
 	struct bucket **buckets;
@@ -55,7 +55,7 @@ ht_ptr HT_create( int table_size, int bucket_size )
     this->init_size = table_size;
     this->size = table_size;
     this->bucket_size = bucket_size;
-	this->buckets = malloc( this->init_size * sizeof(struct bucket) );
+	this->buckets = malloc( this->init_size * sizeof(struct bucket *) );         ///mhpos thelei ena asteri
 
 	for( i = 0; i < this->init_size; ++i ) {
 		this->buckets[i] = malloc( sizeof(struct bucket) );
@@ -121,7 +121,7 @@ void HT_insert( ht_ptr this, hash_f h, void *element, int key )
 
     /* Case: Enough space */
     if ( (*found)->counter < this->bucket_size ) {
-        ;
+        ; /////////////////////////////////////////////////???
 
     /* Case: Split */
     } else {
