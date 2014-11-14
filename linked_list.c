@@ -103,7 +103,7 @@ void *LL_search( list_ptr this, void *key )
 }
 
 /* Returns an allocated array with the contents of the list */
-void *LL_export( list_ptr this )
+void **LL_export( list_ptr this )
 {
 	int i;
 	struct LL_node *node;

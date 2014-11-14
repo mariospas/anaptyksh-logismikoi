@@ -14,6 +14,6 @@ void *LL_delete( list_ptr this, void *key );
 
 void *LL_search( list_ptr this, void *key );
 
-void *LL_export( list_ptr this );
+void **LL_export( list_ptr this );
 
 #endif /* _LINKED_LIST_ */
