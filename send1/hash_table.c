@@ -5,20 +5,75 @@
 
 #include "hash_table.h"
 
+struct record {
+
+    int id; /* key */
+    void *data;
+};
+
+struct bucket {
+
+    /* # of records filled */
+    int counter;
+
+    /* Assignment */
+    struct record *records;
+
+    /* Overflow buckets */
+    struct bucket *overflow;
+};
+
+struct hash_table {
+
+    /* Hash table initial size */
+    int init_size;
+
+    /* Hash table current size */
+    int size;
+
+    /* Bucket_size */
+    int bucket_size;
+
+    /* Changes any time a new hashing is applied */
+    int level;     // i
+
+    /* Splitting bucket index */
+    int next;     // p
+
+    /* Assignment */
+    struct bucket **buckets;
+};
+
+struct HT_iterator {
+
+    /* Hash table */
+    ht_ptr base;
+
+    /* Bucket index at the table */
+    int bucket_index;
+
+    /* Current bucket */
+    struct bucket *current_bucket;
+
+    /* Record index insibe bucket */
+    int record_index;
+};
+
+
 ht_ptr HT_create( int table_size, int bucket_size )
 {
-	int i, j;
-	ht_ptr this = malloc( sizeof( struct hash_table) );
+    int i, j;
+    ht_ptr this = malloc( sizeof( struct hash_table) );
 
-	this->level = 0;
-	this->next = 0;
+    this->level = 0;
+    this->next = 0;
     this->init_size = table_size;
     this->size = table_size;
     this->bucket_size = bucket_size;
-	this->buckets = malloc( this->init_size * sizeof(struct bucket *) ); 
+    this->buckets = malloc( this->init_size * sizeof(struct bucket *) ); 
 
-	for( i = 0; i < this->init_size; ++i ) {
-		this->buckets[i] = malloc( sizeof(struct bucket) );
+    for( i = 0; i < this->init_size; ++i ) {
+        this->buckets[i] = malloc( sizeof(struct bucket) );
         this->buckets[i]->counter = 0;
         this->buckets[i]->overflow = NULL;
 
@@ -27,17 +82,17 @@ ht_ptr HT_create( int table_size, int bucket_size )
             this->buckets[i]->records[j].id = -1;
             this->buckets[i]->records[j].data = NULL;
         }
-	}
+    }
 
-	return this;
+    return this;
 }
 
 static void rec_bucket_destroy_( struct bucket *this, destroyer destroy )
 {
     int i;
-	if ( this->overflow != NULL ) {
-		rec_bucket_destroy_( this->overflow, destroy );
-	}
+    if ( this->overflow != NULL ) {
+        rec_bucket_destroy_( this->overflow, destroy );
+    }
 
     if ( destroy != NULL ) {
         for ( i = 0; i < this->counter; ++i ) {
@@ -52,7 +107,7 @@ static void rec_bucket_destroy_( struct bucket *this, destroyer destroy )
 
 void HT_destroy( ht_ptr this, destroyer destroy )
 {
-	int i;
+    int i;
     for ( i = 0; i < this->size; ++i ) {
         rec_bucket_destroy_( this->buckets[i], destroy );
     }
@@ -148,11 +203,10 @@ void *HT_search( ht_ptr this, int id, hash_f hash )
     }
 
     found = this->buckets[ index ];
-    do
-    {
-    	result = bsearch( (void*) &key, found->records, found->counter, sizeof(struct record), record_match );
-    	found = found->overflow;
-	} while ( result == NULL && found != NULL );
+    do {
+        result = bsearch( (void*) &key, found->records, found->counter, sizeof(struct record), record_match );
+        found = found->overflow;
+    } while ( result == NULL && found != NULL );
     return ( result != NULL ) ? ( (struct record*) result )->data : NULL;
 }
 
@@ -240,7 +294,6 @@ static int pow_( int base, int exp )
 }
 
 /* Debug */
-/*
 void HT_print( ht_ptr this )
 {
     int i, j;
@@ -261,7 +314,6 @@ void HT_print( ht_ptr this )
         fputc( '\n', stdout );
     }
 }
-*/
 
 int HT_size( ht_ptr this )
 {
@@ -271,4 +323,57 @@ int HT_size( ht_ptr this )
 int HT_bsize( ht_ptr this )
 {
     return this->bucket_size;
+}
+
+HT_iter_ptr HT_iter_create( ht_ptr this )
+{
+    HT_iter_ptr it = malloc( sizeof( struct HT_iterator ) );
+    it->base = this;
+    it->bucket_index = 0;
+    it->current_bucket = it->base->buckets[0];
+    it->record_index = 0;
+
+    return it;
+}
+
+void *HT_iter_data( HT_iter_ptr it )
+{
+    return it->current_bucket->records[ it->record_index ].data;
+}
+
+int HT_iter_has_next( HT_iter_ptr it )
+{
+}
+
+int HT_iter_next( HT_iter_ptr it )
+{
+    if ( ( it->bucket_index == ( it->base->size - 1 ) )
+      || ( it->current_bucket->overflow == NULL )
+      || ( it->record_index == ( it->base->bucket_size - 1 ) ) ) {
+        return 0;
+    }
+
+    if ( it->record_index < ( it->base->bucket_size - 1 ) ) {
+        ++it->record_index;
+    } else if ( it->current_bucket->overflow != NULL ) {
+        it->current_bucket = it->current_bucket->overflow;
+        it->record_index = 0;
+    } else {
+        assert( it->bucket_index < ( it->base->size - 1 ) );
+        it->current_bucket = it->base->buckets[ ++it->bucket_index ];
+        it->record_index = 0;
+    }
+    return 1;
+}
+
+void HT_iter_reset( HT_iter_ptr it )
+{
+    it->bucket_index = 0;
+    it->current_bucket = it->base->buckets[0];
+    it->record_index = 0;
+}
+
+void HT_iter_destroy( HT_iter_ptr it )
+{
+    free( it );
 }

@@ -1,46 +1,11 @@
 #ifndef _HASH_TABLE_
 #define _HASH_TABLE_
 
-struct record {
-
-    int id; /* key */
-    void *data;
-};
-
-struct bucket {
-
-    /* # of records filled */
-	int counter;
-
-    /* Assignment */
-	struct record *records;
-
-    /* Overflow buckets */
-	struct bucket *overflow;
-};
-
-struct hash_table {
-
-    /* Hash table initial size */
-    int init_size;
-
-    /* Hash table current size */
-	int size;
-
-    /* Bucket_size */
-    int bucket_size;
-
-    /* Changes any time a new hashing is applied */
-	int level;     // i
-
-    /* Splitting bucket index */
-	int next;     // p
-
-    /* Assignment */
-	struct bucket **buckets;
-};
+struct bucket;
+struct record;
 
 typedef struct hash_table *ht_ptr;
+typedef struct HT_iterator *HT_iter_ptr;
 
 typedef int (*hash_f)(int key, int size);
 typedef void (*destroyer)(void *object);
@@ -66,6 +31,22 @@ static int record_compare( const void *a, const void *b );
 static int record_match( const void *key, const void *object );
 
 static int pow_( int base, int exp );
+
+/* Accessors */
+int HT_size( ht_ptr this );
+
+int HT_bsize( ht_ptr this );
+
+/* Iterator */
+HT_iter_ptr HT_iter_create( ht_ptr this );
+
+void *HT_iter_data( HT_iter_ptr iterator );
+
+int HT_iter_next( HT_iter_ptr iterator );
+
+void HT_iter_reset( HT_iter_ptr it );
+
+void HT_iter_destroy( HT_iter_ptr iterator );
 
 /* Debug */
 /*

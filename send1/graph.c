@@ -10,21 +10,22 @@
 
 struct graph
 {
-	int id;          //panepistimio,atoma,douleia,etc
+    /* Type of graph */
+	int id;
+
+    /* Assignment */
 	ht_ptr table;
+
+    /* Number of nodes */
 	int size;
 };
 
-
-
-ptr_graph createGraph(int id,int m,int c)
+ptr_graph createGraph(int id, int num_of_buckets, int size_of_bucket)
 {
 	ptr_graph graph;
-	ht_ptr table;
 
-	graph = malloc(sizeof(struct graph));
-	table = HT_create(m,c);              //duo int gia orismata
-	graph->table = table;
+	graph = malloc( sizeof( struct graph ) );
+	graph->table = HT_create( num_of_buckets, size_of_bucket );
 	graph->id = id;
 	graph->size = 0;
 
@@ -32,62 +33,45 @@ ptr_graph createGraph(int id,int m,int c)
 
 }
 
-
-int destroyGraph(ptr_graph graph)
+int destroyGraph( ptr_graph graph )
 {
-
-	HT_destroy(graph->table,destroy_entry);  //int epistrofh h HT_destroy
-	free(graph);
+	HT_destroy( graph->table, destroy_entry );
+	free( graph );
 
 	return 0;
 }
 
-
-int insertNode(ptr_graph graph,ptr_entry entry,hash_f h)
+int insertNode( ptr_graph graph, ptr_entry entry, hash_f h )
 {
-
 	int key;
 
-	HT_insert(graph->table,h,(void*) entry,key);
-	graph->size++;
+	HT_insert( graph->table, h, (void*) entry, key );
+	++graph->size;
 
 	return 0;
 }
 
 
-int insertEdge(ptr_graph graph,int id,ptr_edge filos,hash_f hash)
+int insertEdge( ptr_graph graph, int id, ptr_edge friend, hash_f hash )
 {
-	ptr_entry node;
-	void *temp;
-
-	temp = HT_search(graph->table,id,hash);
-	node = (ptr_entry) temp;
-
-	LL_insert((list_ptr)(node->friends),(void*)filos);
+	ptr_entry node = HT_search( graph->table, id, hash );
+	LL_insert( node->friends, (void*) friend );
 
 	return 0;
 }
 
-ptr_entry lookupNode(ptr_graph graph,int id,hash_f hash)
+ptr_entry lookupNode(ptr_graph graph,int id, hash_f hash)
 {
-	ptr_entry node;
-	void *temp;
-
-	temp = HT_search(graph->table,id,hash);
-	node = (ptr_entry) temp;
-
+	ptr_entry node = HT_search(graph->table,id,hash);
 	return node;
 }
 
-
-
-
-int reachNode1( ptr_graph this, int start, int end,hash_f hash )
+int reachNode1( ptr_graph this, int start, int end )
 {
     int i, result;
     for ( i = 0; i < this->size; ++i )
     {
-        if ( IDS( this, start, end, i, hash ) != 0 )
+        if ( IDS( this, start, end, i ) != 0 )
         {
             return i;
         }
@@ -95,75 +79,72 @@ int reachNode1( ptr_graph this, int start, int end,hash_f hash )
     return -1;
 }
 
-int IDS( ptr_graph this, int start, int end, int level,hash_f hash )
+int rec_search( ptr_graph this, int start, int end, int level )
 {
-    int i, j;
+    int i, size, result = 0;
     list_ptr edges;
-    ptr_edge *array;
+    ptr_edge edge;
+    LL_iter_ptr edge_it;
     if ( level == 0 )
     {
         return start == end;
     }
 
     edges = ( (ptr_entry) HT_search( this->table, start, hash ) )->friends;
-    array = (ptr_edge*) LL_export( edges );
+    edge_it = LL_iter_create( edges );
     for ( i = 0; i < this->size - level; ++i )
     {
-        for ( j = 0; j < LL_size( edges) ; ++j )
+        do
         {
-            if ( IDS( this, array[j]->id, end, level - 1, hash ) != 0 )
+            edge = LL_iter_data( edge_it );
+            if ( IDS( this, edge->id, end, level - 1 ) != 0 )
             {
-                free( array );
-                return 1;
+                result = 1;
+                break;
             }
         }
+        while ( LL_iter_next( edge_it ) );
+        LL_iter_reset( edge_it );
     }
-    free( array );
-    return 0;
+    LL_iter_destroy( edge_it );
+    return result;
 }
 
 
-ResultSet reachNodeN(ptr_graph graph, int start)
+ResultSet reachNodeN( ptr_graph graph, int start )
 {
-	int i,j,z=0;
-	struct bucket *init;
-	int apost, size = HT_size( graph->table );
-    int bucket_size = HT_bsize( graph->table );
-
 	ResultSet result;
-	result.pinakas_id = malloc(graph->size * sizeof(int));
-	result.pinakas_apost = malloc(graph->size * sizeof(int));
+	int dist, count = 0;
+    HT_iter_ptr ht_it = HT_iter_create( graph->table );
+    ptr_entry entry;
 
-
-	for(i=0;i<(size);i++)
-	{
-		init = graph->table->buckets[i];
-		while(init != NULL)
-		{
-			for(j=0;j<bucket_size;j++)
-			{
-				apost = reachNode1(graph, start, ( (ptr_entry) init->records[j].data )->id, hash);
-				result.pinakas_apost[z] = apost;
-				result.pinakas_id[z] = ( (ptr_entry) init->records[j].data )->id;
-				z++;
-			}
-			init = init->overflow;
-		}
-	}
+	result.array_id = malloc(graph->size * sizeof(int));
+	result.array_dist = malloc(graph->size * sizeof(int));
+    do
+    {
+        entry = HT_iter_data( ht_it );
+        dist = reachNode1( graph, start, ( (ptr_entry) entry )->id );
+        result.array_dist[count] = dist;
+        result.array_id[count] = ( (ptr_entry) entry )->id;
+        count++;
+    }
+    while ( HT_iter_next( ht_it ) );
+    HT_iter_destroy( ht_it );
 	return result;
 }
 
 
-void NEXT(ResultSet result, int *id, int *apostasi)
+void ResultSet_next(ResultSet result, int *id, int *distance)
 {
-	static int i=0;
+    /* Initialized to 0 */
+	static int i;
 
-	*id = result.pinakas_id[i];
-	*apostasi = result.pinakas_apost[i];
+	*id = result.array_id[i];
+	*distance = result.array_dist[i];
 	i++;
 }
 
 int hash(int value, int size)
 {
-    return ( size * fmod((value * HASH_CONSTANT),1));
+    return ( size * fmod( ( value * HASH_CONSTANT ), 1 ) );
 }
