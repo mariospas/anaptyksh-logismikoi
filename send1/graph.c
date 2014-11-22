@@ -71,7 +71,7 @@ int reachNode1( ptr_graph this, int start, int end )
     int i, result;
     for ( i = 0; i < this->size; ++i )
     {
-        if ( IDS( this, start, end, i ) != 0 )
+        if ( rec_search( this, start, end, i ) != 0 )
         {
             return i;
         }
@@ -97,7 +97,7 @@ int rec_search( ptr_graph this, int start, int end, int level )
         do
         {
             edge = LL_iter_data( edge_it );
-            if ( IDS( this, edge->id, end, level - 1 ) != 0 )
+            if ( rec_search( this, edge->id, end, level - 1 ) != 0 )
             {
                 result = 1;
                 break;

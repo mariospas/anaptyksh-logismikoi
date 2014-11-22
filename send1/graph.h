@@ -15,7 +15,6 @@ typedef struct
 } ResultSet;
 
 
-
 /* Interface */
 ptr_graph createGraph(int id,int m,int c);
 
