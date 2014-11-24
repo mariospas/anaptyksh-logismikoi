@@ -1,6 +1,7 @@
 #ifndef _ENTRIES_
 #define _ENTRIES_
 
+#include "linked_list.h"
 
 typedef struct entry *ptr_entry;
 
@@ -14,7 +15,7 @@ void destroy_entry(ptr_entry this);
 
 ptr_edge create_edge(int id, void* lista_idiotiton);
 
-void destroy_edge(ptr_edge this);
+void destroy_edge(void* this);
 
 
 #endif /* _ENTRIES_ */

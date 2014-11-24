@@ -1,6 +1,9 @@
 #include "graph.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "hash_table.h"
+#include "entries.h"
+#include "linked_list.h"
 
 
 struct graph
@@ -30,25 +33,23 @@ ptr_graph createGraph(int id,int m,int c)
 
 int destroyGraph(ptr_graph graph)
 {
-	int error;
 
-	error = HT_destroy(graph->table,destroy_entry);  //int epistrofh h HT_destroy
+	HT_destroy(graph->table,destroy_entry);  //int epistrofh h HT_destroy
 	free(graph);
 
-	return error;
+	return 0;
 }
 
 
 int insertNode(ptr_graph graph,ptr_entry entry,hash_f h)
 {
-	int error;
 
 	int key;
 
-	error = HT_insert_node(graph->table,h,(void*) entry,key);
+	HT_insert_node(graph->table,h,(void*) entry,key);
 	graph->size++;
 
-	return error;
+	return 0;
 }
 
 
@@ -60,7 +61,7 @@ int insertEdge(ptr_graph graph,int id,ptr_edge filos,hash_f hash)
 	temp = HT_search(graph->table,id,hash);
 	node = (ptr_entry) temp;
 
-	LL_insert((list_ptr)node->friends,(void*)filos);
+	LL_insert((list_ptr)(node->friends),(void*)filos);
 
 	return 0;
 }

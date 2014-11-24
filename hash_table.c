@@ -188,8 +188,11 @@ void *HT_search( ht_ptr this, int id, hash_f hash )
     }
 
     found = this->buckets[ index ];
-    result = bsearch( (void*) &key, found->records, found->counter, sizeof(struct record), record_match );
-
+    do
+    {
+    	result = bsearch( (void*) &key, found->records, found->counter, sizeof(struct record), record_match );
+    	found = found->overflow;
+	} while ( result == NULL && found != NULL );
     return ( result != NULL ) ? ( (struct record*) result )->data : NULL;
 }
 
@@ -239,6 +242,9 @@ static void redistribute( ht_ptr this, struct bucket **a, struct bucket **b )
             break;
         }
     } while (1);
+
+    qsort( (*a)->records, (*a)->counter, sizeof(struct record), record_compare );
+    qsort( (*b)->records, (*b)->counter, sizeof(struct record), record_compare );
 
     rec_bucket_destroy_( temp1, NULL );  
 }

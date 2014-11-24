@@ -1,4 +1,6 @@
 #include "hash_table.h"
+#include "entries.h"
+#include "linked_list.h"
 
 
 typedef struct graph *ptr_graph;
