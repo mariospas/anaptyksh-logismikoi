@@ -16,6 +16,13 @@ struct LL_node {
 	struct LL_node *next;
 };
 
+/* Basically same implementation as node */
+struct LL_iterator {
+    list_ptr base;
+    void *data;
+    struct LL_node *next;
+};
+
 /* Constructor; will return a fully allocated pointer */
 list_ptr LL_create( int (*match)( const void *a, const void *b) )
 {
@@ -28,13 +35,13 @@ list_ptr LL_create( int (*match)( const void *a, const void *b) )
 }
 
 /* Deconstructor */
-void LL_destroy( list_ptr this, int deep )
+void LL_destroy( list_ptr this, void (*destroy)(void*) )
 {
 	struct LL_node *node = this->head, *next;
 	while ( node != NULL ) {
 		next = node->next;
-		if ( deep != 0 ) {
-			free( node->data );
+		if ( destroy != NULL ) {
+			destroy( node->data );
 		}
 		free( node );
 		node = next;
@@ -103,7 +110,7 @@ void *LL_search( list_ptr this, void *key )
 }
 
 /* Returns an allocated array with the contents of the list */
-void *LL_export( list_ptr this )
+void **LL_export( list_ptr this )
 {
 	int i;
 	struct LL_node *node;
@@ -114,4 +121,48 @@ void *LL_export( list_ptr this )
 		result[i] = node->data;
 	}
 	return result;
+}
+
+int LL_size( list_ptr this )
+{
+    return this->size;
+}
+
+LL_iter_ptr LL_iter_create( list_ptr list )
+{
+    LL_iter_ptr it = malloc( sizeof( struct LL_iterator ) );
+    it->base = list;
+    it->data = it->base->head->data;
+
+    assert( list->size >= 2 );
+    it->next = it->base->head->next;
+
+    return it;
+}
+
+void *LL_iter_data( LL_iter_ptr it )
+{
+    return it->data;
+}
+
+int LL_iter_next( LL_iter_ptr it )
+{
+    if ( it->next == NULL ) {
+        return 0;
+    }
+    it->data = it->next->data;
+    it->next = it->next->next;
+
+    return 1;
+}
+
+void LL_iter_reset( LL_iter_ptr it )
+{
+    it->data = it->base->head;
+    it->next = it->base->head->next;
+}
+
+void LL_iter_destroy( LL_iter_ptr it )
+{
+    free( it );
 }

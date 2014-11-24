@@ -3,22 +3,7 @@
 #include <stdlib.h>
 
 
-struct entry
-{
-	int id;
-	void* properties;
-	void* friends;    //deiktis se lista filon
-};
-
-
-struct edge
-{
-	int id;    //id filou
-	void* lista_idiotiton;    //knows,respect,etc
-};
-
-
-ptr_entry create_entry(int id,void* properties)      //create node
+ptr_entry create_entry(int id,void* properties,int (*match)( const void *a, const void *b))      //create node
 {
 	ptr_entry node;
 
@@ -26,10 +11,28 @@ ptr_entry create_entry(int id,void* properties)      //create node
 
 	node->id = id;
 	node->properties = properties;
-	node->friends = NULL;
-	//node->friends = (void*) LL_create(match);   na to doume
+	//node->friends = NULL;
+	node->friends = (void*) LL_create(match);
 
 	return node;
+
+}
+
+
+void destroy_entry(void* entry)
+{
+	ptr_entry this = (ptr_entry) entry;
+	if(this->properties != NULL)
+	{
+		LL_destroy((list_ptr)this->properties,NULL);     //sto null xreiazete mia destroy gia tin lista idiotiton
+	}
+
+	if(this->properties != NULL)
+	{
+		LL_destroy( (list_ptr)this->friends,destroy_edge);
+	}
+
+	free(this);
 
 }
 
@@ -46,3 +49,15 @@ ptr_edge create_edge(int id, void* lista_idiotiton)
 
 	return akmh;
 }
+
+
+void destroy_edge(void* edge)
+{
+	ptr_edge this = (ptr_edge) edge;
+	if(this->lista_idiotiton != NULL)
+	{
+		LL_destroy((list_ptr)this->lista_idiotiton,NULL);    //sto null xreiazete mia destroy gia tin lista idiotiton
+	}
+	free(this);
+}
+
