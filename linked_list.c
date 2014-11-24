@@ -28,13 +28,13 @@ list_ptr LL_create( int (*match)( const void *a, const void *b) )
 }
 
 /* Deconstructor */
-void LL_destroy( list_ptr this, int deep )
+void LL_destroy( list_ptr this, void (*destroy)(void*) )
 {
 	struct LL_node *node = this->head, *next;
 	while ( node != NULL ) {
 		next = node->next;
-		if ( deep != 0 ) {
-			free( node->data );
+		if ( destroy != NULL ) {
+			destroy( node->data );
 		}
 		free( node );
 		node = next;
@@ -103,7 +103,7 @@ void *LL_search( list_ptr this, void *key )
 }
 
 /* Returns an allocated array with the contents of the list */
-void *LL_export( list_ptr this )
+void **LL_export( list_ptr this )
 {
 	int i;
 	struct LL_node *node;
