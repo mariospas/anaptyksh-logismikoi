@@ -12,7 +12,7 @@ ptr_entry create_entry(int id,void* properties,int (*match)( const void *a, cons
 	node->id = id;
 	node->properties = properties;
 	//node->friends = NULL;
-	node->friends = (void*) LL_create(match);
+	node->friends = (void*) LL_create(match);         //edges
 
 	return node;
 
@@ -61,3 +61,22 @@ void destroy_edge(void* edge)
 	free(this);
 }
 
+
+int match_edge(void *a,void *key)
+{
+	if( ((ptr_edge)a)->id == ((ptr_edge)key)->id  )
+	{
+		return 0;
+	}
+	else return 1;
+}
+
+
+int match_entry(void *a,void *key)
+{
+	if( ((ptr_entry)a)->id == ((ptr_entry)key)->id  )
+	{
+		return 0;
+	}
+	else return 1;
+}

@@ -14,6 +14,16 @@ typedef struct
 	int *array_dist;
 } ResultSet;
 
+struct properties {
+    int num_of_prop;
+    char* name;
+    char* surname;
+    int age;
+    char* type;
+    int weight;
+};
+typedef struct properties Properties;
+
 
 /* Interface */
 ptr_graph createGraph(int id,int m,int c);
@@ -37,3 +47,8 @@ int rec_search( ptr_graph this, int start, int end, int level );
 
 int hash(int value, int size);
 
+Properties* createProperties(int number) ;
+
+void setStringProperty(char* property, int index, Properties* p);
+
+void setIntegerProperty(int property, int index, Properties* p);

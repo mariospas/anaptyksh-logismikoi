@@ -20,6 +20,8 @@ struct graph
 	int size;
 };
 
+
+
 ptr_graph createGraph(int id, int num_of_buckets, int size_of_bucket)
 {
 	ptr_graph graph;
@@ -147,4 +149,43 @@ void ResultSet_next(ResultSet result, int *id, int *distance)
 int hash(int value, int size)
 {
     return ( size * fmod( ( value * HASH_CONSTANT ), 1 ) );
+}
+
+
+Properties* createProperties(int number)
+{
+    Properties prop = malloc(sizeof(struct properties));
+    prop->num_of_prop = number;
+    prop->age = -1;
+    prop->name = NULL;
+    prop->surname = NULL;
+    prop->type =  NULL;
+    prop->weight = -1;
+    return NULL;
+}
+
+void setStringProperty(char* property, int index, Properties* p)
+{
+    if(p->num_of_prop == 3)
+    {
+    	if(index == 0) strcpy(p->name,property);
+    	else if(index == 1) strcpy(p->surname,property);
+    }
+    else if(p->num_of_prop == 3)
+	{
+		if(index == 0) strcpy(p->type,property);
+	}
+}
+
+
+void setIntegerProperty(int property, int index, Properties* p)
+{
+	if(p->num_of_prop == 3)
+	{
+		if(index == 2) p->age = property;
+	}
+	else if(p->num_of_prop == 3)
+	{
+		if(index == 1) p->weight;
+	}
 }
