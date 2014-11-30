@@ -45,7 +45,7 @@ int destroyGraph( ptr_graph graph )
 
 int insertNode( ptr_graph graph, ptr_entry entry, hash_f h )
 {
-	int key;
+	int key = entry->id;
 
 	HT_insert( graph->table, h, (void*) entry, key );
 	++graph->size;
@@ -152,7 +152,7 @@ int hash(int value, int size)
 }
 
 
-Properties* createProperties(int number)
+Properties createProperties(int number)
 {
     Properties prop = malloc(sizeof(struct properties));
     prop->num_of_prop = number;
@@ -161,30 +161,66 @@ Properties* createProperties(int number)
     prop->surname = NULL;
     prop->type =  NULL;
     prop->weight = -1;
-    return NULL;
+    return prop;
 }
 
-void setStringProperty(char* property, int index, Properties* p)
+void setStringProperty(char* property, int index, Properties p)
 {
     if(p->num_of_prop == 3)
     {
-    	if(index == 0) strcpy(p->name,property);
-    	else if(index == 1) strcpy(p->surname,property);
+    	if(index == 0)
+		{
+    		if(p->name == NULL)
+    		{
+    			p->name = malloc(sizeof(property) + 1);
+    		}
+    		else
+    		{
+    			free(p->name);
+    			p->name = malloc(sizeof(property) + 1);
+    		}
+    		strcpy((p->name),property);
+		}
+    	else if(index == 1)
+    	{
+    		if(p->surname == NULL)
+			{
+				p->surname = malloc(sizeof(property) + 1);
+			}
+    		else
+			{
+				free(p->surname);
+				p->surname = malloc(sizeof(property) + 1);
+			}
+    		strcpy(p->surname,property);
+    	}
     }
-    else if(p->num_of_prop == 3)
+    else if(p->num_of_prop == 2)
 	{
-		if(index == 0) strcpy(p->type,property);
+		if(index == 0)
+		{
+			if(p->type == NULL)
+			{
+				p->type = malloc(sizeof(property) + 1);
+			}
+			else
+			{
+				free(p->type);
+				p->type = malloc(sizeof(property) + 1);
+			}
+			strcpy(p->type,property);
+		}
 	}
 }
 
 
-void setIntegerProperty(int property, int index, Properties* p)
+void setIntegerProperty(int property, int index, Properties p)
 {
 	if(p->num_of_prop == 3)
 	{
 		if(index == 2) p->age = property;
 	}
-	else if(p->num_of_prop == 3)
+	else if(p->num_of_prop == 2)
 	{
 		if(index == 1) p->weight;
 	}

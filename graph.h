@@ -22,7 +22,7 @@ struct properties {
     char* type;
     int weight;
 };
-typedef struct properties Properties;
+typedef struct properties *Properties;
 
 
 /* Interface */
@@ -47,8 +47,8 @@ int rec_search( ptr_graph this, int start, int end, int level );
 
 int hash(int value, int size);
 
-Properties* createProperties(int number) ;
+Properties createProperties(int number) ;
 
-void setStringProperty(char* property, int index, Properties* p);
+void setStringProperty(char* property, int index, Properties p);
 
-void setIntegerProperty(int property, int index, Properties* p);
+void setIntegerProperty(int property, int index, Properties p);

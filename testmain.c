@@ -10,7 +10,10 @@ ptr_entry setPersonProperties(int id, char* name, char* surname, int age);
 
 ptr_edge setEdgeProperties(int endNodeID, char* type, int weight) ;
 
-int hashing( const void *key );
+int hashing( int key, int size );
+
+void printPersonProperties(ptr_entry n);
+
 
 int main( int argc, char *argv[] )
 {
@@ -49,56 +52,98 @@ int main( int argc, char *argv[] )
 
 
 	/*insert nodes in graph*/
-	insertNode(n1, g);
-	insertNode(n2, g);
-	insertNode(n3, g);
-	insertNode(n4, g);
-	insertNode(n5, g);
-	insertNode(n6, g);
-	insertNode(n7, g);
-	insertNode(n8, g);
-	insertNode(n10, g);
-	insertNode(n9, g);
-	insertNode(n11, g);
-	insertNode(n12, g);
+	insertNode(g, n1, hashing);
+	insertNode(g, n2, hashing);
+	insertNode(g, n3, hashing);
+	insertNode(g, n4, hashing);
+	insertNode(g, n5, hashing);
+	insertNode(g, n6, hashing);
+	insertNode(g, n7, hashing);
+	insertNode(g, n8, hashing);
+	insertNode(g, n10, hashing);
+	insertNode(g, n9, hashing);
+	insertNode(g, n11, hashing);
+	insertNode(g, n12, hashing);
 
 	/* Create edges and set properties */
-	ptr_edge e1 = setEdgeProperties(1, 6, "knows", 30);
-	ptr_edge e2 = setEdgeProperties(6, 1, "knows", 30);
-	ptr_edge e3 = setEdgeProperties(1, 2, "knows", 20);
-	ptr_edge e4 = setEdgeProperties(2, 1, "knows", 20);
-	ptr_edge e5 = setEdgeProperties(1, 4, "knows", 30);
-	ptr_edge e6 = setEdgeProperties(4, 1, "knows", 30);
-	ptr_edge e7 = setEdgeProperties(2, 6, "knows", 10);
-	ptr_edge e8 = setEdgeProperties(6, 2, "knows", 10);
-	ptr_edge e9 = setEdgeProperties(4, 3, "knows", 30);
-	ptr_edge e10 = setEdgeProperties(3, 4, "knows", 30);
-	ptr_edge e11 = setEdgeProperties(4, 7, "knows", 30);
-	ptr_edge e12 = setEdgeProperties(7, 4, "knows", 30);
-	ptr_edge e13 = setEdgeProperties(4, 8, "knows", 10);
-	ptr_edge e14 = setEdgeProperties(8, 4, "knows", 10);
-	ptr_edge e15 = setEdgeProperties(3, 10, "knows", 30);
-	ptr_edge e16 = setEdgeProperties(10, 3, "knows", 30);
-	ptr_edge e17 = setEdgeProperties(10, 7, "knows", 30);
-	ptr_edge e18 = setEdgeProperties(7, 10, "knows", 30);
-	ptr_edge e19 = setEdgeProperties(10, 14, "knows", 50);
-	ptr_edge e20 = setEdgeProperties(14, 10, "knows", 50);
-	ptr_edge e21 = setEdgeProperties(14, 12, "knows", 30);
-	ptr_edge e22 = setEdgeProperties(12, 14, "knows", 30);
-	ptr_edge e23 = setEdgeProperties(12, 16, "knows", 30);
-	ptr_edge e24 = setEdgeProperties(16, 12, "knows", 30);
-	ptr_edge e25 = setEdgeProperties(16, 14, "knows", 30);
-	ptr_edge e26 = setEdgeProperties(14, 16, "knows", 30);
-	ptr_edge e27 = setEdgeProperties(3, 8, "knows", 30);
-	ptr_edge e28 = setEdgeProperties(8, 3, "knows", 30);
-	ptr_edge e29 = setEdgeProperties(8, 10, "knows", 10);
-	ptr_edge e30 = setEdgeProperties(10, 8, "knows", 10);
+	ptr_edge e1 = setEdgeProperties(6, "knows", 30);
+	ptr_edge e2 = setEdgeProperties(1, "knows", 30);
+	ptr_edge e3 = setEdgeProperties(2, "knows", 20);
+	ptr_edge e4 = setEdgeProperties(1, "knows", 20);
+	ptr_edge e5 = setEdgeProperties(4, "knows", 30);
+	ptr_edge e6 = setEdgeProperties(1, "knows", 30);
+	ptr_edge e7 = setEdgeProperties(6, "knows", 10);
+	ptr_edge e8 = setEdgeProperties(2, "knows", 10);
+	ptr_edge e9 = setEdgeProperties(3, "knows", 30);
+	ptr_edge e10 = setEdgeProperties(4, "knows", 30);
+	ptr_edge e11 = setEdgeProperties(7, "knows", 30);
+	ptr_edge e12 = setEdgeProperties(4, "knows", 30);
+	ptr_edge e13 = setEdgeProperties(8, "knows", 10);
+	ptr_edge e14 = setEdgeProperties(4, "knows", 10);
+	ptr_edge e15 = setEdgeProperties(10, "knows", 30);
+	ptr_edge e16 = setEdgeProperties(3, "knows", 30);
+	ptr_edge e17 = setEdgeProperties(7, "knows", 30);
+	ptr_edge e18 = setEdgeProperties(10, "knows", 30);
+	ptr_edge e19 = setEdgeProperties(14, "knows", 50);
+	ptr_edge e20 = setEdgeProperties(10, "knows", 50);
+	ptr_edge e21 = setEdgeProperties(12, "knows", 30);
+	ptr_edge e22 = setEdgeProperties(14, "knows", 30);
+	ptr_edge e23 = setEdgeProperties(16, "knows", 30);
+	ptr_edge e24 = setEdgeProperties(12, "knows", 30);
+	ptr_edge e25 = setEdgeProperties(14, "knows", 30);
+	ptr_edge e26 = setEdgeProperties(16, "knows", 30);
+	ptr_edge e27 = setEdgeProperties(8, "knows", 30);
+	ptr_edge e28 = setEdgeProperties(3, "knows", 30);
+	ptr_edge e29 = setEdgeProperties(10, "knows", 10);
+	ptr_edge e30 = setEdgeProperties(8, "knows", 10);
+
+
+
+	insertEdge(g, 1, e1, hashing);
+	insertEdge(g, 6, e2, hashing);
+	insertEdge(g, 1, e3, hashing);
+	insertEdge(g, 2, e4, hashing);
+	insertEdge(g, 1, e5, hashing);
+	insertEdge(g, 4, e6, hashing);
+	insertEdge(g, 2, e7, hashing);
+	insertEdge(g, 6, e8, hashing);
+	insertEdge(g, 4, e9, hashing);
+	insertEdge(g, 3, e10, hashing);
+	insertEdge(g, 4, e11, hashing);
+	insertEdge(g, 7, e12, hashing);
+	insertEdge(g, 4, e13, hashing);
+	insertEdge(g, 8, e14, hashing);
+	insertEdge(g, 3, e15, hashing);
+	insertEdge(g, 10, e16, hashing);
+	insertEdge(g, 10, e17, hashing);
+	insertEdge(g, 7, e18, hashing);
+	insertEdge(g, 10, e19, hashing);
+	insertEdge(g, 14, e20, hashing);
+	insertEdge(g, 14, e21, hashing);
+	insertEdge(g, 12, e22, hashing);
+	insertEdge(g, 12, e23, hashing);
+	insertEdge(g, 16, e24, hashing);
+	insertEdge(g, 16, e25, hashing);
+	insertEdge(g, 14, e26, hashing);
+
+
+	ptr_entry Nl1 = lookupNode(g,12,hashing);
+	printPersonProperties(Nl1);
+
 
 }
 
-int hashing( const void *key )
+
+
+
+
+
+
+
+
+int hashing( int key,int size )
 {
-    return *( (int*) key );
+    return (key % size);
 }
 
 
@@ -108,13 +153,13 @@ int hashing( const void *key )
 ptr_entry setPersonProperties(int id, char* name, char* surname, int age) {
 
     /*create properties*/
-    Properties* prop = createProperties(PERSON_PROPERTIES_NUM);
+    Properties prop = createProperties(PERSON_PROPERTIES_NUM);
     setStringProperty(name, 0, prop);
     setStringProperty(surname, 1, prop);
     setIntegerProperty(age, 2, prop);
 
     /*create ptr_entry*/
-    ptr_entry n = create_entry(id,(void) prop,match_edge);
+    ptr_entry n = create_entry(id,((void*) prop),match_edge);
 
 
     return n;
@@ -123,12 +168,19 @@ ptr_entry setPersonProperties(int id, char* name, char* surname, int age) {
 ptr_edge setEdgeProperties(int endNodeID, char* type, int weight) {
 
     /*create edge properties*/
-    Properties* propEdge = createProperties(PERSON_REL_PROPERTIES_NUM);
+    Properties propEdge = createProperties(PERSON_REL_PROPERTIES_NUM);
     setStringProperty(type, 0, propEdge);
     setIntegerProperty(weight, 1, propEdge);
 
     /*create an edge */
-    ptr_edge e = create_edge(endNodeID,(void) propEdge);
+    ptr_edge e = create_edge(endNodeID,((void*) propEdge));
 
     return e;
+}
+
+
+void printPersonProperties(ptr_entry n)
+{
+	Properties p = (Properties) (n->properties);
+	printf("Name : %s \n",p->name);
 }
