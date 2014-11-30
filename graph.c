@@ -1,6 +1,7 @@
 #include "graph.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 
 #include "hash_table.h"
@@ -56,8 +57,18 @@ int insertNode( ptr_graph graph, ptr_entry entry, hash_f h )
 
 int insertEdge( ptr_graph graph, int id, ptr_edge friend, hash_f hash )
 {
+	printf("*****InsertEdge %d to Entry %d\n",friend->id,id);
 	ptr_entry node = HT_search( graph->table, id, hash );
-	LL_insert( node->friends, (void*) friend );
+	if(node == NULL)
+	{
+		printf("Entry not Found\n");
+		return 1;
+	}
+	else if(node != NULL)
+	{
+		LL_insert( node->friends, (void*) friend );
+	}
+
 
 	return 0;
 }
@@ -166,18 +177,19 @@ Properties createProperties(int number)
 
 void setStringProperty(char* property, int index, Properties p)
 {
+	int len = strlen(property) + 1;
     if(p->num_of_prop == 3)
     {
     	if(index == 0)
 		{
     		if(p->name == NULL)
     		{
-    			p->name = malloc(sizeof(property) + 1);
+    			p->name = (char*) malloc(len * sizeof(char));
     		}
     		else
     		{
     			free(p->name);
-    			p->name = malloc(sizeof(property) + 1);
+    			p->name = (char*) malloc(len * sizeof(char));
     		}
     		strcpy((p->name),property);
 		}
@@ -185,12 +197,12 @@ void setStringProperty(char* property, int index, Properties p)
     	{
     		if(p->surname == NULL)
 			{
-				p->surname = malloc(sizeof(property) + 1);
+				p->surname = (char*) malloc(len * sizeof(char));
 			}
     		else
 			{
 				free(p->surname);
-				p->surname = malloc(sizeof(property) + 1);
+				p->surname = (char*) malloc(len * sizeof(char));
 			}
     		strcpy(p->surname,property);
     	}
@@ -201,12 +213,12 @@ void setStringProperty(char* property, int index, Properties p)
 		{
 			if(p->type == NULL)
 			{
-				p->type = malloc(sizeof(property) + 1);
+				p->type = (char*) malloc(len * sizeof(char));
 			}
 			else
 			{
 				free(p->type);
-				p->type = malloc(sizeof(property) + 1);
+				p->type = (char*) malloc(len * sizeof(char));
 			}
 			strcpy(p->type,property);
 		}

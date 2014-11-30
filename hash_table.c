@@ -190,23 +190,29 @@ void HT_insert( ht_ptr this, hash_f h, void *element, int key )
 
 void *HT_search( ht_ptr this, int id, hash_f hash )
 {
+	//printf("HT_search 1 \n");
     int index, key = hash( id, this->size );
     struct bucket *found;
     void *result;
 
+    //printf("HT_search 2 \n");
     /* Apply small hashing first */
     index = key % ( pow_(2, this->level) * this->init_size );
 
+    //printf("HT_search 3 \n");
     /* If it's split investigate further */
     if ( index < this->next ) {
         index = key % ( pow_(2, this->level + 1) * this->init_size );
     }
 
+    //printf("HT_search 4 \n");
     found = this->buckets[ index ];
     do {
+    	//printf("HT_search 5 \n");
         result = bsearch( (void*) &key, found->records, found->counter, sizeof(struct record), record_match );
         found = found->overflow;
     } while ( result == NULL && found != NULL );
+    //printf("HT_search 6 \n");
     return ( result != NULL ) ? ( (struct record*) result )->data : NULL;
 }
 

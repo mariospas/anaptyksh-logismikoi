@@ -9,6 +9,7 @@ ptr_entry create_entry(int id,void* properties,int (*match)( const void *a, cons
 
 	node = malloc(sizeof(struct entry));
 
+	printf("create Entry id = %d\n",id);
 	node->id = id;
 	node->properties = properties;
 	//node->friends = NULL;

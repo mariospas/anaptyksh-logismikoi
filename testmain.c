@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include "graph.h"
 #include "entries.h"
 #include "hash_table.h"
@@ -10,7 +11,7 @@ ptr_entry setPersonProperties(int id, char* name, char* surname, int age);
 
 ptr_edge setEdgeProperties(int endNodeID, char* type, int weight) ;
 
-int hashing( int key, int size );
+//int hashing( int key, int size );
 
 void printPersonProperties(ptr_entry n);
 
@@ -36,6 +37,7 @@ int main( int argc, char *argv[] )
 	ptr_graph g;
 	g = createGraph(0,m,c);
 
+	printf("Set Person Properties\n");
 	/*create node and set node properties*/
 	ptr_entry n1 = setPersonProperties(5, "lonely", "loner", 29);
 	ptr_entry n2 = setPersonProperties(1, "herald", "kllapi", 22);
@@ -50,21 +52,22 @@ int main( int argc, char *argv[] )
 	ptr_entry n11 = setPersonProperties(12, "fox", "mulder", 29);
 	ptr_entry n12 = setPersonProperties(16, "dana", "scully", 25);
 
-
+	printf("Insert Person Properties\n");
 	/*insert nodes in graph*/
-	insertNode(g, n1, hashing);
-	insertNode(g, n2, hashing);
-	insertNode(g, n3, hashing);
-	insertNode(g, n4, hashing);
-	insertNode(g, n5, hashing);
-	insertNode(g, n6, hashing);
-	insertNode(g, n7, hashing);
-	insertNode(g, n8, hashing);
-	insertNode(g, n10, hashing);
-	insertNode(g, n9, hashing);
-	insertNode(g, n11, hashing);
-	insertNode(g, n12, hashing);
+	insertNode(g, n1, hash);
+	insertNode(g, n2, hash);
+	insertNode(g, n3, hash);
+	insertNode(g, n4, hash);
+	insertNode(g, n5, hash);
+	insertNode(g, n6, hash);
+	insertNode(g, n7, hash);
+	insertNode(g, n8, hash);
+	insertNode(g, n10, hash);
+	insertNode(g, n9, hash);
+	insertNode(g, n11, hash);
+	insertNode(g, n12, hash);
 
+	printf("Set Edge Properties\n");
 	/* Create edges and set properties */
 	ptr_edge e1 = setEdgeProperties(6, "knows", 30);
 	ptr_edge e2 = setEdgeProperties(1, "knows", 30);
@@ -99,35 +102,36 @@ int main( int argc, char *argv[] )
 
 
 
-	insertEdge(g, 1, e1, hashing);
-	insertEdge(g, 6, e2, hashing);
-	insertEdge(g, 1, e3, hashing);
-	insertEdge(g, 2, e4, hashing);
-	insertEdge(g, 1, e5, hashing);
-	insertEdge(g, 4, e6, hashing);
-	insertEdge(g, 2, e7, hashing);
-	insertEdge(g, 6, e8, hashing);
-	insertEdge(g, 4, e9, hashing);
-	insertEdge(g, 3, e10, hashing);
-	insertEdge(g, 4, e11, hashing);
-	insertEdge(g, 7, e12, hashing);
-	insertEdge(g, 4, e13, hashing);
-	insertEdge(g, 8, e14, hashing);
-	insertEdge(g, 3, e15, hashing);
-	insertEdge(g, 10, e16, hashing);
-	insertEdge(g, 10, e17, hashing);
-	insertEdge(g, 7, e18, hashing);
-	insertEdge(g, 10, e19, hashing);
-	insertEdge(g, 14, e20, hashing);
-	insertEdge(g, 14, e21, hashing);
-	insertEdge(g, 12, e22, hashing);
-	insertEdge(g, 12, e23, hashing);
-	insertEdge(g, 16, e24, hashing);
-	insertEdge(g, 16, e25, hashing);
-	insertEdge(g, 14, e26, hashing);
+	printf("Insert Edge Properties\n");
+	insertEdge(g, 1, e1, hash);
+	insertEdge(g, 6, e2, hash);
+	insertEdge(g, 1, e3, hash);
+	insertEdge(g, 2, e4, hash);
+	insertEdge(g, 1, e5, hash);
+	insertEdge(g, 4, e6, hash);
+	insertEdge(g, 2, e7, hash);
+	insertEdge(g, 6, e8, hash);
+	insertEdge(g, 4, e9, hash);
+	insertEdge(g, 3, e10, hash);
+	insertEdge(g, 4, e11, hash);
+	insertEdge(g, 7, e12, hash);
+	insertEdge(g, 4, e13, hash);
+	insertEdge(g, 8, e14, hash);
+	insertEdge(g, 3, e15, hash);
+	insertEdge(g, 10, e16, hash);
+	insertEdge(g, 10, e17, hash);
+	insertEdge(g, 7, e18, hash);
+	insertEdge(g, 10, e19, hash);
+	insertEdge(g, 14, e20, hash);
+	insertEdge(g, 14, e21, hash);
+	insertEdge(g, 12, e22, hash);
+	insertEdge(g, 12, e23, hash);
+	insertEdge(g, 16, e24, hash);
+	insertEdge(g, 16, e25, hash);
+	insertEdge(g, 14, e26, hash);
 
-
-	ptr_entry Nl1 = lookupNode(g,12,hashing);
+	printf("Try to LookUp\n");
+	ptr_entry Nl1 = lookupNode(g,1,hash);
 	printPersonProperties(Nl1);
 
 
@@ -140,12 +144,12 @@ int main( int argc, char *argv[] )
 
 
 
-
+/*
 int hashing( int key,int size )
 {
     return (key % size);
 }
-
+*/
 
 
 
