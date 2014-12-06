@@ -2,8 +2,15 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h> 
+#include "entries.h"
 
 #include "hash_table.h"
+
+struct node_key
+{
+	int key;
+	int id;
+};
 
 struct record {
 
@@ -185,28 +192,41 @@ void HT_insert( ht_ptr this, hash_f h, void *element, int key )
     (*found)->records[ (*found)->counter ].data = element;
     ++(*found)->counter;
 
+    printf("---records->id = %d\n",hashed);
+    printf("---records->data->id = %d\n",(((ptr_entry) element)->id) );
+
     qsort( (*found)->records, (*found)->counter, sizeof(struct record), record_compare );
 }           
 
 void *HT_search( ht_ptr this, int id, hash_f hash )
 {
+	//printf("HT_search 1 \n");
     int index, key = hash( id, this->size );
     struct bucket *found;
     void *result;
+    struct node_key keyNode;
+    keyNode.id = id;
+    keyNode.key = key;
 
+    //printf("HT_search 2 \n");
     /* Apply small hashing first */
     index = key % ( pow_(2, this->level) * this->init_size );
 
+    //printf("HT_search 3 \n");
     /* If it's split investigate further */
     if ( index < this->next ) {
         index = key % ( pow_(2, this->level + 1) * this->init_size );
     }
 
+    //printf("HT_search 4 \n");
     found = this->buckets[ index ];
     do {
-        result = bsearch( (void*) &key, found->records, found->counter, sizeof(struct record), record_match );
+    	printf("HT_search key = %d and id = %d\n",key,id);
+        //result = bsearch( (void*) &key, found->records, found->counter, sizeof(struct record), record_match );
+    	result = bsearch( (void*) &keyNode, found->records, found->counter, sizeof(struct record), record_match );
         found = found->overflow;
     } while ( result == NULL && found != NULL );
+    //printf("HT_search 6 \n");
     return ( result != NULL ) ? ( (struct record*) result )->data : NULL;
 }
 
@@ -279,10 +299,24 @@ static int record_compare( const void *a, const void *b )
     return ( ( (struct record*) a )->id ) - ( ( (struct record*) b )->id );
 }
 
-static int record_match( const void *key, const void *object )
+/*static int record_match( const void *key, const void *object )
 {
     return *( (int*) key ) - ( ( (struct record*) object )->id );
+}*/
+
+static int record_match( const void *key, const void *object )
+{
+	printf("^^^Record Match^^^\n");
+	printf("key node = %d ---- object id = %d\n",(((struct node_key *) key)->key),( ( (struct record*) object )->id ));
+	printf("key id = %d ---- object data id = %d\n",(((struct node_key *) key)->id),(((ptr_entry) ( ( (struct record*) object )->data ))->id) );
+	printf("^^^^^^^^^^^^^^^^^^\n");
+	if( !( (((struct node_key *) key)->key) - ( ( (struct record*) object )->id ) )  )
+	{
+		return (((ptr_entry) ( ( (struct record*) object )->data ))->id) - (((struct node_key *) key)->id);
+	}
+	return 1;
 }
+
 
 static int pow_( int base, int exp )
 {

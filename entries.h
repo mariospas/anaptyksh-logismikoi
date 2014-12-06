@@ -30,5 +30,9 @@ ptr_edge create_edge(int id, void* lista_idiotiton);
 
 void destroy_edge(void* this);
 
+int match_edge(void *a,void *key);
+
+int match_entry(void *a,void *key);
+
 
 #endif /* _ENTRIES_ */
