@@ -81,3 +81,16 @@ int match_entry(void *a,void *key)
 	}
 	else return 1;
 }
+
+
+
+
+
+
+//Iterators
+
+
+void* Entry_take_list(ptr_entry this)
+{
+	return this->friends;
+}

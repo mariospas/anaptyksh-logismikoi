@@ -69,7 +69,7 @@ int main( int argc, char *argv[] )
 
 	printf("Set Edge Properties\n");
 	/* Create edges and set properties */
-	ptr_edge e1 = setEdgeProperties(6, "knows", 30);
+	ptr_edge e1 = setEdgeProperties(6, "knows", 30);   //knows na bazame mia lista
 	ptr_edge e2 = setEdgeProperties(1, "knows", 30);
 	ptr_edge e3 = setEdgeProperties(2, "knows", 20);
 	ptr_edge e4 = setEdgeProperties(1, "knows", 20);

@@ -35,4 +35,8 @@ int match_edge(void *a,void *key);
 int match_entry(void *a,void *key);
 
 
+//Iterators
+
+void* Entry_take_list(ptr_entry this);
+
 #endif /* _ENTRIES_ */
