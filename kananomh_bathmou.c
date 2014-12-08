@@ -92,8 +92,60 @@ void degreeDistribution(ptr_graph g)
 		}
 
 
+
+		LL_iter_destroy(iterList);
+		HT_iter_destroy(iter);
+
 	}
 }
 
+
+
+//#################diametros#########################
+
+void return_maxN(Result_ptr result,int size,int* max)
+{
+	int i;
+	int id;
+	int distance;
+
+	for(i=0;i<size;i++)
+	{
+		ResultSet_next(result,&id,&distance,i);
+		if(*max < distance)
+		{
+			*max = distance;
+		}
+	}
+
+}
+
+
+int diameter(ptr_graph g)
+{
+	int i;
+	HT_iter_ptr iter;
+	ptr_entry data;
+	Result_ptr result;
+	int max = -7;
+
+	if(g != NULL)
+	{
+		iter = HT_iter_create(g->table);
+
+		for(i=0;i<g->size;i++)
+		{
+			data = ((ptr_entry)HT_iter_data(iter));
+			result = reachNodeN(g,data->id);
+			return_maxN(result,g->size,&max);
+
+			HT_iter_next(iter);
+		}
+
+		HT_iter_destroy(iter);
+	}
+
+	return max;
+}
 
 

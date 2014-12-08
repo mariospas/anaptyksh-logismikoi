@@ -18,6 +18,12 @@ void manage_list(list_ptr list,int arithmos_filon);
 
 void degreeDistribution(ptr_graph g);
 
+//####diametros#####
+
+void return_maxN(Result_ptr result,int size,int* max);
+
+int diameter(ptr_graph g);
+
 
 
 

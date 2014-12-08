@@ -124,21 +124,21 @@ int rec_search( ptr_graph this, int start, int end, int level )
 }
 
 
-ResultSet reachNodeN( ptr_graph graph, int start )
+Result_ptr reachNodeN( ptr_graph graph, int start )
 {
-	ResultSet result;
+	Result_ptr result = malloc(sizeof(ResultSet));
 	int dist, count = 0;
     HT_iter_ptr ht_it = HT_iter_create( graph->table );
     ptr_entry entry;
 
-	result.array_id = malloc(graph->size * sizeof(int));
-	result.array_dist = malloc(graph->size * sizeof(int));
+	result->array_id = malloc(graph->size * sizeof(int));
+	result->array_dist = malloc(graph->size * sizeof(int));
     do
     {
         entry = HT_iter_data( ht_it );
         dist = reachNode1( graph, start, ( (ptr_entry) entry )->id );
-        result.array_dist[count] = dist;
-        result.array_id[count] = ( (ptr_entry) entry )->id;
+        result->array_dist[count] = dist;
+        result->array_id[count] = ( (ptr_entry) entry )->id;
         count++;
     }
     while ( HT_iter_next( ht_it ) );
@@ -147,14 +147,14 @@ ResultSet reachNodeN( ptr_graph graph, int start )
 }
 
 
-void ResultSet_next(ResultSet result, int *id, int *distance)
+void ResultSet_next(Result_ptr result, int *id, int *distance,int i)
 {
     /* Initialized to 0 */
-	static int i;
+	//static int i;
 
-	*id = result.array_id[i];
-	*distance = result.array_dist[i];
-	i++;
+	*id = result->array_id[i];
+	*distance = result->array_dist[i];
+	//i++;
 }
 
 int hash(int value, int size)

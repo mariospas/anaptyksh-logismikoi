@@ -14,6 +14,8 @@ typedef struct
 	int *array_dist;
 } ResultSet;
 
+typedef ResultSet *Result_ptr;
+
 struct properties {
     int num_of_prop;
     char* name;
@@ -38,9 +40,9 @@ ptr_entry lookupNode(ptr_graph graph,int id,hash_f hash);
 
 int reachNode1( ptr_graph this, int start, int end );
 
-ResultSet reachNodeN(ptr_graph graph, int start);
+Result_ptr reachNodeN(ptr_graph graph, int start);
 
-void ResultSet_next(ResultSet result, int *id, int *distance);
+void ResultSet_next(Result_ptr result, int *id, int *distance);
 
 /* Helpers */
 int rec_search( ptr_graph this, int start, int end, int level );
