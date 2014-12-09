@@ -358,3 +358,10 @@ int maxCC(ptr_graph g)
 	return max_size;
 }
 
+
+
+double density(ptr_graph g)
+{
+
+}
+
