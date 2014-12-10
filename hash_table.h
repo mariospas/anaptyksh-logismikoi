@@ -1,23 +1,25 @@
 #ifndef _HASH_TABLE_
 #define _HASH_TABLE_
 
+#include <stdlib.h>
+
 struct bucket;
 struct record;
 
 typedef struct hash_table *ht_ptr;
 typedef struct HT_iterator *HT_iter_ptr;
 
-typedef int (*hash_f)(int key, int size);
+typedef size_t (*hash_f)(int key, size_t size);
 typedef void (*destroyer)(void *object);
 
 /* Interface */
-ht_ptr HT_create( int table_size, int bucket_size );
+ht_ptr HT_create( int table_size, int bucket_size, hash_f hash );
 
 void HT_destroy( ht_ptr this, destroyer destroy );
 
-void HT_insert( ht_ptr this, hash_f h, void *element, int key );
+void HT_insert( ht_ptr this, void *element, int key );
 
-void *HT_search( ht_ptr this, int id, hash_f hash );
+void *HT_search( ht_ptr this, int id );
 
 /* Helpers */
 static void rec_bucket_destroy_( struct bucket *this, destroyer destroy );

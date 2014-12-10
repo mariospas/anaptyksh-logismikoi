@@ -28,7 +28,7 @@ ptr_graph createGraph(int id, int num_of_buckets, int size_of_bucket)
 	ptr_graph graph;
 
 	graph = malloc( sizeof( struct graph ) );
-	graph->table = HT_create( num_of_buckets, size_of_bucket );
+	graph->table = HT_create( num_of_buckets, size_of_bucket, hash );
 	graph->id = id;
 	graph->size = 0;
 
@@ -44,21 +44,21 @@ int destroyGraph( ptr_graph graph )
 	return 0;
 }
 
-int insertNode( ptr_graph graph, ptr_entry entry, hash_f h )
+int insertNode( ptr_graph graph, ptr_entry entry )
 {
 	int key = entry->id;
 
-	HT_insert( graph->table, h, (void*) entry, key );
+	HT_insert( graph->table, (void*) entry, key );
 	++graph->size;
 
 	return 0;
 }
 
 
-int insertEdge( ptr_graph graph, int id, ptr_edge friend, hash_f hash )
+int insertEdge( ptr_graph graph, int id, ptr_edge friend )
 {
 	printf("*****InsertEdge %d to Entry %d\n",friend->id,id);
-	ptr_entry node = HT_search( graph->table, id, hash );
+	ptr_entry node = HT_search( graph->table, id );
 	if(node == NULL)
 	{
 		printf("Entry not Found\n");
@@ -73,9 +73,9 @@ int insertEdge( ptr_graph graph, int id, ptr_edge friend, hash_f hash )
 	return 0;
 }
 
-ptr_entry lookupNode(ptr_graph graph,int id, hash_f hash)
+ptr_entry lookupNode(ptr_graph graph,int id)
 {
-	ptr_entry node = HT_search(graph->table,id,hash);
+	ptr_entry node = HT_search(graph->table,id);
 	return node;
 }
 
@@ -103,7 +103,7 @@ int rec_search( ptr_graph this, int start, int end, int level )
         return start == end;
     }
 
-    edges = ( (ptr_entry) HT_search( this->table, start, hash ) )->friends;
+    edges = ( (ptr_entry) HT_search( this->table, start ) )->friends;
     edge_it = LL_iter_create( edges );
     for ( i = 0; i < this->size - level; ++i )
     {
@@ -157,7 +157,7 @@ void ResultSet_next(ResultSet result, int *id, int *distance)
 	i++;
 }
 
-int hash(int value, int size)
+size_t hash(int value, size_t size)
 {
     return ( size * fmod( ( value * HASH_CONSTANT ), 1 ) );
 }

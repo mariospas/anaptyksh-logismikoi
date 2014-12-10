@@ -22,7 +22,7 @@ typedef struct entry *ptr_entry;
 typedef struct edge *ptr_edge;
 
 
-ptr_entry create_entry(int id,void* properties,int (*match)( const void *a, const void *b));    //create node
+ptr_entry create_entry(int id,void* properties);    //create node
 
 void destroy_entry(void* this);
 
@@ -30,7 +30,7 @@ ptr_edge create_edge(int id, void* lista_idiotiton);
 
 void destroy_edge(void* this);
 
-int match_edge(void *a,void *key);
+int match_edge(const void *a, const void *key);
 
 int match_entry(void *a,void *key);
 

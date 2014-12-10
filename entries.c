@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 
-ptr_entry create_entry(int id,void* properties,int (*match)( const void *a, const void *b))      //create node
+ptr_entry create_entry(int id,void* properties)      //create node
 {
 	ptr_entry node;
 
@@ -13,7 +13,7 @@ ptr_entry create_entry(int id,void* properties,int (*match)( const void *a, cons
 	node->id = id;
 	node->properties = properties;
 	//node->friends = NULL;
-	node->friends = (void*) LL_create(match);         //edges
+	node->friends = (void*) LL_create(match_edge);         //edges
 
 	return node;
 
@@ -63,7 +63,7 @@ void destroy_edge(void* edge)
 }
 
 
-int match_edge(void *a,void *key)
+int match_edge(const void *a, const void *key)
 {
 	if( ((ptr_edge)a)->id == ((ptr_edge)key)->id  )
 	{

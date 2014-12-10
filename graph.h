@@ -30,11 +30,11 @@ ptr_graph createGraph(int id,int m,int c);
 
 int destroyGraph(ptr_graph graph);
 
-int insertNode(ptr_graph graph,ptr_entry entry,hash_f h);
+int insertNode(ptr_graph graph,ptr_entry entry);
 
-int insertEdge(ptr_graph graph,int id,ptr_edge filos,hash_f hash);
+int insertEdge(ptr_graph graph,int id,ptr_edge filos);
 
-ptr_entry lookupNode(ptr_graph graph,int id,hash_f hash);
+ptr_entry lookupNode(ptr_graph graph,int id);
 
 int reachNode1( ptr_graph this, int start, int end );
 
@@ -45,7 +45,7 @@ void ResultSet_next(ResultSet result, int *id, int *distance);
 /* Helpers */
 int rec_search( ptr_graph this, int start, int end, int level );
 
-int hash(int value, int size);
+size_t hash(int value, size_t size);
 
 Properties createProperties(int number) ;
 
