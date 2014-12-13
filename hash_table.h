@@ -24,9 +24,11 @@ void *HT_search( ht_ptr this, int id );
 /* Helpers */
 static void rec_bucket_destroy_( struct bucket *this, destroyer destroy );
 
+static void rec_bucket_sort( struct bucket *this );
+
 static void redistribute( ht_ptr this, struct bucket **a, struct bucket **b );
 
-static void clear_bucket( struct bucket *b, int size );
+static void clear_bucket_( struct bucket *b, int size );
 
 static int record_compare( const void *a, const void *b );
 

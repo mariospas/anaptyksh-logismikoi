@@ -6,12 +6,6 @@
 
 #include "hash_table.h"
 
-struct node_key
-{
-	int key;
-	int id;
-};
-
 struct record {
 
     int id; /* key */
@@ -116,6 +110,15 @@ static void rec_bucket_destroy_( struct bucket *this, destroyer destroy )
     free( this );
 }
 
+static void rec_bucket_sort( struct bucket *this )
+{
+    int i;
+    if ( this->overflow != NULL ) {
+        rec_bucket_sort( this->overflow );
+    }
+    qsort( this->records, this->counter, sizeof(struct record), record_compare );
+}
+
 void HT_destroy( ht_ptr this, destroyer destroy )
 {
     int i;
@@ -147,42 +150,38 @@ void HT_insert( ht_ptr this, void *element, int key )
 
     /* Case: Enough space */
     if ( (*found)->counter < this->bucket_size ) {
-        ; 
+        (*found)->records[ (*found)->counter ].id = hashed;
+        (*found)->records[ (*found)->counter ].data = element;
+        qsort( (*found)->records, ++(*found)->counter, sizeof(struct record), record_compare );
 
     /* Case: Split */
     } else {
 
-        /* Split */
+        /* Add a new index */
         this->buckets = realloc( this->buckets, ++this->size * sizeof(struct bucket*) );
         assert( ( this->size - 1 ) == ( this->next + ( pow_(2, this->level) * this->init_size ) ) );
 
+        /* Fill the newly created bucket */
+        this->buckets[ this->size - 1 ] = malloc( sizeof(struct bucket) );
+        this->buckets[ this->size - 1 ]->records = malloc( this->bucket_size * sizeof(struct record) );
+        clear_bucket_( this->buckets[ this->size - 1 ], this->bucket_size );
+
+        /* Setup addition */
         found = &this->buckets[ index ];
-        while ( (*found)->overflow != NULL ) {
+        while ( *found != NULL ) {
             found = &(*found)->overflow;
         }
+        *found = malloc( sizeof(struct bucket) );
+        (*found)->records = malloc( this->bucket_size * sizeof(struct record) );
+        clear_bucket_( *found, this->bucket_size );
 
-        this->buckets[ this->size - 1 ] = malloc( sizeof(struct bucket) );
-        this->buckets[ this->size - 1 ]->counter = 0;
-        this->buckets[ this->size - 1 ]->overflow = NULL;
-        this->buckets[ this->size - 1 ]->records = malloc( this->bucket_size * sizeof(struct record) );
-        for ( i = 0; i < this->bucket_size; ++i ) {
-            this->buckets[ this->size - 1 ]->records[i].id = -1;
-            this->buckets[ this->size - 1 ]->records[i].data = NULL;
-        }
+        (*found)->records[ (*found)->counter ].id = hashed;
+        (*found)->records[ (*found)->counter ].data = element;
+        ++(*found)->counter;
+
+        /* Spit the contents os the appropriate buckets */
         redistribute( this, &this->buckets[ this->next ], &this->buckets[ this->size - 1 ] );
 
-        /* Same bucket to be split; No overflow */
-        if ( (*found)->counter < this->bucket_size ) {
-            assert( this->buckets[ this->next ] == *found );
-
-        /* Overflow */
-        } else {
-            found = &(*found)->overflow;
-            *found = malloc( sizeof(struct bucket) );
-            (*found)->records = malloc( this->bucket_size * sizeof(struct record) );
-            clear_bucket( *found, this->bucket_size );
-        }
-               
         /* New level check */
         if ( this->size == ( pow_(2, this->level + 1) * this->init_size ) ) {
             ++this->level;
@@ -192,16 +191,11 @@ void HT_insert( ht_ptr this, void *element, int key )
         }
     } 
 
-    (*found)->records[ (*found)->counter ].id = hashed;
-    (*found)->records[ (*found)->counter ].data = element;
-    ++(*found)->counter;
-
     /*
     printf("---records->id = %d\n",hashed);
     printf("---records->data->id = %d\n",(((ptr_entry) element)->id) );
     */
 
-    qsort( (*found)->records, (*found)->counter, sizeof(struct record), record_compare );
 }           
 
 void *HT_search( ht_ptr this, int id )
@@ -210,9 +204,6 @@ void *HT_search( ht_ptr this, int id )
     int index, key = this->hash( id, this->size );
     struct bucket *found;
     void *result;
-    struct node_key keyNode;
-    keyNode.id = id;
-    keyNode.key = key;
 
     //printf("HT_search 2 \n");
     /* Apply small hashing first */
@@ -230,8 +221,7 @@ void *HT_search( ht_ptr this, int id )
         /*
     	printf("HT_search key = %d and id = %d\n",key,id);
         */
-        //result = bsearch( (void*) &key, found->records, found->counter, sizeof(struct record), record_match );
-    	result = bsearch( (void*) &keyNode, found->records, found->counter, sizeof(struct record), record_match );
+        result = bsearch( (void*) &key, found->records, found->counter, sizeof(struct record), record_match );
         found = found->overflow;
     } while ( result == NULL && found != NULL );
     //printf("HT_search 6 \n");
@@ -252,7 +242,7 @@ static void redistribute( ht_ptr this, struct bucket **a, struct bucket **b )
     temp1 = temp;
 
     /* Clear initial bucket */
-    clear_bucket( *a, this->bucket_size );
+    clear_bucket_( *a, this->bucket_size );
 
     do {
         for ( i = 0; i < temp->counter; ++i ) {
@@ -268,30 +258,29 @@ static void redistribute( ht_ptr this, struct bucket **a, struct bucket **b )
             }
 
             /* Overflow bucket */
-            if ( (*chosen)->counter == this->bucket_size ) {
+            while ( (*chosen)->counter == this->bucket_size ) {
                 chosen = &(*chosen)->overflow;
-                *chosen = malloc( sizeof(struct bucket) );
-                (*chosen)->records = malloc( this->bucket_size * sizeof(struct record) );
-                clear_bucket( *chosen, this->bucket_size );
+                if ( *chosen == NULL ) {
+                    *chosen = malloc( sizeof(struct bucket) );
+                    (*chosen)->records = malloc( this->bucket_size * sizeof(struct record) );
+                    clear_bucket_( *chosen, this->bucket_size );
+                }
             }
+
             (*chosen)->records[ (*chosen)->counter ].id = temp->records[i].id;
             (*chosen)->records[ (*chosen)->counter ].data = temp->records[i].data;
             ++(*chosen)->counter;
         }
-        if ( temp->overflow != NULL ) {
-            temp = temp->overflow;
-        } else {
-            break;
-        }
-    } while (1);
+        temp = temp->overflow;
+    } while ( temp != NULL );
 
-    qsort( (*a)->records, (*a)->counter, sizeof(struct record), record_compare );
-    qsort( (*b)->records, (*b)->counter, sizeof(struct record), record_compare );
+    rec_bucket_sort( *a );
+    rec_bucket_sort( *b );
 
     rec_bucket_destroy_( temp1, NULL );  
 }
 
-static void clear_bucket( struct bucket *b, int size )
+static void clear_bucket_( struct bucket *b, int size )
 {
     int i;
     b->counter = 0;
@@ -307,26 +296,10 @@ static int record_compare( const void *a, const void *b )
     return ( ( (struct record*) a )->id ) - ( ( (struct record*) b )->id );
 }
 
-/*static int record_match( const void *key, const void *object )
-{
-    return *( (int*) key ) - ( ( (struct record*) object )->id );
-}*/
-
 static int record_match( const void *key, const void *object )
 {
-    /*
-	printf("^^^Record Match^^^\n");
-	printf("key node = %d ---- object id = %d\n",(((struct node_key *) key)->key),( ( (struct record*) object )->id ));
-	printf("key id = %d ---- object data id = %d\n",(((struct node_key *) key)->id),(((ptr_entry) ( ( (struct record*) object )->data ))->id) );
-	printf("^^^^^^^^^^^^^^^^^^\n");
-    */
-	if( !( (((struct node_key *) key)->key) - ( ( (struct record*) object )->id ) )  )
-	{
-		return (((ptr_entry) ( ( (struct record*) object )->data ))->id) - (((struct node_key *) key)->id);
-	}
-	return 1;
+    return *( (int*) key ) - ( ( (struct record*) object )->id );
 }
-
 
 static int pow_( int base, int exp )
 {

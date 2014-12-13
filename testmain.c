@@ -16,45 +16,45 @@ size_t hashing( int key, size_t size );
 void printPersonProperties(ptr_entry n);
 
 char *cont[20] = {
-    "1",
-    "2",
-    "3",
-    "4",
-    "5",
-    "6",
-    "7",
-    "8",
-    "9",
-    "10",
-    "11",
-    "12",
-    "13",
-    "14",
-    "15",
-    "16",
-    "17",
-    "18",
-    "19",
-    "20"
+    "No0",
+    "No1",
+    "No2",
+    "No3",
+    "No4",
+    "No5",
+    "No6",
+    "No7",
+    "No8",
+    "No9",
+    "No10",
+    "No11",
+    "No12",
+    "No13",
+    "No14",
+    "No15",
+    "No16",
+    "No17",
+    "No18",
+    "No19"
 };
 
 int main( int argc, char *argv[] )
 {
     int i, max = 20;
-    ht_ptr sample = HT_create( 4, 4, hashing );
+    ht_ptr sample = HT_create( 2, 2, hashing );
 
-    for ( i = 1; i <= max; ++i ) {
-
+    for ( i = 0; i < max; ++i ) {
         HT_insert( sample, cont[i], i );
     }
 
+    HT_print( sample );
+
+    fputc( '\n', stdout );
     printf( "%d: %s\n", 3, (char*) HT_search( sample, 3 ) );
     printf( "%d: %s\n", 8, (char*) HT_search( sample, 8 ) );
     printf( "%d: %s\n", 14, (char*) HT_search( sample, 14 ) );
 
-    HT_print( sample );
     HT_destroy( sample, NULL );
-
     return EXIT_SUCCESS; // I hope
 
 #if 0
@@ -201,5 +201,5 @@ void printPersonProperties(ptr_entry n)
 
 size_t hashing( int key, size_t size )
 {
-    return key;
+    return key * key * 2 + 20;
 }
