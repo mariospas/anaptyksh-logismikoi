@@ -201,5 +201,5 @@ void printPersonProperties(ptr_entry n)
 
 size_t hashing( int key, size_t size )
 {
-    return key * key * 2 + 20;
+    return 100 / (key+1) + 30;
 }

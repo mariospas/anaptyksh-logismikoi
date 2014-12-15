@@ -42,6 +42,10 @@ ResultSet reachNodeN(ptr_graph graph, int start);
 
 void ResultSet_next(ResultSet result, int *id, int *distance);
 
+double closeness_centrality( ptr_entry n, ptr_graph g );
+
+double betweenness_centrality( ptr_entry n, ptr_graph g );
+
 /* Helpers */
 int rec_search( ptr_graph this, int start, int end, int level );
 
@@ -52,3 +56,4 @@ Properties createProperties(int number) ;
 void setStringProperty(char* property, int index, Properties p);
 
 void setIntegerProperty(int property, int index, Properties p);
+
