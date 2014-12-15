@@ -17,6 +17,7 @@ typedef struct
 typedef ResultSet *Result_ptr;
 
 struct properties {
+	int id_entry;
     int num_of_prop;
     char* name;
     char* surname;
