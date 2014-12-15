@@ -22,7 +22,7 @@ struct database
 struct entity
 {
 	int id;
-	ht_ptr idiothtes;
+	ptr_graph basic;
 	ptr_graph* sxeseis;
 };
 
