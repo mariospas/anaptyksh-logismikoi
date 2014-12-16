@@ -94,3 +94,12 @@ void* Entry_take_list(ptr_entry this)
 {
 	return this->friends;
 }
+
+int size_of_friend_list(ptr_entry this)
+{
+	int size = 0;
+
+	size = LL_size(((list_ptr)(this->friends)));
+
+	return size;
+}

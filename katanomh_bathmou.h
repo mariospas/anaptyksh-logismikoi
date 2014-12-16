@@ -6,6 +6,7 @@
 #include "graph.h"
 #include "entries.h"
 #include "hash_table.h"
+#include <string.h>
 
 //#####katanomh############
 

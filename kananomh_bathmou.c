@@ -61,44 +61,61 @@ void degreeDistribution(ptr_graph g)
 	int list_size;
 	FILE* fp;
 	ptr_katanomh dataKat;
+	FILE* gnuplotPipe;
+	char ** commandsForGnuplot;
 
 	if(g != NULL)
 	{
 		iter = HT_iter_create(g->table);
 
-
 		for(i=0;i < g->size;i++)
 		{
 			data = ((ptr_entry)HT_iter_data(iter));
 			friend_list =((list_ptr)Entry_take_list(data));
-			list_size = LL_size(friend_list);                  //theoroume oti oloi einai knows ara to megethos tis listas
-															//einai kai to zhtoumeno mas
-
+			list_size = LL_size(friend_list); //theoroume oti oloi einai knows ara to megethos tis listas
+			//einai kai to zhtoumeno mas
 			manage_list(list,list_size);
-
 			HT_iter_next(iter);
 		}
-
-		fp = fopen("dedomena_katanomhs.txt","w+");
-
+		fp = fopen("dedomena_katanomhs.temp","w+");
 		iterList = LL_iter_create(list);
 
 		for(i=0;i<LL_size(list);i++)
 		{
 			dataKat = (ptr_katanomh)LL_iter_data(iterList);
 			fprintf(fp,"%d %f\n",dataKat->arithmos_filon,((dataKat->size)/(g->size)));
-
 			LL_iter_next(iterList);
 		}
-
-
 
 		LL_iter_destroy(iterList);
 		HT_iter_destroy(iter);
 
+		/*********GNUPLOT******************/
+
+		gnuplotPipe = popen("gnuplot -persistent","w");
+		commandsForGnuplot = malloc(2*sizeof(char*));
+		for(i=0; i<2; i++)
+		{
+			commandsForGnuplot[i] = malloc(50*sizeof(char));
+		}
+
+		strcpy(commandsForGnuplot[0], "set title \"Κατανομή Βαθμού\"");
+		strcpy(commandsForGnuplot[1], "plot \"dedomena_katanomhs.temp\"");
+
+		for(i=0; i<2; i++)
+		{
+			fprintf(gnuplotPipe,"%s \n",commandsForGnuplot[i]);
+		}
+
+		for(i=0; i<2; i++) free(commandsForGnuplot[i]);
+
+		free(commandsForGnuplot);
+
+		fclose(fp);
+
+		//remove("dedomena_katanomhs.temp");
 	}
 }
-
 
 
 //#################diametros#########################
@@ -362,6 +379,34 @@ int maxCC(ptr_graph g)
 
 double density(ptr_graph g)
 {
+	int i;
+	HT_iter_ptr iter;
+	ptr_entry node;
+	long sizeEdges = 0;
+	double d = 1;
 
+	if(g != NULL)
+	{
+		iter = HT_iter_create(g->table);
+
+		for(i=0;i<g->size;i++)
+		{
+			node = ((ptr_entry)HT_iter_data(iter));
+			if(node != NULL)
+			{
+				sizeEdges = sizeEdges + size_of_friend_list(node);
+			}
+
+			HT_iter_next(iter);
+		}
+
+
+		HT_iter_destroy(iter);
+
+		d = (2 * sizeEdges) / ((g->size) * (g->size - 1));
+
+	}
+
+	return d;
 }
 
