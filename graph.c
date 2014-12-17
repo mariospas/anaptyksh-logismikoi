@@ -286,5 +286,5 @@ double betweenness_centrality( ptr_entry n, ptr_graph g )
     } while ( HT_iter_next( node_it ) );
     HT_iter_destroy( node_it );
 
-    return ( 2 * ret ) / (double) ( g->size - 1 ) * ( g->size - 2 );
+    return ( 2 * ret ) / ( (double) ( g->size - 1 ) * ( g->size - 2 ) );
 }
