@@ -25,7 +25,8 @@ ptr_matches create_match(int id,int similarity)
 }
 
 
-ptr_array_matches matchSuggestion(ptr_entry n, int k, int h, int x, int limit, ptr_entity entity)    //anti gia graph pername entity
+#if 0
+ptr_array_matches matchSuggestion(ptr_entry n, int k, int h, int x, int limit, ptr_entity entity)
 {
 	int location_node;
 	int i;
@@ -37,8 +38,7 @@ ptr_array_matches matchSuggestion(ptr_entry n, int k, int h, int x, int limit, p
 
 	array->pinakas = malloc(limit * sizeof(ptr_matches));
 
-	g = find_graph(entity,LOCATED) ;   //na ftiaksoume find an tha einai lista h pinakas kai na arxikopoihsoume id
-
+	g = find_graph(entity,LOCATED);
 
 	if(g != NULL)
 	{
@@ -55,10 +55,5 @@ ptr_array_matches matchSuggestion(ptr_entry n, int k, int h, int x, int limit, p
 		}
 	}
 
-
-
-
-
-
-
 }
+#endif

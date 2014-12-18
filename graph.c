@@ -8,9 +8,6 @@
 #include "entries.h"
 #include "linked_list.h"
 
-#define GRAPH_ID_SIZE 50
-
-
 struct graph
 {
     /* Type of graph */
@@ -22,8 +19,6 @@ struct graph
     /* Number of nodes */
 	int size;
 };
-
-
 
 ptr_graph createGraph(char id[GRAPH_ID_SIZE], int num_of_buckets, int size_of_bucket)
 {
@@ -127,9 +122,9 @@ int rec_search( ptr_graph this, int start, int end, int level )
 }
 
 
-Result_ptr reachNodeN( ptr_graph graph, int start )
+ResultSet *reachNodeN( ptr_graph graph, int start )
 {
-	Result_ptr result = malloc(sizeof(ResultSet));
+	ResultSet *result = malloc(sizeof(ResultSet));
 	int dist, count = 0;
     HT_iter_ptr ht_it = HT_iter_create( graph->table );
     ptr_entry entry;
@@ -150,14 +145,20 @@ Result_ptr reachNodeN( ptr_graph graph, int start )
 }
 
 
-void ResultSet_next(Result_ptr result, int *id, int *distance,int i)
+void ResultSet_next(ResultSet *result, int *id, int *distance )
 {
     /* Initialized to 0 */
-	//static int i;
+	static int i;
+
+    /* Reset condition */
+    if ( result == NULL ) {
+        i = 0;
+        return;
+    }
 
 	*id = result->array_id[i];
 	*distance = result->array_dist[i];
-	//i++;
+	i++;
 }
 
 size_t hash(int value, size_t size)
@@ -187,7 +188,7 @@ double betweenness_centrality( ptr_entry n, ptr_graph g )
     double ret = 0.0;
     HT_iter_ptr node_it = HT_iter_create( g->table );
     ptr_entry node;
-    ResultSet set;
+    ResultSet *set;
 
     /* For each node in the graph */
     do {
@@ -210,8 +211,19 @@ double betweenness_centrality( ptr_entry n, ptr_graph g )
         }
 
         ret += (double) betweendist / alldist;
+        free( set );
     } while ( HT_iter_next( node_it ) );
     HT_iter_destroy( node_it );
 
     return ( 2 * ret ) / ( (double) ( g->size - 1 ) * ( g->size - 2 ) );
+}
+
+size_t Graph_size( ptr_graph graph )
+{
+    return graph->size;
+}
+
+ht_ptr Graph_nodes( ptr_graph graph )
+{
+    return graph->table;
 }

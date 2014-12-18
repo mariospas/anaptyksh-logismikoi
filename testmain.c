@@ -1,7 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
+
 #include "graph.h"
 #include "entries.h"
+#include "properties_uti.h"
 #include "hash_table.h"
 
 #define PERSON_PROPERTIES_NUM 3

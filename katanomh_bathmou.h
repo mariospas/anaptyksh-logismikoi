@@ -12,7 +12,7 @@
 
 typedef struct katanomh *ptr_katanomh;
 
-int match_friend(void *a,void *key);
+int match_friend( const void *a, const void *key);
 
 ptr_katanomh create_data(int arithmos_filon);
 
@@ -36,7 +36,7 @@ double averagePathLength(ptr_graph g);
 //#########plithos sunektikon grafimaton######
 
 
-int match_id(void *a,void *key);
+int match_id( const void *a, const void *key);
 
 int node_exist(list_ptr list,ptr_entry node);
 
