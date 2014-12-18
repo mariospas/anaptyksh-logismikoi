@@ -70,4 +70,4 @@ ptr_person_properties create_person_properties( char firstname[FIRSTNAME_SIZE],
 
 
 
-#endif _PROPERTIES_
+#endif /* _PROPERTIES_*/

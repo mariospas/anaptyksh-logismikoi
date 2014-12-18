@@ -1,3 +1,4 @@
+#include "graph.h"
 #include "katanomh_bathmou.h"
 
 
@@ -10,7 +11,7 @@ struct katanomh
 };
 
 
-int match_friend(void *a,void *key)
+int match_friend(const void *a, const void *key)
 {
 	if( ((ptr_katanomh)a)->arithmos_filon == *((int*)key) )
 	{
@@ -54,11 +55,12 @@ void degreeDistribution(ptr_graph g)
 {
 	list_ptr list = LL_create(match_friend);
 	int i;
+    ht_ptr nodes = Graph_nodes(g);
 	HT_iter_ptr iter;
 	LL_iter_ptr iterList;
 	ptr_entry data;
 	list_ptr friend_list;
-	int list_size;
+	int list_size, graph_size = Graph_size(g);
 	FILE* fp;
 	ptr_katanomh dataKat;
 	FILE* gnuplotPipe;
@@ -66,9 +68,9 @@ void degreeDistribution(ptr_graph g)
 
 	if(g != NULL)
 	{
-		iter = HT_iter_create(g->table);
+		iter = HT_iter_create(nodes);
 
-		for(i=0;i < g->size;i++)
+		for(i=0;i < graph_size;i++)
 		{
 			data = ((ptr_entry)HT_iter_data(iter));
 			friend_list =((list_ptr)Entry_take_list(data));
@@ -83,7 +85,7 @@ void degreeDistribution(ptr_graph g)
 		for(i=0;i<LL_size(list);i++)
 		{
 			dataKat = (ptr_katanomh)LL_iter_data(iterList);
-			fprintf(fp,"%d %f\n",dataKat->arithmos_filon,((dataKat->size)/(g->size)));
+			fprintf(fp,"%d %f\n",dataKat->arithmos_filon,( (double) dataKat->size / graph_size ) );
 			LL_iter_next(iterList);
 		}
 
@@ -128,7 +130,7 @@ void return_maxN(Result_ptr result,int size,int* max)
 
 	for(i=0;i<size;i++)
 	{
-		ResultSet_next(result,&id,&distance,i);
+		ResultSet_next(result,&id,&distance);
 		if(*max < distance)
 		{
 			*max = distance;
@@ -140,21 +142,22 @@ void return_maxN(Result_ptr result,int size,int* max)
 
 int diameter(ptr_graph g)
 {
-	int i;
+	int i, graph_size = Graph_size(g);
 	HT_iter_ptr iter;
+    ht_ptr nodes = Graph_nodes(g);
 	ptr_entry data;
 	Result_ptr result;
 	int max = -7;
 
 	if(g != NULL)
 	{
-		iter = HT_iter_create(g->table);
+		iter = HT_iter_create(nodes);
 
-		for(i=0;i<g->size;i++)
+		for(i=0;i<graph_size;i++)
 		{
 			data = ((ptr_entry)HT_iter_data(iter));
 			result = reachNodeN(g,data->id);
-			return_maxN(result,g->size,&max);
+			return_maxN(result,graph_size,&max);
 
 			HT_iter_next(iter);
 		}
@@ -178,7 +181,7 @@ void sum_from_result(Result_ptr result,int size,double *sum)
 
 	for(i=0;i<size;i++)
 	{
-		ResultSet_next(result,&id,&distance,i);
+		ResultSet_next(result,&id,&distance);
 		if(distance < 0)
 		{
 			continue;
@@ -191,28 +194,29 @@ void sum_from_result(Result_ptr result,int size,double *sum)
 double averagePathLength(ptr_graph g)
 {
 
-	int i;
+	int i, graph_size = Graph_size(g);
 	HT_iter_ptr iter;
+    ht_ptr nodes = Graph_nodes(g);
 	ptr_entry data;
 	Result_ptr result;
 	double apotel = 0.0;
 
 	if(g != NULL)
 	{
-		iter = HT_iter_create(g->table);
+		iter = HT_iter_create(nodes);
 
-		for(i=0;i<g->size;i++)
+		for(i=0;i<graph_size;i++)
 		{
 			data = ((ptr_entry)HT_iter_data(iter));
 			result = reachNodeN(g,data->id);
-			sum_from_result(result,g->size,&apotel);
+			sum_from_result(result,graph_size,&apotel);
 
 			HT_iter_next(iter);
 		}
 
 		HT_iter_destroy(iter);
 
-		apotel = (apotel*2)/((g->size)*((g->size)-1));
+		apotel = (apotel*2)/((graph_size)*((graph_size)-1));
 
 	}
 
@@ -224,7 +228,7 @@ double averagePathLength(ptr_graph g)
 //#########plithos sunektikon grafimaton######
 
 
-int match_id(void *a,void *key)
+int match_id( const void *a, const void *key)
 {
 	if( *((int*)a) == *((int*)key)  )
 	{
@@ -281,7 +285,7 @@ void rec_search_dfs(ptr_graph g,list_ptr list,ptr_entry node,int *size)
 		data = ((ptr_edge) LL_iter_data(iterList));
 		id = data->id;
 
-		next = lookupNode(g,id,hash);             //hash lookupNode
+		next = lookupNode(g,id);             //hash lookupNode
 		if(next == NULL) return;
 		rec_search_dfs(g,list,next,size);
 
@@ -303,9 +307,10 @@ void rec_search_dfs(ptr_graph g,list_ptr list,ptr_entry node,int *size)
 
 int numberOfCCs(ptr_graph g)
 {
-	int i;
+	int i, graph_size = Graph_size(g);
 	list_ptr fringe;
 	HT_iter_ptr iter;
+    ht_ptr nodes = Graph_nodes(g);
 	ptr_entry node;
 	int size = 0;
 	int num_of_graphs = 0;
@@ -313,9 +318,9 @@ int numberOfCCs(ptr_graph g)
 
 	if(g != NULL)
 	{
-		iter = HT_iter_create(g->table);
+		iter = HT_iter_create(nodes);
 
-		for(i=0;i<g->size;i++)
+		for(i=0;i<graph_size;i++)
 		{
 			node = ((ptr_entry)HT_iter_data(iter));
 			if(!(node_exist(fringe,node)) )
@@ -340,9 +345,10 @@ int numberOfCCs(ptr_graph g)
 
 int maxCC(ptr_graph g)
 {
-	int i;
+	int i, graph_size = Graph_size(g);
 	list_ptr fringe;
 	HT_iter_ptr iter;
+    ht_ptr nodes = Graph_nodes(g);
 	ptr_entry node;
 	int size = 0;
 	int max_size = 0;
@@ -351,9 +357,9 @@ int maxCC(ptr_graph g)
 
 	if(g != NULL)
 	{
-		iter = HT_iter_create(g->table);
+		iter = HT_iter_create(nodes);
 
-		for(i=0;i<g->size;i++)
+		for(i=0;i<graph_size;i++)
 		{
 			node = ((ptr_entry)HT_iter_data(iter));
 
@@ -379,17 +385,18 @@ int maxCC(ptr_graph g)
 
 double density(ptr_graph g)
 {
-	int i;
+	int i, graph_size = Graph_size(g);
 	HT_iter_ptr iter;
+    ht_ptr nodes = Graph_nodes(g);
 	ptr_entry node;
 	long sizeEdges = 0;
 	double d = 1;
 
 	if(g != NULL)
 	{
-		iter = HT_iter_create(g->table);
+		iter = HT_iter_create(nodes);
 
-		for(i=0;i<g->size;i++)
+		for(i=0;i<graph_size;i++)
 		{
 			node = ((ptr_entry)HT_iter_data(iter));
 			if(node != NULL)
@@ -403,7 +410,7 @@ double density(ptr_graph g)
 
 		HT_iter_destroy(iter);
 
-		d = (2 * sizeEdges) / ((g->size) * (g->size - 1));
+		d = (2 * sizeEdges) / ((graph_size) * (graph_size - 1));
 
 	}
 
