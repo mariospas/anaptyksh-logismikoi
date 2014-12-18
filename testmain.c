@@ -11,26 +11,53 @@ ptr_entry setPersonProperties(int id, char* name, char* surname, int age);
 
 ptr_edge setEdgeProperties(int endNodeID, char* type, int weight) ;
 
-//int hashing( int key, int size );
+size_t hashing( int key, size_t size );
 
 void printPersonProperties(ptr_entry n);
 
+char *cont[20] = {
+    "No0",
+    "No1",
+    "No2",
+    "No3",
+    "No4",
+    "No5",
+    "No6",
+    "No7",
+    "No8",
+    "No9",
+    "No10",
+    "No11",
+    "No12",
+    "No13",
+    "No14",
+    "No15",
+    "No16",
+    "No17",
+    "No18",
+    "No19"
+};
 
 int main( int argc, char *argv[] )
 {
-   /* int i, max = atoi( argv[1] );
-    ht_ptr sample = HT_create( 4, 4 );
+    int i, max = 20;
+    ht_ptr sample = HT_create( 2, 2, hashing );
 
-    for ( i = 1; i <= max; ++i ) {
-        HT_insert( sample, hashing, NULL, i );
+    for ( i = 0; i < max; ++i ) {
+        HT_insert( sample, cont[i], i );
     }
 
     HT_print( sample );
+
+    fputc( '\n', stdout );
+    printf( "%d: %s\n", 3, (char*) HT_search( sample, 3 ) );
+    printf( "%d: %s\n", 8, (char*) HT_search( sample, 8 ) );
+    printf( "%d: %s\n", 14, (char*) HT_search( sample, 14 ) );
+
     HT_destroy( sample, NULL );
-
     return EXIT_SUCCESS; // I hope
-	*/
 
+#if 0
 	int m = 2;
 	int c = 3;
 
@@ -54,18 +81,18 @@ int main( int argc, char *argv[] )
 
 	printf("Insert Person Properties\n");
 	/*insert nodes in graph*/
-	insertNode(g, n1, hash);
-	insertNode(g, n2, hash);
-	insertNode(g, n3, hash);
-	insertNode(g, n4, hash);
-	insertNode(g, n5, hash);
-	insertNode(g, n6, hash);
-	insertNode(g, n7, hash);
-	insertNode(g, n8, hash);
-	insertNode(g, n10, hash);
-	insertNode(g, n9, hash);
-	insertNode(g, n11, hash);
-	insertNode(g, n12, hash);
+	insertNode(g, n1);
+	insertNode(g, n2);
+	insertNode(g, n3);
+	insertNode(g, n4);
+	insertNode(g, n5);
+	insertNode(g, n6);
+	insertNode(g, n7);
+	insertNode(g, n8);
+	insertNode(g, n10);
+	insertNode(g, n9);
+	insertNode(g, n11);
+	insertNode(g, n12);
 
 	printf("Set Edge Properties\n");
 	/* Create edges and set properties */
@@ -103,56 +130,39 @@ int main( int argc, char *argv[] )
 
 
 	printf("Insert Edge Properties\n");
-	insertEdge(g, 1, e1, hash);
-	insertEdge(g, 6, e2, hash);
-	insertEdge(g, 1, e3, hash);
-	insertEdge(g, 2, e4, hash);
-	insertEdge(g, 1, e5, hash);
-	insertEdge(g, 4, e6, hash);
-	insertEdge(g, 2, e7, hash);
-	insertEdge(g, 6, e8, hash);
-	insertEdge(g, 4, e9, hash);
-	insertEdge(g, 3, e10, hash);
-	insertEdge(g, 4, e11, hash);
-	insertEdge(g, 7, e12, hash);
-	insertEdge(g, 4, e13, hash);
-	insertEdge(g, 8, e14, hash);
-	insertEdge(g, 3, e15, hash);
-	insertEdge(g, 10, e16, hash);
-	insertEdge(g, 10, e17, hash);
-	insertEdge(g, 7, e18, hash);
-	insertEdge(g, 10, e19, hash);
-	insertEdge(g, 14, e20, hash);
-	insertEdge(g, 14, e21, hash);
-	insertEdge(g, 12, e22, hash);
-	insertEdge(g, 12, e23, hash);
-	insertEdge(g, 16, e24, hash);
-	insertEdge(g, 16, e25, hash);
-	insertEdge(g, 14, e26, hash);
+	insertEdge(g, 1, e1);
+	insertEdge(g, 6, e2);
+	insertEdge(g, 1, e3);
+	insertEdge(g, 2, e4);
+	insertEdge(g, 1, e5);
+	insertEdge(g, 4, e6);
+	insertEdge(g, 2, e7);
+	insertEdge(g, 6, e8);
+	insertEdge(g, 4, e9);
+	insertEdge(g, 3, e10);
+	insertEdge(g, 4, e11);
+	insertEdge(g, 7, e12);
+	insertEdge(g, 4, e13);
+	insertEdge(g, 8, e14);
+	insertEdge(g, 3, e15);
+	insertEdge(g, 10, e16);
+	insertEdge(g, 10, e17);
+	insertEdge(g, 7, e18);
+	insertEdge(g, 10, e19);
+	insertEdge(g, 14, e20);
+	insertEdge(g, 14, e21);
+	insertEdge(g, 12, e22);
+	insertEdge(g, 12, e23);
+	insertEdge(g, 16, e24);
+	insertEdge(g, 16, e25);
+	insertEdge(g, 14, e26);
 
 	printf("Try to LookUp\n");
-	ptr_entry Nl1 = lookupNode(g,1,hash);
+	ptr_entry Nl1 = lookupNode(g,1);
 	printPersonProperties(Nl1);
 
-
+#endif
 }
-
-
-
-
-
-
-
-
-/*
-int hashing( int key,int size )
-{
-    return (key % size);
-}
-*/
-
-
-
 
 ptr_entry setPersonProperties(int id, char* name, char* surname, int age) {
 
@@ -163,7 +173,7 @@ ptr_entry setPersonProperties(int id, char* name, char* surname, int age) {
     setIntegerProperty(age, 2, prop);
 
     /*create ptr_entry*/
-    ptr_entry n = create_entry(id,((void*) prop),match_edge);
+    ptr_entry n = create_entry(id,((void*) prop));
 
 
     return n;
@@ -187,4 +197,9 @@ void printPersonProperties(ptr_entry n)
 {
 	Properties p = (Properties) (n->properties);
 	printf("Name : %s \n",p->name);
+}
+
+size_t hashing( int key, size_t size )
+{
+    return 100 / (key+1) + 30;
 }

@@ -22,11 +22,11 @@ ptr_graph createGraph(int id,int m,int c);
 
 int destroyGraph(ptr_graph graph);
 
-int insertNode(ptr_graph graph,ptr_entry entry,hash_f h);
+int insertNode(ptr_graph graph,ptr_entry entry);
 
-int insertEdge(ptr_graph graph,int id,ptr_edge filos,hash_f hash);
+int insertEdge(ptr_graph graph,int id,ptr_edge filos);
 
-ptr_entry lookupNode(ptr_graph graph,int id,hash_f hash);
+ptr_entry lookupNode(ptr_graph graph,int id);
 
 int reachNode1( ptr_graph this, int start, int end );
 
@@ -34,13 +34,18 @@ Result_ptr reachNodeN(ptr_graph graph, int start);
 
 void ResultSet_next(Result_ptr result, int *id, int *distance);
 
+double closeness_centrality( ptr_entry n, ptr_graph g );
+
+double betweenness_centrality( ptr_entry n, ptr_graph g );
+
 /* Helpers */
 int rec_search( ptr_graph this, int start, int end, int level );
 
-int hash(int value, int size);
+size_t hash(int value, size_t size);
 
 Properties createProperties(int number) ;
 
 void setStringProperty(char* property, int index, Properties p);
 
 void setIntegerProperty(int property, int index, Properties p);
+
