@@ -46,7 +46,8 @@ ptr_edge create_edge(int id, void* lista_idiotiton)
 	akmh = malloc(sizeof(struct edge));
 
 	akmh->id = id;
-	akmh->lista_idiotiton = lista_idiotiton;
+	//akmh->lista_idiotiton = lista_idiotiton;
+	akmh->weight = 0;
 
 	return akmh;
 }
@@ -55,10 +56,10 @@ ptr_edge create_edge(int id, void* lista_idiotiton)
 void destroy_edge(void* edge)
 {
 	ptr_edge this = (ptr_edge) edge;
-	if(this->lista_idiotiton != NULL)
+	/*if(this->lista_idiotiton != NULL)
 	{
 		LL_destroy((list_ptr)this->lista_idiotiton,NULL);    //sto null xreiazete mia destroy gia tin lista idiotiton
-	}
+	}*/
 	free(this);
 }
 

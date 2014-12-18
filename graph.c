@@ -8,11 +8,13 @@
 #include "entries.h"
 #include "linked_list.h"
 
+#define GRAPH_ID_SIZE 50
+
 
 struct graph
 {
     /* Type of graph */
-	int id;
+	char id[GRAPH_ID_SIZE];
 
     /* Assignment */
 	ht_ptr table;
@@ -23,13 +25,14 @@ struct graph
 
 
 
-ptr_graph createGraph(int id, int num_of_buckets, int size_of_bucket)
+ptr_graph createGraph(char id[GRAPH_ID_SIZE], int num_of_buckets, int size_of_bucket)
 {
 	ptr_graph graph;
 
 	graph = malloc( sizeof( struct graph ) );
 	graph->table = HT_create( num_of_buckets, size_of_bucket, hash );
-	graph->id = id;
+	strcpy(graph->id,id);
+	//graph->id = id;
 	graph->size = 0;
 
 	return graph;
