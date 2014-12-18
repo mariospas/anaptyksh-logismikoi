@@ -16,17 +16,6 @@ typedef struct
 
 typedef ResultSet *Result_ptr;
 
-struct properties {
-	int id_entry;
-    int num_of_prop;
-    char* name;
-    char* surname;
-    int age;
-    char* type;
-    int weight;
-};
-typedef struct properties *Properties;
-
 
 /* Interface */
 ptr_graph createGraph(int id,int m,int c);

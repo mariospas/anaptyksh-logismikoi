@@ -13,7 +13,7 @@ struct entry
 struct edge
 {
 	int id;    //id filou
-	void* lista_idiotiton;    //knows,respect,etc
+	int weight;
 };
 
 typedef struct entry *ptr_entry;
