@@ -19,6 +19,8 @@ typedef struct
 } ResultSet;
 typedef ResultSet *Result_ptr;
 
+typedef struct katanomh *ptr_katanomh;
+
 /* Interface */
 ptr_graph createGraph(char id[GRAPH_ID_SIZE], int num_of_buckets, int size_of_bucket);
 
@@ -40,9 +42,59 @@ size_t Graph_size( ptr_graph graph );
 
 ht_ptr Graph_nodes( ptr_graph graph );
 
+
+
+
+
+
+
+//#####katanomh############
+
+
+
+int match_friend( const void *a, const void *key);
+
+ptr_katanomh create_data(int arithmos_filon);
+
+void manage_list(list_ptr list,int arithmos_filon);
+
+void degreeDistribution(ptr_graph g);
+
+//####diametros#####
+
+void return_maxN(Result_ptr result,int size,int* max);
+
+int diameter(ptr_graph g);
+
+//############mesh timh monopation########
+
+void sum_from_result(Result_ptr result,int size,double *sum);
+
+double averagePathLength(ptr_graph g);
+
+
+//#########plithos sunektikon grafimaton######
+
+
+int match_id( const void *a, const void *key);
+
+int node_exist(list_ptr list,ptr_entry node);
+
+void rec_search_dfs(ptr_graph g,list_ptr list,ptr_entry node,int *size);
+
+int numberOfCCs(ptr_graph g);
+
+int maxCC(ptr_graph g);
+
+
 double closeness_centrality( ptr_entry n, ptr_graph g );
 
 double betweenness_centrality( ptr_entry n, ptr_graph g );
+
+
+
+
+
 
 /* Helpers */
 static int rec_search( ptr_graph this, int start, int end, int level );

@@ -1,5 +1,6 @@
 #ifndef _ENTRIES_
 #define _ENTRIES_
+#define SYSXETISH_SIZE 50
 
 #include "linked_list.h"
 
@@ -12,6 +13,7 @@ struct entry
 
 struct edge
 {
+	char susxetish[SYSXETISH_SIZE];
 	int id;    //id filou
 	int weight;
 };
@@ -36,6 +38,8 @@ int match_entry(void *a,void *key);
 
 
 //Iterators
+
+list_ptr person_knows_person_list(ptr_entry node);
 
 void* Entry_take_list(ptr_entry this);
 

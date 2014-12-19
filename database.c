@@ -23,7 +23,6 @@ struct entity
 {
 	int id;
 	ptr_graph basic;
-	ptr_graph* sxeseis;
 };
 
 
