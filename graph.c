@@ -166,58 +166,6 @@ size_t hash(int value, size_t size)
     return ( size * fmod( ( value * HASH_CONSTANT ), 1 ) );
 }
 
-double closeness_centrality( ptr_entry n, ptr_graph g )
-{
-    int sumdist = 0;
-    ptr_entry entry;
-    HT_iter_ptr inode = HT_iter_create( g->table );
-
-    do {
-        entry = HT_iter_data( inode );
-        sumdist += reachNode1( g, n->id, entry->id );
-    } while ( HT_iter_next( inode ) );
-    HT_iter_destroy( inode );
-
-    return sumdist / ( (double) g->size );
-}
-
-double betweenness_centrality( ptr_entry n, ptr_graph g )
-{
-    int size = g->size, alldist, betweendist;
-    int id, dist, i;
-    double ret = 0.0;
-    HT_iter_ptr node_it = HT_iter_create( g->table );
-    ptr_entry node;
-    ResultSet *set;
-
-    /* For each node in the graph */
-    do {
-        node = HT_iter_data( node_it );
-        set = reachNodeN( g, node->id );
-        alldist = 0;
-        betweendist = 0;
-
-        /* Check every shortest path */
-        for ( i = 0; i < size; ++i ) {
-            ResultSet_next( set, &id, &dist );
-            if ( dist <= 0 ) {
-                continue;
-            }
-
-            ++alldist;
-            if ( dist == ( reachNode1( g, node->id, n->id ) + reachNode1( g, n->id, id ) ) ) {
-                ++betweendist;
-            }
-        }
-
-        ret += (double) betweendist / alldist;
-        free( set );
-    } while ( HT_iter_next( node_it ) );
-    HT_iter_destroy( node_it );
-
-    return ( 2 * ret ) / ( (double) ( g->size - 1 ) * ( g->size - 2 ) );
-}
-
 size_t Graph_size( ptr_graph graph )
 {
     return graph->size;

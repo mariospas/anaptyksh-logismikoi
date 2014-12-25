@@ -40,10 +40,6 @@ size_t Graph_size( ptr_graph graph );
 
 ht_ptr Graph_nodes( ptr_graph graph );
 
-double closeness_centrality( ptr_entry n, ptr_graph g );
-
-double betweenness_centrality( ptr_entry n, ptr_graph g );
-
 /* Helpers */
 static int rec_search( ptr_graph this, int start, int end, int level );
 
