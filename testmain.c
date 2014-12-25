@@ -2,8 +2,8 @@
 #include <stdio.h>
 
 #include "graph.h"
-#include "entries.h"
-#include "properties_uti.h"
+#include "graph_entry.h"
+#include "dataset_handlers.h"
 #include "hash_table.h"
 
 #define PERSON_PROPERTIES_NUM 3

@@ -1,11 +1,11 @@
-#include "graph.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
 
+#include "graph.h"
 #include "hash_table.h"
-#include "entries.h"
+#include "graph_entry.h"
 #include "linked_list.h"
 
 struct graph

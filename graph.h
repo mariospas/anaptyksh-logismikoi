@@ -4,8 +4,8 @@
 #include <math.h>
 
 #include "hash_table.h"
-#include "entries.h"
 #include "linked_list.h"
+#include "graph_entry.h"
 
 #define GRAPH_ID_SIZE 50
 #define HASH_CONSTANT ((sqrt(5) - 1) / 2)

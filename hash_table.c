@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h> 
-#include "entries.h"
 
 #include "hash_table.h"
+#include "graph_entry.h"
 
 struct record {
 
