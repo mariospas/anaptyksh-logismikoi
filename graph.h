@@ -14,8 +14,9 @@ typedef struct graph *ptr_graph;
 
 typedef struct
 {
-	int *array_id;
-	int *array_dist;
+    ptr_graph graph;
+    HT_iter_ptr current;
+    int from;
 } ResultSet;
 typedef ResultSet *Result_ptr;
 
@@ -34,7 +35,7 @@ int reachNode1( ptr_graph this, int start, int end );
 
 Result_ptr reachNodeN(ptr_graph graph, int start);
 
-void ResultSet_next(Result_ptr result, int *id, int *distance);
+int ResultSet_next(Result_ptr result, int *id, int *distance);
 
 size_t Graph_size( ptr_graph graph );
 

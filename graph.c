@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 #include <math.h>
 
 #include "graph.h"
@@ -125,40 +126,30 @@ int rec_search( ptr_graph this, int start, int end, int level )
 ResultSet *reachNodeN( ptr_graph graph, int start )
 {
 	ResultSet *result = malloc(sizeof(ResultSet));
-	int dist, count = 0;
-    HT_iter_ptr ht_it = HT_iter_create( graph->table );
-    ptr_entry entry;
 
-	result->array_id = malloc(graph->size * sizeof(int));
-	result->array_dist = malloc(graph->size * sizeof(int));
-    do
-    {
-        entry = HT_iter_data( ht_it );
-        dist = reachNode1( graph, start, ( (ptr_entry) entry )->id );
-        result->array_dist[count] = dist;
-        result->array_id[count] = ( (ptr_entry) entry )->id;
-        count++;
-    }
-    while ( HT_iter_next( ht_it ) );
-    HT_iter_destroy( ht_it );
+    /* Initialize only */
+    result->graph = graph;
+    result->current = HT_iter_create( graph->table );
+    result->from = start;
+
 	return result;
 }
 
 
-void ResultSet_next(ResultSet *result, int *id, int *distance )
+int ResultSet_next(ResultSet *result, int *id, int *distance )
 {
-    /* Initialized to 0 */
-	static int i;
+    assert( result != NULL );
+    ptr_entry entry = HT_iter_data( result->current );
+    *id = entry->id;
+    *distance = reachNode1( result->graph, result->from, entry->id );
 
-    /* Reset condition */
-    if ( result == NULL ) {
-        i = 0;
-        return;
+    /* End condition */
+    if ( ! HT_iter_next( result->current ) ) {
+        HT_iter_destroy( result->current );
+        free( result );
+        return 0;
     }
-
-	*id = result->array_id[i];
-	*distance = result->array_dist[i];
-	i++;
+    return 1;
 }
 
 size_t hash(int value, size_t size)
