@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <assert.h>
 
 #include "graph_entry.h"
 #include "linked_list.h"
@@ -10,68 +12,54 @@ ptr_entry create_entry(int id,void* properties)      //create node
 
 	node = malloc(sizeof(struct entry));
 
-	printf("create Entry id = %d\n",id);
 	node->id = id;
 	node->properties = properties;
-	//node->friends = NULL;
-	node->friends = (void*) LL_create(match_edge);         //edges
+	node->edges = LL_create(match_edge);
 
 	return node;
-
 }
 
-
-void destroy_entry(void* entry)
+void destroy_entry(void *entry)
 {
-	ptr_entry this = (ptr_entry) entry;
-	if(this->properties != NULL)
+    ptr_entry entry1 = (ptr_entry) entry;
+	if(entry1->properties != NULL)
 	{
-		LL_destroy((list_ptr)this->properties,NULL);     //sto null xreiazete mia destroy gia tin lista idiotiton
+        free( entry1->properties );
 	}
+	free(entry1);
+}
 
-	if(this->properties != NULL)
-	{
-		LL_destroy( (list_ptr)this->friends,destroy_edge);
-	}
+ptr_edge create_edge(char edge_type[EDGE_TYPE_BUF], int target_id, int target_type, int weight )
+{
+	ptr_edge new_edge = malloc(sizeof(struct edge));
 
-	free(this);
+    strcpy( new_edge->edge_type, edge_type );
+	new_edge->target_id = target_id;
+	new_edge->target_type = target_type;
+	new_edge->weight = 0;
 
+	return new_edge;
 }
 
 
-
-ptr_edge create_edge(int id, void* lista_idiotiton)
+void destroy_edge(void *edge)
 {
-	ptr_edge akmh;
-
-	akmh = malloc(sizeof(struct edge));
-
-	akmh->id = id;
-	//akmh->lista_idiotiton = lista_idiotiton;
-	akmh->weight = 0;
-
-	return akmh;
+	free(edge);
 }
 
 
-void destroy_edge(void* edge)
+int match_edge(const void *a, const void *b)
 {
-	ptr_edge this = (ptr_edge) edge;
-	/*if(this->lista_idiotiton != NULL)
-	{
-		LL_destroy((list_ptr)this->lista_idiotiton,NULL);    //sto null xreiazete mia destroy gia tin lista idiotiton
-	}*/
-	free(this);
-}
-
-
-int match_edge(const void *a, const void *key)
-{
-	if( ((ptr_edge)a)->id == ((ptr_edge)key)->id  )
-	{
-		return 0;
-	}
-	else return 1;
+    ptr_edge a1 = (ptr_edge) a;
+    ptr_edge b1 = (ptr_edge) b;
+    assert( a1 != NULL && b1 != NULL );
+    if ( a1->target_type == b1->target_type
+      && a1->target_id == b1->target_id
+      && a1->weight == b1->weight
+      && ( ! strcmp( a1->edge_type, b1->edge_type ) ) ) {
+       return 0;
+    }
+    return -1;
 }
 
 
@@ -94,14 +82,14 @@ int match_entry(void *a,void *key)
 
 void* Entry_take_list(ptr_entry this)
 {
-	return this->friends;
+	return this->edges;
 }
 
 int size_of_friend_list(ptr_entry this)
 {
 	int size = 0;
 
-	size = LL_size(((list_ptr)(this->friends)));
+	size = LL_size(((list_ptr)(this->edges)));
 
 	return size;
 }

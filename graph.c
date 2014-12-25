@@ -54,9 +54,9 @@ int insertNode( ptr_graph graph, ptr_entry entry )
 }
 
 
-int insertEdge( ptr_graph graph, int id, ptr_edge friend )
+int insertEdge( ptr_graph graph, int id, ptr_edge edge )
 {
-	printf("*****InsertEdge %d to Entry %d\n",friend->id,id);
+	//printf("*****InsertEdge %d to Entry %d\n",friend->id,id);
 	ptr_entry node = HT_search( graph->table, id );
 	if(node == NULL)
 	{
@@ -65,7 +65,7 @@ int insertEdge( ptr_graph graph, int id, ptr_edge friend )
 	}
 	else if(node != NULL)
 	{
-		LL_insert( node->friends, (void*) friend );
+		LL_insert( node->edges, (void*) edge );
 	}
 
 
@@ -102,14 +102,14 @@ int rec_search( ptr_graph this, int start, int end, int level )
         return start == end;
     }
 
-    edges = ( (ptr_entry) HT_search( this->table, start ) )->friends;
+    edges = ( (ptr_entry) HT_search( this->table, start ) )->edges;
     edge_it = LL_iter_create( edges );
     for ( i = 0; i < this->size - level; ++i )
     {
         do
         {
             edge = LL_iter_data( edge_it );
-            if ( rec_search( this, edge->id, end, level - 1 ) != 0 )
+            if ( rec_search( this, edge->target_id, end, level - 1 ) != 0 )
             {
                 result = 1;
                 break;

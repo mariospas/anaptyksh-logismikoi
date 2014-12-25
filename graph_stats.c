@@ -286,7 +286,7 @@ void rec_search_dfs(ptr_graph g,list_ptr list,ptr_entry node,int *size)
 	for(i=0;i<size_friends_list;i++)
 	{
 		data = ((ptr_edge) LL_iter_data(iterList));
-		id = data->id;
+		id = data->target_id;
 
 		next = lookupNode(g,id);             //hash lookupNode
 		if(next == NULL) return;

@@ -166,6 +166,7 @@ int main( int argc, char *argv[] )
 #endif
 }
 
+#if 0
 ptr_entry setPersonProperties(int id, char* name, char* surname, int age) {
 
     /*create properties*/
@@ -200,6 +201,7 @@ void printPersonProperties(ptr_entry n)
 	Properties p = (Properties) (n->properties);
 	printf("Name : %s \n",p->name);
 }
+#endif
 
 size_t hashing( int key, size_t size )
 {
