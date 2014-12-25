@@ -8,7 +8,7 @@
 
 struct record {
 
-    int id; /* key */
+    int id; /* table produced key */
     void *data;
 };
 
@@ -356,10 +356,6 @@ HT_iter_ptr HT_iter_create( ht_ptr this )
 void *HT_iter_data( HT_iter_ptr it )
 {
     return it->current_bucket->records[ it->record_index ].data;
-}
-
-int HT_iter_has_next( HT_iter_ptr it )
-{
 }
 
 int HT_iter_next( HT_iter_ptr it )
