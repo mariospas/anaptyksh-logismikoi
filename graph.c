@@ -12,7 +12,7 @@
 struct graph
 {
     /* Type of graph */
-	char id[GRAPH_ID_SIZE];
+	int id;
 
     /* Assignment */
 	ht_ptr table;
@@ -21,14 +21,13 @@ struct graph
 	int size;
 };
 
-ptr_graph createGraph(char id[GRAPH_ID_SIZE], int num_of_buckets, int size_of_bucket)
+ptr_graph createGraph(int id, int num_of_buckets, int size_of_bucket)
 {
 	ptr_graph graph;
 
 	graph = malloc( sizeof( struct graph ) );
 	graph->table = HT_create( num_of_buckets, size_of_bucket, hash );
-	strcpy(graph->id,id);
-	//graph->id = id;
+	graph->id = id;
 	graph->size = 0;
 
 	return graph;

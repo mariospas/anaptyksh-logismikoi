@@ -21,7 +21,7 @@ typedef struct
 typedef ResultSet *Result_ptr;
 
 /* Interface */
-ptr_graph createGraph(char id[GRAPH_ID_SIZE], int num_of_buckets, int size_of_bucket);
+ptr_graph createGraph(int id, int num_of_buckets, int size_of_bucket);
 
 int destroyGraph(ptr_graph graph);
 
