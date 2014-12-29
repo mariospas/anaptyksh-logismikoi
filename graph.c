@@ -108,7 +108,8 @@ int rec_search( ptr_graph this, int start, int end, int level )
         do
         {
             edge = LL_iter_data( edge_it );
-            if ( rec_search( this, edge->target_id, end, level - 1 ) != 0 )
+            if ( edge->target_type == this->id
+              && rec_search( this, edge->target_id, end, level - 1 ) != 0 )
             {
                 result = 1;
                 break;
