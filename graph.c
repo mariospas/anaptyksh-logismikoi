@@ -21,7 +21,7 @@ struct graph
 	int size;
 };
 
-ptr_graph createGraph(int id, int num_of_buckets, int size_of_bucket)
+ptr_graph createGraph(int id, int num_of_buckets, int size_of_bucket )
 {
 	ptr_graph graph;
 
@@ -34,7 +34,7 @@ ptr_graph createGraph(int id, int num_of_buckets, int size_of_bucket)
 
 }
 
-int destroyGraph( ptr_graph graph )
+int destroyGraph(ptr_graph graph )
 {
 	HT_destroy( graph->table, destroy_entry );
 	free( graph );

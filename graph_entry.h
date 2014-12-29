@@ -5,6 +5,8 @@
 
 #define EDGE_TYPE_BUF 20
 
+typedef void (*deallocator_f)(void *obj);
+
 struct entry
 {
 	int id;
@@ -13,6 +15,9 @@ struct entry
 	void* properties;
 
 	list_ptr edges;    //deiktis se lista filon
+
+    /* Function to handle properties destruction */
+    deallocator_f properties_destroy;
 };
 
 struct edge
@@ -28,7 +33,7 @@ typedef struct entry *ptr_entry;
 typedef struct edge *ptr_edge;
 
 
-ptr_entry create_entry(int id,void* properties);    //create node
+ptr_entry create_entry(int id, void* properties, deallocator_f destroy_properties );      //create node
 
 void destroy_entry(void *entry);
 

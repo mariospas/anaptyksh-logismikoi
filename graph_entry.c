@@ -6,7 +6,7 @@
 #include "graph_entry.h"
 #include "linked_list.h"
 
-ptr_entry create_entry(int id,void* properties)      //create node
+ptr_entry create_entry(int id,void* properties, deallocator_f destroy_properties )      //create node
 {
 	ptr_entry node;
 
@@ -19,12 +19,12 @@ ptr_entry create_entry(int id,void* properties)      //create node
 	return node;
 }
 
-void destroy_entry(void *entry)
+void destroy_entry(void *entry )
 {
     ptr_entry entry1 = (ptr_entry) entry;
 	if(entry1->properties != NULL)
 	{
-        free( entry1->properties );
+        entry1->properties_destroy( entry1->properties );
 	}
 	free(entry1);
 }

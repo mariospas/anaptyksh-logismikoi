@@ -10,19 +10,19 @@ typedef struct hash_table *ht_ptr;
 typedef struct HT_iterator *HT_iter_ptr;
 
 typedef size_t (*hash_f)(int key, size_t size);
-typedef void (*destroyer)(void *object);
+typedef void (*deallocator)(void *object);
 
 /* Interface */
 ht_ptr HT_create( int table_size, int bucket_size, hash_f hash );
 
-void HT_destroy( ht_ptr this, destroyer destroy );
+void HT_destroy( ht_ptr this, deallocator destroy_entry );
 
 void HT_insert( ht_ptr this, void *element, int key );
 
 void *HT_search( ht_ptr this, int id );
 
 /* Helpers */
-static void rec_bucket_destroy_( struct bucket *this, destroyer destroy );
+static void rec_bucket_destroy_( struct bucket *this, deallocator destroy_entry );
 
 static void rec_bucket_sort( struct bucket *this );
 

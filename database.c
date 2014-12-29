@@ -1,6 +1,5 @@
 
 #include "database.h"
-#include "graph_stats.h"
 #include "graph.h"
 
 #define TABLE_DEFAULT_SIZE 4

@@ -92,17 +92,17 @@ ht_ptr HT_create( int table_size, int bucket_size, hash_f hash )
     return this;
 }
 
-static void rec_bucket_destroy_( struct bucket *this, destroyer destroy )
+static void rec_bucket_destroy_( struct bucket *this, deallocator destroy_entry )
 {
     int i;
     if ( this->overflow != NULL ) {
-        rec_bucket_destroy_( this->overflow, destroy );
+        rec_bucket_destroy_( this->overflow, destroy_entry );
     }
 
-    if ( destroy != NULL ) {
+    if ( destroy_entry != NULL ) {
         for ( i = 0; i < this->counter; ++i ) {
             if ( this->records[i].id > -1 ) {
-                destroy( this->records[i].data );
+                destroy_entry( this->records[i].data );
             }
         }
     }
@@ -119,11 +119,11 @@ static void rec_bucket_sort( struct bucket *this )
     qsort( this->records, this->counter, sizeof(struct record), record_compare );
 }
 
-void HT_destroy( ht_ptr this, destroyer destroy )
+void HT_destroy( ht_ptr this, deallocator destroy_entry )
 {
     int i;
     for ( i = 0; i < this->size; ++i ) {
-        rec_bucket_destroy_( this->buckets[i], destroy );
+        rec_bucket_destroy_( this->buckets[i], destroy_entry );
     }
     free( this->buckets );
     free( this );

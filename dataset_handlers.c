@@ -1,123 +1,242 @@
 #include <string.h>
+#include <assert.h>
 
 #include "dataset_handlers.h"
 
-//proth testmain
+/********************** Date *****************************/
 
-
-Properties createProperties(int number)
+struct date date_create( size_t year,
+                         size_t month,
+                         size_t day,
+                         size_t hour,
+                         size_t minute,
+                         size_t second )
 {
-    Properties prop = malloc(sizeof(struct properties));
-    prop->num_of_prop = number;
-    prop->age = -1;
-    prop->name = NULL;
-    prop->surname = NULL;
-    prop->type =  NULL;
-    prop->weight = -1;
-    return prop;
+    struct date retval;
+    retval.year = year;
+    retval.month = month;
+    retval.day = day;
+    retval.hour = hour;
+    retval.minute = minute;
+    retval.second = second;
+
+    return retval;
 }
 
-void setStringProperty(char* property, int index, Properties p)
+/************************ Person **************************/
+
+struct person_info *person_create( int id,
+                                   char *first_name,
+                                   char *surname,
+                                   gender_t gender,
+                                   struct date creation_date,
+                                   char *location_ip,
+                                   char *browser_used )
 {
-	int len = strlen(property) + 1;
-    if(p->num_of_prop == 3)
-    {
-    	if(index == 0)
-		{
-    		if(p->name == NULL)
-    		{
-    			p->name = (char*) malloc(len * sizeof(char));
-    		}
-    		else
-    		{
-    			free(p->name);
-    			p->name = (char*) malloc(len * sizeof(char));
-    		}
-    		strcpy((p->name),property);
-		}
-    	else if(index == 1)
-    	{
-    		if(p->surname == NULL)
-			{
-				p->surname = (char*) malloc(len * sizeof(char));
-			}
-    		else
-			{
-				free(p->surname);
-				p->surname = (char*) malloc(len * sizeof(char));
-			}
-    		strcpy(p->surname,property);
-    	}
-    }
-    else if(p->num_of_prop == 2)
-	{
-		if(index == 0)
-		{
-			if(p->type == NULL)
-			{
-				p->type = (char*) malloc(len * sizeof(char));
-			}
-			else
-			{
-				free(p->type);
-				p->type = (char*) malloc(len * sizeof(char));
-			}
-			strcpy(p->type,property);
-		}
-	}
+    struct person_info *retval = malloc( sizeof(struct person_info) );
+    retval->id = id;
+    retval->first_name = strdup( first_name );
+    retval->surname = strdup( surname );
+    retval->gender = gender;
+    retval->creation_date = creation_date;
+    retval->location_ip = strdup( location_ip );
+    retval->browser_used = strdup( browser_used );
+
+    return retval;
 }
 
-
-void setIntegerProperty(int property, int index, Properties p)
+void person_delete( void *obj )
 {
-	if(p->num_of_prop == 3)
-	{
-		if(index == 2) p->age = property;
-	}
-	else if(p->num_of_prop == 2)
-	{
-		if(index == 1) p->weight;
-	}
+    struct person_info *obj1 = obj;
+    assert( obj1 != NULL );
+
+    free( obj1->first_name );
+    free( obj1->surname );
+    free( obj1->location_ip );
+    free( obj1->browser_used );
+    free( obj1 );
 }
 
+/************************* Post **************************/
 
-///telos proth test main
-
-
-
-ptr_date create_date(size_t year,size_t month,size_t day,size_t hour,size_t minutes,size_t second)
+struct post_info *post_create( int id,
+                               char *image_file,
+                               struct date creation_date,
+                               char *location_ip,
+                               char *browser_used,
+                               char *language,
+                               char *content )
 {
-	ptr_date date = malloc(sizeof(struct date));
+    struct post_info *retval = malloc( sizeof(struct post_info) );
+    retval->id = id;
+    retval->image_file = strdup( image_file );
+    retval->creation_date = creation_date;
+    retval->location_ip = strdup( location_ip );
+    retval->browser_used = strdup( browser_used );
+    retval->language = strdup( language );
+    retval->content = strdup( content );
 
-	date->day = day;
-	date->hour = hour;
-	date->minutes = minutes;
-	date->month = month;
-	date->second = second;
-	date->year = year;
-
-	return date;
+    return retval;
 }
 
-
-ptr_person_properties create_person_properties( char firstname[FIRSTNAME_SIZE],
-												char lastname[LASTNAME_SIZE],
-                                                int gender,
-												ptr_date birthday,
-												ptr_date creationDate,
-												char location[IP_SIZE],
-												char browserUsed[BROWSER_SIZE])
+void post_delete( void *obj )
 {
-	ptr_person_properties person_prop = malloc(sizeof(struct person_properties));
+    struct post_info *obj1 = obj;
+    assert( obj != NULL );
 
-	strcpy(person_prop->firstname,firstname);
-	strcpy(person_prop->lastname,lastname);
-	strcpy(person_prop->location,location);
-	strcpy(person_prop->browserUsed,browserUsed);
-	person_prop->gender = gender;
-	person_prop->birthday = birthday;
-	person_prop->creationDate = creationDate;
+    free( obj1->image_file );
+    free( obj1->location_ip );
+    free( obj1->browser_used );
+    free( obj1->language );
+    free( obj1->content );
+    free( obj1 );
+}
 
-	return person_prop;
+/************************** Forum *************************/
 
+struct forum_info *forum_create( int id,
+                                 char *title,
+                                 struct date creation_date )
+{
+    struct forum_info *retval = malloc( sizeof(struct forum_info) );
+    retval->id = id;
+    retval->title = strdup( title );
+    retval->creation_date = creation_date;
+
+    return retval;
+}
+
+void forum_delete( void *obj )
+{
+    struct forum_info *obj1 = obj;
+    assert( obj != NULL );
+
+    free( obj1->title );
+    free( obj1 );
+}
+
+/************************* Comment **************************/
+
+struct comment_info *comment_create( int id,
+                                     struct date creation_date,
+                                     char *location_ip,
+                                     char *browser_used )
+{
+    struct comment_info *retval = malloc( sizeof(struct comment_info) );
+    retval->id = id;
+    retval->creation_date = creation_date;
+    retval->location_ip = strdup( location_ip );
+    retval->browser_used = strdup( browser_used );
+
+    return retval;
+}
+
+void comment_delete( void *obj )
+{
+    struct comment_info *obj1 = obj;
+    assert( obj1 != NULL );
+
+    free( obj1->location_ip );
+    free( obj1->browser_used );
+    free( obj1 );
+}
+
+/********************* Organisation *************************/
+
+struct organisation_info *organisation_create( int id,
+                                               organisation_t type,
+                                               char *name,
+                                               char *url )
+{
+    struct organisation_info *retval = malloc( sizeof(struct organisation_info) );
+    retval->id = id;
+    retval->type = type;
+    retval->name = strdup( name );
+    retval->url = strdup( url );
+
+    return retval;
+}
+
+void organisation_delete( void *obj )
+{
+    struct organisation_info *obj1 = obj;
+    assert( obj1 != NULL );
+
+    free( obj1->name );
+    free( obj1->url );
+    free( obj1 );
+}
+
+/************************* Place *****************************/
+
+struct place_info *place_create( int id,
+                                 char *name,
+                                 char *url,
+                                 place_t type )
+{
+    struct place_info *retval = malloc( sizeof(struct place_info) );
+    retval->id = id;
+    retval->name = strdup( name );
+    retval->url = strdup ( url );
+    retval->type = type;
+
+    return retval;
+}
+
+void place_delete( void *obj )
+{
+    struct place_info *obj1 = obj;
+    assert( obj1 != NULL );
+
+    free( obj1->name );
+    free( obj1->url );
+    free( obj1 );
+}
+
+/************************** Tag ******************************/
+
+struct tag_info *tag_create( int id,
+                             char *name,
+                             char *url )
+{
+    struct tag_info *retval = malloc( sizeof(struct tag_info) );
+    retval->id = id;
+    retval->name = strdup( name );
+    retval->url = strdup( url );
+
+    return retval;
+}
+
+void tag_delete( void *obj )
+{
+    struct tag_info *obj1 = obj;
+    assert( obj1 != NULL );
+
+    free( obj1->name );
+    free( obj1->url );
+    free( obj1 );
+}
+
+/************************ Tagclass **************************/
+
+struct tagclass_info *tagclass_create( int id,
+                             char *name,
+                             char *url )
+{
+    struct tagclass_info *retval = malloc( sizeof(struct tagclass_info) );
+    retval->id = id;
+    retval->name = strdup( name );
+    retval->url = strdup( url );
+
+    return retval;
+}
+
+void tagclass_delete( void *obj )
+{
+    struct tagclass_info *obj1 = obj;
+    assert( obj1 != NULL );
+
+    free( obj1->name );
+    free( obj1->url );
+    free( obj1 );
 }
