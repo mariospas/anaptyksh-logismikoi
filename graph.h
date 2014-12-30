@@ -17,7 +17,7 @@ typedef struct
 	int *array_id;
 	int *array_dist;
 } ResultSet;
-typedef ResultSet *Result_ptr;
+typedef ResultSet *Result_ptr;              //na mhn proepologizei alla na upologizei ekeinh thn ora
 
 typedef struct katanomh *ptr_katanomh;
 
