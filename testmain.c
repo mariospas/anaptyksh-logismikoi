@@ -17,6 +17,7 @@ size_t hashing( int key, size_t size );
 
 void printPersonProperties(ptr_entry n);
 
+
 /*
 char *cont[20] = {
     "No0",
