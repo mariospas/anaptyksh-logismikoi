@@ -6,7 +6,7 @@
 #include "graph_entry.h"
 #include "linked_list.h"
 
-ptr_entry create_entry(int id,void* properties, deallocator_f destroy_properties )      //create node
+ptr_entry create_entry(int id,void* properties, deallocator_f properties_destroy )      //create node
 {
 	ptr_entry node;
 
@@ -15,6 +15,7 @@ ptr_entry create_entry(int id,void* properties, deallocator_f destroy_properties
 	node->id = id;
 	node->properties = properties;
 	node->edges = LL_create(match_edge);
+	node->properties_destroy = properties_destroy;
 
 	return node;
 }

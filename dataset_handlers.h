@@ -14,7 +14,9 @@ struct date {
     size_t second;
 };
 
-struct date date_create( size_t year,
+typedef struct date *ptr_date;
+
+ptr_date date_create( size_t year,
                          size_t month,
                          size_t day,
                          size_t hour,
@@ -33,16 +35,18 @@ struct person_info {
     char *first_name;
     char *surname;
     gender_t gender;
-    struct date creation_date;
+    ptr_date creation_date;
     char *location_ip;
     char *browser_used;
 };
+
+typedef struct person_info *ptr_person_info;
 
 struct person_info *person_create( int id,
                                    char *first_name,
                                    char *surname,
                                    gender_t gender,
-                                   struct date creation_date,
+                                   ptr_date creation_date,
                                    char *location_ip,
                                    char *browser_used );
                                    

@@ -55,15 +55,16 @@ int insertNode( ptr_graph graph, ptr_entry entry )
 
 int insertEdge( ptr_graph graph, int id, ptr_edge edge )
 {
-	//printf("*****InsertEdge %d to Entry %d\n",friend->id,id);
+	printf("Search for id = %d \n",id);
 	ptr_entry node = HT_search( graph->table, id );
 	if(node == NULL)
 	{
-		printf("Entry not Found\n");
+		printf("Entry not Found\n\n");
 		return 1;
 	}
 	else if(node != NULL)
 	{
+		printf("Normal Insert\n");
 		LL_insert( node->edges, (void*) edge );
 	}
 
@@ -73,7 +74,9 @@ int insertEdge( ptr_graph graph, int id, ptr_edge edge )
 
 ptr_entry lookupNode(ptr_graph graph,int id)
 {
-	ptr_entry node = HT_search(graph->table,id);
+	ptr_entry node = NULL;
+	node = HT_search(graph->table,id);
+	if(node == NULL) printf("NULL in lookupNode\n");
 	return node;
 }
 

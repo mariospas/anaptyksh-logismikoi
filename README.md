@@ -1,4 +1,0 @@
-anaptyksh-logismikoi
-====================
-
-Anaptyksh Logismikoi

@@ -5,6 +5,7 @@
 #include "graph_entry.h"
 #include "dataset_handlers.h"
 #include "hash_table.h"
+#include "database.h"
 
 #define PERSON_PROPERTIES_NUM 3
 #define PERSON_REL_PROPERTIES_NUM 2
@@ -84,6 +85,11 @@ int main( int argc, char *argv[] )
 	ptr_entry n10 = setPersonProperties(14, "johnny", "depp", 35);
 	ptr_entry n11 = setPersonProperties(12, "fox", "mulder", 29);
 	ptr_entry n12 = setPersonProperties(16, "dana", "scully", 25);
+
+	printf("Try to LookUp\n");
+	ptr_entry Nl2 = lookupNode(g,2);
+	if(Nl2 == NULL) printf("NULL\n");
+	else printPersonProperties(Nl2);
 
 	printf("Insert Person Properties\n");
 	/*insert nodes in graph*/
@@ -174,13 +180,15 @@ int main( int argc, char *argv[] )
 ptr_entry setPersonProperties(int id, char* name, char* surname, int age) {
 
     /*create properties*/
-    Properties prop = createProperties(PERSON_PROPERTIES_NUM);
-    setStringProperty(name, 0, prop);
-    setStringProperty(surname, 1, prop);
-    setIntegerProperty(age, 2, prop);
+	gender_t gender = MALE;
+	ptr_date creation_date = date_create(1,1,1,1,1,1);
+	char location_ip[30] = "192.168.1.1";
+	char browser[20] = "chrome";
+
+    ptr_person_info prop = person_create(id,name,surname,gender,creation_date,location_ip,browser);
 
     /*create ptr_entry*/
-    ptr_entry n = create_entry(id,((void*) prop));
+    ptr_entry n = create_entry(id,((void*) prop),person_delete);
 
 
     return n;
@@ -189,12 +197,12 @@ ptr_entry setPersonProperties(int id, char* name, char* surname, int age) {
 ptr_edge setEdgeProperties(int endNodeID, char* type, int weight) {
 
     /*create edge properties*/
-    Properties propEdge = createProperties(PERSON_REL_PROPERTIES_NUM);
-    setStringProperty(type, 0, propEdge);
-    setIntegerProperty(weight, 1, propEdge);
+    char edge_type[EDGE_TYPE_BUF] = "PersonKnowsPerson";
+    int target_id = endNodeID;
+    int target_type = PERSON;
 
     /*create an edge */
-    ptr_edge e = create_edge(endNodeID,((void*) propEdge));
+    ptr_edge e = create_edge(edge_type,target_id,target_type,weight);
 
     return e;
 }
@@ -202,8 +210,8 @@ ptr_edge setEdgeProperties(int endNodeID, char* type, int weight) {
 
 void printPersonProperties(ptr_entry n)
 {
-	Properties p = (Properties) (n->properties);
-	printf("Name : %s \n",p->name);
+	ptr_person_info p = (ptr_person_info) (n->properties);
+	printf("Name : %s \n",p->first_name);
 }
 
 
