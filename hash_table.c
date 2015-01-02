@@ -132,9 +132,10 @@ void HT_destroy( ht_ptr this, deallocator destroy_entry )
 
 void HT_insert( ht_ptr this, void *element, int key )
 {
-    int i, index, hashed = this->hash( key, this->size );
+    int i, index, hashed = key+1;//hashed = this->hash( key, this->size );
     struct bucket **found;
 
+    printf("HT_insert ID = %d, hashed key = %d\n",key,hashed);
     /* Apply small h first */
     index = hashed % ( pow_(2, this->level) * this->init_size );
 
@@ -201,7 +202,7 @@ void HT_insert( ht_ptr this, void *element, int key )
 void *HT_search( ht_ptr this, int id )
 {
 	//printf("HT_search 1 \n");
-    int index, key = this->hash( id, this->size );
+    int index, key = id+1; //key = this->hash( id, this->size );
     struct bucket *found;
     void *result;
 

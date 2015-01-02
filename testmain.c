@@ -86,10 +86,7 @@ int main( int argc, char *argv[] )
 	ptr_entry n11 = setPersonProperties(12, "fox", "mulder", 29);
 	ptr_entry n12 = setPersonProperties(16, "dana", "scully", 25);
 
-	printf("Try to LookUp\n");
-	ptr_entry Nl2 = lookupNode(g,2);
-	if(Nl2 == NULL) printf("NULL\n");
-	else printPersonProperties(Nl2);
+
 
 	printf("Insert Person Properties\n");
 	/*insert nodes in graph*/
@@ -105,6 +102,11 @@ int main( int argc, char *argv[] )
 	insertNode(g, n9);
 	insertNode(g, n11);
 	insertNode(g, n12);
+
+	printf("Try to LookUp\n");
+	ptr_entry Nl2 = lookupNode(g,1);
+	if(Nl2 == NULL) printf("NULL\n");
+	else printPersonProperties(Nl2);
 
 	printf("Set Edge Properties\n");
 	/* Create edges and set properties */
@@ -172,6 +174,10 @@ int main( int argc, char *argv[] )
 	printf("Try to LookUp\n");
 	ptr_entry Nl1 = lookupNode(g,1);
 	printPersonProperties(Nl1);
+
+
+	int reach = reachNode1(g,1,6);
+	printf("\nreach = %d\n",reach);
 
 
 }

@@ -57,6 +57,7 @@ int insertEdge( ptr_graph graph, int id, ptr_edge edge )
 {
 	printf("Search for id = %d \n",id);
 	ptr_entry node = HT_search( graph->table, id );
+	printf("in insert edge ID = %d\n",node->id);
 	if(node == NULL)
 	{
 		printf("Entry not Found\n\n");
