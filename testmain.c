@@ -178,6 +178,7 @@ int main( int argc, char *argv[] )
 
 	int reach = reachNode1(g,1,6);
 	printf("\nreach = %d\n",reach);
+	//tpt
 
 
 }
