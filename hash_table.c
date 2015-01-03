@@ -361,20 +361,26 @@ void *HT_iter_data( HT_iter_ptr it )
 int HT_iter_next( HT_iter_ptr it )
 {
     if ( ( it->bucket_index == ( it->base->size - 1 ) )
-      || ( it->current_bucket->overflow == NULL )
-      || ( it->record_index == ( it->base->bucket_size - 1 ) ) ) {
+      && ( it->current_bucket->overflow == NULL )
+      && ( it->record_index == ( it->current_bucket->counter - 1 ) ) ) {
         return 0;
     }
 
-    if ( it->record_index < ( it->base->bucket_size - 1 ) ) {
+    if ( it->record_index < ( it->current_bucket->counter - 1 ) ) {
         ++it->record_index;
     } else if ( it->current_bucket->overflow != NULL ) {
         it->current_bucket = it->current_bucket->overflow;
         it->record_index = 0;
     } else {
         assert( it->bucket_index < ( it->base->size - 1 ) );
-        it->current_bucket = it->base->buckets[ ++it->bucket_index ];
-        it->record_index = 0;
+        do {
+            it->current_bucket = it->base->buckets[ ++it->bucket_index ];
+            it->record_index = 0;
+
+            if ( it->bucket_index == it->base->size ) {
+                return 0;
+            }
+        } while ( it->current_bucket->counter == 0 );
     }
     return 1;
 }
