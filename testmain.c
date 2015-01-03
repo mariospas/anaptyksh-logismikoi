@@ -175,10 +175,9 @@ int main( int argc, char *argv[] )
 	ptr_entry Nl1 = lookupNode(g,1);
 	printPersonProperties(Nl1);
 
-
 	int reach = reachNode1(g,1,6);
 	printf("\nreach = %d\n",reach);
-	//tpt
+
 
 
 }
