@@ -69,7 +69,7 @@ int main( int argc, char *argv[] )
 	int c = 3;
 
 	ptr_graph g;
-	g = createGraph(0,m,c);
+	g = createGraph(PERSON,m,c);
 
 	printf("Set Person Properties\n");
 	/*create node and set node properties*/
@@ -175,9 +175,17 @@ int main( int argc, char *argv[] )
 	ptr_entry Nl1 = lookupNode(g,1);
 	printPersonProperties(Nl1);
 
-	int reach = reachNode1(g,1,6);
-	printf("\nreach = %d\n",reach);
+	int reach1 = reachNode1(g,1,12);
+	printf("\nreach1 = %d\n",reach1);
 
+	int reach2 = reachNode1(g,14,14);
+	printf("\nreach2 = %d\n",reach2);
+
+	int reach3 = reachNode1(g,3,16);
+	printf("\nreach3 = %d\n",reach3);
+
+	int reach4 = reachNode1(g,5,3);
+	printf("\nreach3 = %d\n",reach4);
 
 
 }

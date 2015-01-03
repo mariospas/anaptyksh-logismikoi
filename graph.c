@@ -86,6 +86,7 @@ int reachNode1( ptr_graph this, int start, int end )
     int i, result;
     for ( i = 0; i < this->size; ++i )
     {
+    	printf("In reachNode i=%d\n",i);
         if ( rec_search( this, start, end, i ) != 0 )
         {
             return i;
@@ -96,7 +97,8 @@ int reachNode1( ptr_graph this, int start, int end )
 
 int rec_search( ptr_graph this, int start, int end, int level )
 {
-    int i, size, result = 0;
+	//printf("insert in rec_search\n");
+    int i, size,list_size, result = 0;
     list_ptr edges;
     ptr_edge edge;
     LL_iter_ptr edge_it;
@@ -106,9 +108,14 @@ int rec_search( ptr_graph this, int start, int end, int level )
     }
 
     edges = ( (ptr_entry) HT_search( this->table, start ) )->edges;
+
+    list_size = LL_size(edges);
+    if(list_size == 0) return result;
+
     edge_it = LL_iter_create( edges );
     for ( i = 0; i < this->size - level; ++i )
     {
+    	//printf("rec_search  i = %d start = %d end = %d\n",i,start,end);
         do
         {
             edge = LL_iter_data( edge_it );

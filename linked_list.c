@@ -134,7 +134,7 @@ LL_iter_ptr LL_iter_create( list_ptr list )
     it->base = list;
     it->data = it->base->head->data;
 
-    assert( list->size >= 2 );
+    assert( list->size >= 1 );
     it->next = it->base->head->next;
 
     return it;
