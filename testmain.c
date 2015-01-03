@@ -17,6 +17,8 @@ size_t hashing( int key, size_t size );
 
 void printPersonProperties(ptr_entry n);
 
+
+/*
 char *cont[20] = {
     "No0",
     "No1",
@@ -39,9 +41,10 @@ char *cont[20] = {
     "No18",
     "No19"
 };
-
+*/
 int main( int argc, char *argv[] )
 {
+	/*
     int i, max = 20;
     ht_ptr sample = HT_create( 2, 2, hashing );
 
@@ -58,8 +61,9 @@ int main( int argc, char *argv[] )
 
     HT_destroy( sample, NULL );
     return EXIT_SUCCESS; // I hope
+    */
 
-#if 0
+
 	int m = 2;
 	int c = 3;
 
@@ -163,10 +167,10 @@ int main( int argc, char *argv[] )
 	ptr_entry Nl1 = lookupNode(g,1);
 	printPersonProperties(Nl1);
 
-#endif
+
 }
 
-#if 0
+
 ptr_entry setPersonProperties(int id, char* name, char* surname, int age) {
 
     /*create properties*/
@@ -201,7 +205,7 @@ void printPersonProperties(ptr_entry n)
 	Properties p = (Properties) (n->properties);
 	printf("Name : %s \n",p->name);
 }
-#endif
+
 
 size_t hashing( int key, size_t size )
 {
