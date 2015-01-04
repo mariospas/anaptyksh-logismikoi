@@ -237,7 +237,7 @@ int main( int argc, char *argv[] )
 	ptr_entry N16 = lookupNode(g,16);
 	printPersonProperties(N16);
 
-
+/*
 	int id = -1,distance = -1;
 	Result_ptr result = reachNodeN(g,1);
 
@@ -246,7 +246,11 @@ int main( int argc, char *argv[] )
 		printf("Start id = %d to end id = %d and distance = %d\n",result->from,id,distance);
 	}
 	printf("Start id = %d to end id = %d and distance = %d\n",result->from,id,distance);
+*/
 
+	//part2
+
+	degreeDistribution(g);
 
 }
 
