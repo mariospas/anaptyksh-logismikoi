@@ -176,16 +176,73 @@ int main( int argc, char *argv[] )
 	printPersonProperties(Nl1);
 
 	int reach1 = reachNode1(g,1,12);
-	printf("\nreach1 = %d\n",reach1);
+	printf("reach1 = %d\n\n",reach1);
 
 	int reach2 = reachNode1(g,14,14);
-	printf("\nreach2 = %d\n",reach2);
+	printf("reach2 = %d\n\n",reach2);
 
 	int reach3 = reachNode1(g,3,16);
-	printf("\nreach3 = %d\n",reach3);
+	printf("reach3 = %d\n\n",reach3);
 
 	int reach4 = reachNode1(g,5,3);
-	printf("\nreach3 = %d\n",reach4);
+	printf("reach4 = %d\n\n",reach4);
+
+	/*int id = -1,distance = -1;
+	Result_ptr result = reachNodeN(g,1);
+
+	while( ResultSet_next(result,&id,&distance))
+	{
+		printf("Start id = %d to end id = %d and distance = %d\n",result->from,id,distance);
+	}
+	*/
+
+	//printf("Try to LookUp\n");
+	ptr_entry N1 = lookupNode(g,1);
+	printPersonProperties(N1);
+
+	//printf("Try to LookUp\n");
+	ptr_entry N2 = lookupNode(g,2);
+	printPersonProperties(N2);
+
+	//printf("Try to LookUp\n");
+	ptr_entry N3 = lookupNode(g,3);
+	printPersonProperties(N3);
+
+	//printf("Try to LookUp\n");
+	ptr_entry N4 = lookupNode(g,4);
+	printPersonProperties(N4);
+
+	//printf("Try to LookUp\n");
+	ptr_entry N5 = lookupNode(g,5);
+	printPersonProperties(N5);
+
+	//printf("Try to LookUp\n");
+	ptr_entry N6 = lookupNode(g,6);
+	printPersonProperties(N6);
+
+	//printf("Try to LookUp\n");
+	ptr_entry N7 = lookupNode(g,7);
+	printPersonProperties(N7);
+
+	//printf("Try to LookUp\n");
+	ptr_entry N8 = lookupNode(g,8);
+	printPersonProperties(N8);
+
+	//printf("Try to LookUp\n");
+	ptr_entry N10 = lookupNode(g,10);
+	printPersonProperties(N10);
+
+	//printf("Try to LookUp\n");
+	ptr_entry N12 = lookupNode(g,12);
+	printPersonProperties(N12);
+
+	//printf("Try to LookUp\n");
+	ptr_entry N14 = lookupNode(g,14);
+	printPersonProperties(N14);
+
+	//printf("Try to LookUp\n");
+	ptr_entry N16 = lookupNode(g,16);
+	printPersonProperties(N16);
 
 
 }
@@ -225,7 +282,7 @@ ptr_edge setEdgeProperties(int endNodeID, char* type, int weight) {
 void printPersonProperties(ptr_entry n)
 {
 	ptr_person_info p = (ptr_person_info) (n->properties);
-	printf("Name : %s \n",p->first_name);
+	printf("Name : %s and ID = %d\n",p->first_name,p->id);
 }
 
 
