@@ -187,14 +187,7 @@ int main( int argc, char *argv[] )
 	int reach4 = reachNode1(g,5,3);
 	printf("reach4 = %d\n\n",reach4);
 
-	/*int id = -1,distance = -1;
-	Result_ptr result = reachNodeN(g,1);
 
-	while( ResultSet_next(result,&id,&distance))
-	{
-		printf("Start id = %d to end id = %d and distance = %d\n",result->from,id,distance);
-	}
-	*/
 
 	//printf("Try to LookUp\n");
 	ptr_entry N1 = lookupNode(g,1);
@@ -243,6 +236,16 @@ int main( int argc, char *argv[] )
 	//printf("Try to LookUp\n");
 	ptr_entry N16 = lookupNode(g,16);
 	printPersonProperties(N16);
+
+
+	int id = -1,distance = -1;
+	Result_ptr result = reachNodeN(g,1);
+
+	while( ResultSet_next(result,&id,&distance))
+	{
+		printf("Start id = %d to end id = %d and distance = %d\n",result->from,id,distance);
+	}
+	printf("Start id = %d to end id = %d and distance = %d\n",result->from,id,distance);
 
 
 }

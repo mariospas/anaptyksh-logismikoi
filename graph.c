@@ -86,7 +86,7 @@ int reachNode1( ptr_graph this, int start, int end )
     int i, result;
     for ( i = 0; i < this->size; ++i )
     {
-    	printf("In reachNode i=%d\n",i);
+    	//printf("In reachNode i=%d\n",i);
         if ( rec_search( this, start, end, i ) != 0 )
         {
             return i;
