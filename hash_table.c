@@ -132,10 +132,9 @@ void HT_destroy( ht_ptr this, deallocator destroy_entry )
 
 void HT_insert( ht_ptr this, void *element, int key )
 {
-    int i, index, hashed = key+1;//hashed = this->hash( key, this->size );
+    int i, index, hashed = this->hash( key, this->size );
     struct bucket **found;
 
-    printf("HT_insert ID = %d, hashed key = %d\n",key,hashed);
     /* Apply small h first */
     index = hashed % ( pow_(2, this->level) * this->init_size );
 
@@ -202,7 +201,7 @@ void HT_insert( ht_ptr this, void *element, int key )
 void *HT_search( ht_ptr this, int id )
 {
 	//printf("HT_search 1 \n");
-    int index, key = id+1; //key = this->hash( id, this->size );
+    int index, key = this->hash( id, this->size );
     struct bucket *found;
     void *result;
 
@@ -362,20 +361,26 @@ void *HT_iter_data( HT_iter_ptr it )
 int HT_iter_next( HT_iter_ptr it )
 {
     if ( ( it->bucket_index == ( it->base->size - 1 ) )
-      || ( it->current_bucket->overflow == NULL )
-      || ( it->record_index == ( it->base->bucket_size - 1 ) ) ) {
+      && ( it->current_bucket->overflow == NULL )
+      && ( it->record_index == ( it->current_bucket->counter - 1 ) ) ) {
         return 0;
     }
 
-    if ( it->record_index < ( it->base->bucket_size - 1 ) ) {
+    if ( it->record_index < ( it->current_bucket->counter - 1 ) ) {
         ++it->record_index;
     } else if ( it->current_bucket->overflow != NULL ) {
         it->current_bucket = it->current_bucket->overflow;
         it->record_index = 0;
     } else {
         assert( it->bucket_index < ( it->base->size - 1 ) );
-        it->current_bucket = it->base->buckets[ ++it->bucket_index ];
-        it->record_index = 0;
+        do {
+            it->current_bucket = it->base->buckets[ ++it->bucket_index ];
+            it->record_index = 0;
+
+            if ( it->bucket_index == it->base->size ) {
+                return 0;
+            }
+        } while ( it->current_bucket->counter == 0 );
     }
     return 1;
 }
@@ -391,3 +396,4 @@ void HT_iter_destroy( HT_iter_ptr it )
 {
     free( it );
 }
+
