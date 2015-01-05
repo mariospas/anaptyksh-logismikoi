@@ -141,6 +141,11 @@ int main( int argc, char *argv[] )
 	ptr_edge e29 = setEdgeProperties(10, "knows", 10);
 	ptr_edge e30 = setEdgeProperties(8, "knows", 10);
 
+	///ebala tis parakato gia na sundeso perissotera na ginei pio grhgoro
+	ptr_edge e31 = setEdgeProperties(5, "knows", 30);
+	ptr_edge e32 = setEdgeProperties(5, "knows", 10);
+	ptr_edge e33 = setEdgeProperties(5, "knows", 10);
+
 
 
 	printf("Insert Edge Properties\n");
@@ -170,6 +175,14 @@ int main( int argc, char *argv[] )
 	insertEdge(g, 16, e24);
 	insertEdge(g, 16, e25);
 	insertEdge(g, 14, e26);
+
+	///ebala tis parakato gia na sundeso perissotera na ginei pio grhgoro
+	insertEdge(g, 4, e31);
+	insertEdge(g, 7, e32);
+	insertEdge(g, 14, e33);
+	insertEdge(g, 5, e20);
+	insertEdge(g, 5, e17);
+
 
 	printf("Try to LookUp\n");
 	ptr_entry Nl1 = lookupNode(g,1);
@@ -248,9 +261,28 @@ int main( int argc, char *argv[] )
 	printf("Start id = %d to end id = %d and distance = %d\n",result->from,id,distance);
 */
 
-	//part2
 
-	degreeDistribution(g);
+
+	///////////part2////////////////
+
+	//degreeDistribution(g);
+
+	int diam = diameter(g);
+	printf("\nDIAMETER = %d\n",diam);
+
+	int aver = 0;
+	double apotel = 0.0;
+	aver = averagePathLength(g,&apotel);
+	printf("\nAVERAGE PATH = %f\n",apotel);
+
+	int numofCC = numberOfCCs(g);
+	printf("\nNumber of Connected Comp = %d\n",numofCC);
+
+	int max = maxCC(g);
+	printf("\nMax Connected Comp = %d\n",max);
+
+	double denc = density(g);
+	printf("\nDensity = %f\n",denc);
 
 }
 

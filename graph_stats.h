@@ -32,9 +32,15 @@ int diameter(ptr_graph g);
 
 void sum_from_result(Result_ptr result,int size,double *sum);
 
-double averagePathLength(ptr_graph g);
+int averagePathLength(ptr_graph g,double *apotel);
 
 /********** COHERENT GRAPHS ***********/
+
+typedef struct dataCC *dataCC_ptr;
+
+dataCC_ptr create_dataCC(int id);
+
+void destroy_dataCC(void* data);
 
 int match_id( const void *a, const void *key);
 
