@@ -36,6 +36,11 @@ ptr_katanomh create_data(int arithmos_filon)
 	return node;
 }
 
+void destroy_data(void* data)
+{
+	free(data);
+}
+
 void manage_list(list_ptr list,int arithmos_filon)
 {
 	void* data;
@@ -94,6 +99,7 @@ void degreeDistribution(ptr_graph g)
 
 		LL_iter_destroy(iterList);
 		HT_iter_destroy(iter);
+		LL_destroy(list,destroy_data);
 
 		/*********GNUPLOT******************/
 
@@ -392,14 +398,14 @@ int maxCC(ptr_graph g)
 
 
 
-double density(ptr_graph g)
+double density(ptr_graph g,double *d)
 {
 	int i, graph_size = Graph_size(g);
 	HT_iter_ptr iter;
     ht_ptr nodes = Graph_nodes(g);
 	ptr_entry node;
 	long sizeEdges = 0;
-	double d = 1;
+	//double d = 1;
 
 	if(g != NULL)
 	{
@@ -411,6 +417,7 @@ double density(ptr_graph g)
 			if(node != NULL)
 			{
 				sizeEdges = sizeEdges + size_of_friend_list(node);
+				//printf("sizeEdges = %ld\n",sizeEdges);
 			}
 
 			HT_iter_next(iter);
@@ -419,11 +426,12 @@ double density(ptr_graph g)
 
 		HT_iter_destroy(iter);
 
-		d = (2 * sizeEdges) / ((graph_size) * (graph_size - 1));
-
+		*d = (2 * ((double)sizeEdges)) / (((double)graph_size) * ((double)graph_size - 1));
+		//printf("D = %f\n",*d);
 	}
 
-	return d;
+	//printf("D = %f\n",*d);
+	return 1;
 }
 
 double closeness_centrality( ptr_entry n, ptr_graph g )
@@ -438,6 +446,7 @@ double closeness_centrality( ptr_entry n, ptr_graph g )
     } while ( HT_iter_next( inode ) );
     HT_iter_destroy( inode );
 
+    printf("result = %f\n",(sumdist / ( (double) size )));
     return sumdist / ( (double) size );
 }
 
@@ -459,7 +468,8 @@ double betweenness_centrality( ptr_entry n, ptr_graph g )
 
         /* Check every shortest path */
         for ( i = 0; i < size; ++i ) {
-            assert( ResultSet_next( set, &id, &dist ) );
+        	ResultSet_next( set, &id, &dist );
+           // assert( ResultSet_next( set, &id, &dist ) );
             if ( dist <= 0 || node->id == id ) {
                 continue;
             }
@@ -471,9 +481,10 @@ double betweenness_centrality( ptr_entry n, ptr_graph g )
         }
 
         ret += (double) betweendist / alldist;
-        free( set );
+        //free( set );
     } while ( HT_iter_next( node_it ) );
     HT_iter_destroy( node_it );
 
+    printf("result = %f\n",(( 2 * ret ) / ( (double) ( size - 1 ) * ( size - 2 ) )));
     return ( 2 * ret ) / ( (double) ( size - 1 ) * ( size - 2 ) );
 }

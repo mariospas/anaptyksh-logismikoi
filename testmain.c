@@ -1,11 +1,35 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 
 #include "graph.h"
 #include "graph_entry.h"
 #include "dataset_handlers.h"
 #include "hash_table.h"
 #include "database.h"
+
+#define TRUST_GRAPH_REL_PROPERTIES_NUM 1
+
+#define CHECKINT(text, actual, expected)                         \
+  if (actual != expected) {                                   \
+    printf("%-30s: Failed | actual = %3d, expected = %3d\n",  \
+           text,                                              \
+           actual,                                            \
+           expected);                                         \
+  } else {                                                    \
+    printf("%-30s: Success\n", text);                     \
+  }
+
+#define CHECKDOUBLE(text, actual, expected)                         \
+if ( (actual - expected < 0.01) || (expected - actual < 0.01)) {                                   \
+  printf("%-30s: Failed | actual = %3f, expected = %3f\n",  \
+         text,                                              \
+         actual,                                            \
+         expected);                                         \
+} else {                                                    \
+  printf("%-30s: Success\n", text);                     \
+}
+
 
 #define PERSON_PROPERTIES_NUM 3
 #define PERSON_REL_PROPERTIES_NUM 2
@@ -17,6 +41,9 @@ ptr_edge setEdgeProperties(int endNodeID, char* type, int weight) ;
 size_t hashing( int key, size_t size );
 
 void printPersonProperties(ptr_entry n);
+
+void testBetweennessCentrality(int bucketsNumber, int bucketSize);
+void testClosenessCentrality(int bucketsNumber, int bucketSize);
 
 
 /*
@@ -281,8 +308,13 @@ int main( int argc, char *argv[] )
 	int max = maxCC(g);
 	printf("\nMax Connected Comp = %d\n",max);
 
-	double denc = density(g);
+	double denc = 1.0;
+	int ok = density(g,&denc);
 	printf("\nDensity = %f\n",denc);
+
+	testBetweennessCentrality(2,3);
+
+	testClosenessCentrality(2,3);
 
 }
 
@@ -329,3 +361,152 @@ size_t hashing( int key, size_t size )
 {
     return 100 / (key+1) + 30;
 }
+
+
+void testBetweennessCentrality(int bucketsNumber, int bucketSize) {
+    //create small graph for testing betweenness Centrality
+
+    ptr_graph gBetw = createGraph(PERSON,bucketsNumber, bucketSize);
+
+    ptr_entry n1Betw = create_entry(1,NULL,person_delete);
+    ptr_entry n2Betw = create_entry(2, NULL,person_delete);
+    ptr_entry n3Betw = create_entry(3, NULL,person_delete);
+    ptr_entry n4Betw = create_entry(4, NULL,person_delete);
+    ptr_entry n5Betw = create_entry(5, NULL,person_delete);
+
+    insertNode(gBetw,n1Betw);
+    insertNode(gBetw,n2Betw);
+    insertNode(gBetw,n3Betw);
+    insertNode(gBetw,n4Betw);
+    insertNode(gBetw,n5Betw);
+
+
+    char edge_type[EDGE_TYPE_BUF] = "PersonKnowsPerson";
+	int target_type = PERSON;
+
+	/*create an edge */
+
+
+    /* Create edges and set properties */
+	ptr_edge e1Betw = create_edge(edge_type,2,target_type,10);
+	ptr_edge e2Betw = create_edge(edge_type, 1, target_type,10);
+    ptr_edge e3Betw = create_edge(edge_type, 3, target_type,10);
+    ptr_edge e4Betw = create_edge(edge_type, 4, target_type,10);
+    ptr_edge e5Betw = create_edge(edge_type, 2, target_type,10);
+    ptr_edge e6Betw = create_edge(edge_type, 5, target_type,10);
+    ptr_edge e7Betw = create_edge(edge_type, 2, target_type,10);
+    ptr_edge e8Betw = create_edge(edge_type, 5, target_type,10);
+    ptr_edge e9Betw = create_edge(edge_type, 3, target_type,10);
+    ptr_edge e10Betw = create_edge(edge_type, 4, target_type,10);
+
+    /* Insert edges in graph */
+    insertEdge(gBetw, 1, e1Betw);
+    insertEdge(gBetw, 2, e2Betw);
+    insertEdge(gBetw, 2, e3Betw);
+    insertEdge(gBetw, 2, e4Betw);
+    insertEdge(gBetw, 3, e5Betw);
+    insertEdge(gBetw, 3, e6Betw);
+    insertEdge(gBetw, 4, e7Betw);
+    insertEdge(gBetw, 4, e8Betw);
+    insertEdge(gBetw, 5, e9Betw);
+    insertEdge(gBetw, 5, e10Betw);
+
+    double betwCentrty1 = betweenness_centrality(n1Betw, gBetw);
+    CHECKDOUBLE("Small Graph betweenness centrality node:1 ", betwCentrty1, 0.0 / 6);
+
+    double betwCentrty2 = betweenness_centrality(n2Betw, gBetw);
+    CHECKDOUBLE("Small Graph betweenness centrality node:2 ", betwCentrty2, 3.5 / 6);
+
+    double betwCentrty3 = betweenness_centrality(n3Betw, gBetw);
+    CHECKDOUBLE("Small Graph betweenness centrality node:3 ", betwCentrty3, 1.0 / 6);
+
+    double betwCentrty4 = betweenness_centrality(n4Betw, gBetw);
+    CHECKDOUBLE("Small Graph betweenness centrality node:4 ", betwCentrty4, 1.0 / 6);
+
+    double betwCentrty5 = betweenness_centrality(n5Betw, gBetw);
+    CHECKDOUBLE("Small Graph betweenness centrality node:5 ", betwCentrty5, 0.5 / 6);
+}
+
+
+void testClosenessCentrality(int bucketsNumber, int bucketSize) {
+    //create small graph for testing betweenness Centrality
+	ptr_graph gClos = createGraph(PERSON,bucketsNumber, bucketSize);
+
+
+    ptr_entry n1Clos = create_entry(1,NULL,person_delete);
+	ptr_entry n2Clos = create_entry(2, NULL,person_delete);
+	ptr_entry n3Clos = create_entry(3, NULL,person_delete);
+	ptr_entry n4Clos = create_entry(4, NULL,person_delete);
+	ptr_entry n5Clos = create_entry(5, NULL,person_delete);
+	ptr_entry n6Clos = create_entry(6, NULL,person_delete);
+	ptr_entry n7Clos = create_entry(7, NULL,person_delete);
+
+    insertNode(gClos, n1Clos);
+    insertNode( gClos, n2Clos);
+    insertNode( gClos, n3Clos);
+    insertNode( gClos, n4Clos);
+    insertNode( gClos, n5Clos);
+    insertNode( gClos, n6Clos);
+    insertNode( gClos, n7Clos);
+
+    char edge_type[EDGE_TYPE_BUF] = "PersonKnowsPerson";
+	int target_type = PERSON;
+
+
+    /* Create edges and set properties */
+    ptr_edge e1Clos = create_edge(edge_type,2,target_type,10);
+	ptr_edge e2Clos = create_edge(edge_type, 3, target_type,10);
+	ptr_edge e3Clos = create_edge(edge_type, 1, target_type,10);
+	ptr_edge e4Clos = create_edge(edge_type, 3, target_type,10);
+	ptr_edge e5Clos = create_edge(edge_type, 1, target_type,10);
+	ptr_edge e6Clos = create_edge(edge_type, 2, target_type,10);
+	ptr_edge e7Clos = create_edge(edge_type, 4, target_type,10);
+	ptr_edge e8Clos = create_edge(edge_type, 3, target_type,10);
+	ptr_edge e9Clos = create_edge(edge_type, 5, target_type,10);
+	ptr_edge e10Clos = create_edge(edge_type, 4, target_type,10);
+
+	ptr_edge e11Clos = create_edge(edge_type,6,target_type,10);
+	ptr_edge e12Clos = create_edge(edge_type, 7, target_type,10);
+	ptr_edge e13Clos = create_edge(edge_type, 5, target_type,10);
+	ptr_edge e14Clos = create_edge(edge_type, 7, target_type,10);
+	ptr_edge e15Clos = create_edge(edge_type, 5, target_type,10);
+	ptr_edge e16Clos = create_edge(edge_type, 6, target_type,10);
+
+
+
+
+    /* Insert edges in graph */
+    insertEdge(gClos,1, e1Clos);
+    insertEdge(gClos,2, e2Clos);
+    insertEdge(gClos,2, e3Clos);
+    insertEdge(gClos,2, e4Clos);
+    insertEdge(gClos,3, e5Clos);
+    insertEdge(gClos,3, e6Clos);
+    insertEdge(gClos,4, e7Clos);
+    insertEdge(gClos,4, e8Clos);
+    insertEdge(gClos,5, e9Clos);
+    insertEdge(gClos,5, e10Clos);
+
+    double closCentrty1 = closeness_centrality(n1Clos, gClos);
+    CHECKDOUBLE("Small Graph closeness centrality node:1 ", closCentrty1, 0.4 / 6);
+
+    double closCentrty2 = closeness_centrality(n2Clos, gClos);
+    CHECKDOUBLE("Small Graph closeness centrality node:2 ", closCentrty2, 0.4 / 6);
+
+    double closCentrty3 = closeness_centrality(n3Clos, gClos);
+    CHECKDOUBLE("Small Graph closeness centrality node:3 ", closCentrty3, 0.55 / 6);
+
+    double closCentrty4 = closeness_centrality(n4Clos, gClos);
+    CHECKDOUBLE("Small Graph closeness centrality node:4 ", closCentrty4, 0.6 / 6);
+
+    double closCentrty5 = closeness_centrality(n5Clos, gClos);
+    CHECKDOUBLE("Small Graph closeness centrality node:5 ", closCentrty5, 0.55 / 6);
+
+    double closCentrty6 = closeness_centrality(n6Clos, gClos);
+    CHECKDOUBLE("Small Graph closeness centrality node:6 ", closCentrty6, 0.4 / 6);
+
+    double closCentrty7 = closeness_centrality(n7Clos, gClos);
+    CHECKDOUBLE("Small Graph closeness centrality node:7 ", closCentrty7, 0.4 / 6);
+
+}
+
