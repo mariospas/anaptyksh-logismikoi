@@ -4,6 +4,7 @@
 
 #include "graph.h"
 #include "graph_entry.h"
+#include "graph_stats.h"
 #include "dataset_handlers.h"
 #include "hash_table.h"
 #include "database.h"
@@ -315,6 +316,8 @@ int main( int argc, char *argv[] )
 	testBetweennessCentrality(2,3);
 
 	testClosenessCentrality(2,3);
+
+	load_graph(g);
 
 }
 

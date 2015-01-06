@@ -6,9 +6,14 @@
 #include "hash_table.h"
 #include "linked_list.h"
 #include "graph_entry.h"
+#include "dataset_handlers.h"
 
 #define GRAPH_ID_SIZE 50
 #define HASH_CONSTANT ((sqrt(5) - 1) / 2)
+#define MAX_STR_LEN 1024
+#define MAX_NAME 50
+#define LOCATION_IP 25
+#define BROWSER 25
 
 typedef struct graph *ptr_graph;
 
@@ -40,6 +45,10 @@ int ResultSet_next(Result_ptr result, int *id, int *distance);
 size_t Graph_size( ptr_graph graph );
 
 ht_ptr Graph_nodes( ptr_graph graph );
+
+void load_graph(ptr_graph graph);
+
+ptr_date load_date(char* buf,int i);
 
 /* Helpers */
 static int rec_search( ptr_graph this, int start, int end, int level );

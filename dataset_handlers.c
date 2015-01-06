@@ -58,6 +58,9 @@ void person_delete( void *obj )
     free( obj1 );
 }
 
+
+
+
 /************************* Post **************************/
 
 struct post_info *post_create( int id,

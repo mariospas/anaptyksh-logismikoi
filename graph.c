@@ -8,6 +8,8 @@
 #include "hash_table.h"
 #include "graph_entry.h"
 #include "linked_list.h"
+#include "dataset_handlers.h"
+#include "database.h"
 
 struct graph
 {
@@ -162,6 +164,180 @@ int ResultSet_next(ResultSet *result, int *id, int *distance )
     }
     return 1;
 }
+
+
+void load_graph(ptr_graph graph)
+{
+	FILE *fp;
+	char *buf = malloc(MAX_STR_LEN);
+	char *tmp;
+	char *tempB;
+	char *tempCreat;
+	ptr_entry entry;
+
+	if (buf == NULL)
+	{
+		printf ("No memory\n");
+		return;
+	}
+
+
+	if(graph->id == PERSON)
+	{
+		int id;
+		char *firstname;
+		char *lastname;
+		gender_t gender;
+		ptr_date birthday;
+		ptr_date creationDate;
+		char *location_ip;
+		char *browser;
+
+
+		if ( ( fp = fopen( "dataset/person.csv", "r" ) ) == NULL ) //Reading a file
+		{
+			printf( "File could not be opened.\n" );
+		}
+
+		fgets(buf, 1023, fp);   //first line
+
+		while (fgets(buf, 1023, fp) != NULL)
+		{
+			if ((strlen(buf)>0) && (buf[strlen (buf) - 1] == '\n'))
+				buf[strlen (buf) - 1] = '\0';
+
+
+			tmp = strtok(buf, "|");
+			id = atoi(tmp);
+			printf("id = %d ",id);
+
+			tmp = strtok(NULL, "|");
+			firstname = strdup(tmp);
+			printf("firstname = %s ",firstname);
+
+			tmp = strtok(NULL, "|");
+			lastname = strdup(tmp);
+			printf("lastname = %s ",lastname);
+
+			tmp = strtok(NULL, "|");
+			if(strcmp(tmp,"male") == 0) gender = MALE;
+			if(strcmp(tmp,"female") == 0) gender = FEMALE;
+			printf("gender = %d ",gender);
+
+			tmp = strtok(NULL, "|");
+			tempB = strdup(tmp);
+			printf("\ntmpBirt = %s\n",tmp);
+			//birthday = load_date(temp,4);
+
+			tmp = strtok(NULL, "|");
+			printf("\ntmpCREAT = %s\n",tmp);
+			tempCreat = strdup(tmp);
+			//creationDate = load_date(temp,5);
+
+			tmp = strtok(NULL, "|");
+			location_ip = strdup(tmp);
+			printf("\nlocation_ip = %s\n",tmp);
+
+			tmp = strtok(NULL, "|");
+			browser = strdup(tmp);
+			printf("\nbrowser = %s\n",tmp);
+
+			birthday = load_date(tempB,4);
+			creationDate = load_date(tempCreat,5);
+
+			ptr_person_info person = person_create(id,firstname,lastname,gender,creationDate,location_ip,browser);
+
+			entry = create_entry(id,((void *)person),person_delete);
+
+			insertNode(graph,entry);
+
+		}
+
+	}
+}
+
+
+ptr_date load_date(char* buf,int i)
+{
+	char *tmpo;
+	ptr_date date;
+	size_t year;
+	size_t month;
+	size_t day;
+	size_t hour;
+	size_t minute;
+	size_t sec;
+	int j;
+
+	printf("\nInsert Date :\n");
+
+	tmpo = strtok(buf, "-");
+	printf("\nInsert Date 2: %s\n",tmpo);
+	year = atoi(tmpo);
+	printf("year = %zu ",year);
+
+	tmpo = strtok(NULL, "-");
+	month = atoi(tmpo);
+	printf("month = %zu ",month);
+
+	tmpo = strtok(NULL, "-");
+	day = atoi(tmpo);
+	printf("day = %zu \n",day);
+
+
+
+	if(i == 4)
+	{
+		//printf("\nBirthday :\n");
+
+		hour = 0;
+		printf("hour = %zu ",hour);
+		minute = 0;
+		printf("minute = %zu ",minute);
+		sec = 0;
+		printf("sec = %zu \n",sec);
+	}
+	else if(i == 5)
+	{
+		//printf("\nCreation date :\n");
+		//printf("year = %zu ",year);
+		//printf("month = %zu ",month);
+		//printf("day = %zu ",day);
+
+		int len = strlen(tmpo) + 1;
+		for(j=0;j<len;j++)
+		{
+			if(tmpo[j] != 'T') tmpo[j] = '-';
+			else if(tmpo[j] == 'T')
+			{
+				printf("find T\n");
+				tmpo[j] = '|';
+				break;
+			}
+		}
+
+		printf("inse %s\n",tmpo);
+
+		tmpo = strtok(NULL, "|");
+		hour = atoi(tmpo);
+		printf("hour = %zu ",hour);
+
+		tmpo = strtok(NULL, ":");
+		minute = atoi(tmpo);
+		printf("minute = %zu ",minute);
+
+		tmpo = strtok(NULL, ":");
+		sec = atoi(tmpo);
+		printf("sec = %zu \n",sec);
+	}
+
+	date = date_create(year,month,day,hour,minute,sec);
+
+	return date;
+
+
+}
+
 
 size_t hash(int value, size_t size)
 {
