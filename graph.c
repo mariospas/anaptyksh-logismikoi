@@ -57,9 +57,9 @@ int insertNode( ptr_graph graph, ptr_entry entry )
 
 int insertEdge( ptr_graph graph, int id, ptr_edge edge )
 {
-	printf("Search for id = %d \n",id);
+	//printf("Search for id = %d \n",id);
 	ptr_entry node = HT_search( graph->table, id );
-	printf("in insert edge ID = %d\n",node->id);
+	//printf("in insert edge ID = %d\n",node->id);
 	if(node == NULL)
 	{
 		printf("Entry not Found\n\n");
@@ -67,7 +67,7 @@ int insertEdge( ptr_graph graph, int id, ptr_edge edge )
 	}
 	else if(node != NULL)
 	{
-		printf("Normal Insert\n");
+		//printf("Normal Insert\n");
 		LL_insert( node->edges, (void*) edge );
 	}
 
@@ -174,6 +174,7 @@ void load_graph(ptr_graph graph)
 	char *tempB;
 	char *tempCreat;
 	ptr_entry entry;
+	ptr_edge edge;
 
 	if (buf == NULL)
 	{
@@ -192,6 +193,10 @@ void load_graph(ptr_graph graph)
 		ptr_date creationDate;
 		char *location_ip;
 		char *browser;
+
+
+		int id1;
+		int id2;
 
 
 		if ( ( fp = fopen( "dataset/person.csv", "r" ) ) == NULL ) //Reading a file
@@ -222,25 +227,25 @@ void load_graph(ptr_graph graph)
 			tmp = strtok(NULL, "|");
 			if(strcmp(tmp,"male") == 0) gender = MALE;
 			if(strcmp(tmp,"female") == 0) gender = FEMALE;
-			printf("gender = %d ",gender);
+			printf("gender = %d \n",gender);
 
 			tmp = strtok(NULL, "|");
 			tempB = strdup(tmp);
-			printf("\ntmpBirt = %s\n",tmp);
+			printf("Birthday = %s ",tmp);
 			//birthday = load_date(temp,4);
 
 			tmp = strtok(NULL, "|");
-			printf("\ntmpCREAT = %s\n",tmp);
+			printf("Creation Date = %s \n",tmp);
 			tempCreat = strdup(tmp);
 			//creationDate = load_date(temp,5);
 
 			tmp = strtok(NULL, "|");
 			location_ip = strdup(tmp);
-			printf("\nlocation_ip = %s\n",tmp);
+			printf("location_ip = %s ",tmp);
 
 			tmp = strtok(NULL, "|");
 			browser = strdup(tmp);
-			printf("\nbrowser = %s\n",tmp);
+			printf("browser = %s\n\n",tmp);
 
 			birthday = load_date(tempB,4);
 			creationDate = load_date(tempCreat,5);
@@ -250,7 +255,36 @@ void load_graph(ptr_graph graph)
 			entry = create_entry(id,((void *)person),person_delete);
 
 			insertNode(graph,entry);
+		}
 
+
+		if ( ( fp = fopen( "dataset/person_knows_person.csv", "r" ) ) == NULL ) //Reading a file
+		{
+			printf( "File could not be opened.\n" );
+		}
+
+		fgets(buf, 1023, fp);   //first line
+
+		while (fgets(buf, 1023, fp) != NULL)
+		{
+			if ((strlen(buf)>0) && (buf[strlen (buf) - 1] == '\n'))
+				buf[strlen (buf) - 1] = '\0';
+
+
+			tmp = strtok(buf, "|");
+			id1 = atoi(tmp);
+			printf("id1 = %d ",id1);
+
+			tmp = strtok(NULL, "|");
+			id2 = atoi(tmp);
+			printf("id2 = %d \n",id2);
+
+			char edge_type[EDGE_TYPE_BUF] = "PersonKnowsPerson";
+			int target_type = PERSON;
+
+			edge = create_edge(edge_type,id2,target_type,0);
+
+			insertEdge(graph,id1,edge);
 		}
 
 	}
@@ -260,6 +294,7 @@ void load_graph(ptr_graph graph)
 ptr_date load_date(char* buf,int i)
 {
 	char *tmpo;
+	char *temp;
 	ptr_date date;
 	size_t year;
 	size_t month;
@@ -269,20 +304,17 @@ ptr_date load_date(char* buf,int i)
 	size_t sec;
 	int j;
 
-	printf("\nInsert Date :\n");
-
 	tmpo = strtok(buf, "-");
-	printf("\nInsert Date 2: %s\n",tmpo);
 	year = atoi(tmpo);
-	printf("year = %zu ",year);
+	//printf("year = %zu ",year);
 
 	tmpo = strtok(NULL, "-");
 	month = atoi(tmpo);
-	printf("month = %zu ",month);
+	//printf("month = %zu ",month);
 
 	tmpo = strtok(NULL, "-");
 	day = atoi(tmpo);
-	printf("day = %zu \n",day);
+	//printf("day = %zu \n",day);
 
 
 
@@ -291,11 +323,11 @@ ptr_date load_date(char* buf,int i)
 		//printf("\nBirthday :\n");
 
 		hour = 0;
-		printf("hour = %zu ",hour);
+		//printf("hour = %zu ",hour);
 		minute = 0;
-		printf("minute = %zu ",minute);
+		//printf("minute = %zu ",minute);
 		sec = 0;
-		printf("sec = %zu \n",sec);
+		//printf("sec = %zu \n",sec);
 	}
 	else if(i == 5)
 	{
@@ -310,25 +342,31 @@ ptr_date load_date(char* buf,int i)
 			if(tmpo[j] != 'T') tmpo[j] = '-';
 			else if(tmpo[j] == 'T')
 			{
-				printf("find T\n");
+				//printf("find T\n");
 				tmpo[j] = '|';
 				break;
 			}
 		}
 
-		printf("inse %s\n",tmpo);
+		temp = strdup(tmpo);
+		//printf("inse %s\n",temp);
 
-		tmpo = strtok(NULL, "|");
+		tmpo = strtok(temp, "|");
+
+		tmpo = strtok(NULL, ":");
+		//printf("inse %s\n",tmpo);
 		hour = atoi(tmpo);
-		printf("hour = %zu ",hour);
+		//printf("hour = %zu ",hour);
 
 		tmpo = strtok(NULL, ":");
 		minute = atoi(tmpo);
-		printf("minute = %zu ",minute);
+		//printf("minute = %zu ",minute);
 
 		tmpo = strtok(NULL, ":");
 		sec = atoi(tmpo);
-		printf("sec = %zu \n",sec);
+		//printf("sec = %zu \n",sec);
+
+		free(temp);
 	}
 
 	date = date_create(year,month,day,hour,minute,sec);

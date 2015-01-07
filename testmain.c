@@ -8,6 +8,7 @@
 #include "dataset_handlers.h"
 #include "hash_table.h"
 #include "database.h"
+#include "linked_list.h"
 
 #define TRUST_GRAPH_REL_PROPERTIES_NUM 1
 
@@ -317,7 +318,18 @@ int main( int argc, char *argv[] )
 
 	testClosenessCentrality(2,3);
 
+
+	///load and test///
+
 	load_graph(g);
+
+	ptr_entry N60 = lookupNode(g,9800);
+	printPersonProperties(N60);
+
+	print_list_of_edges(N60);
+
+
+
 
 }
 

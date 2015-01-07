@@ -50,4 +50,6 @@ void* Entry_take_list(ptr_entry this);
 
 int size_of_friend_list(ptr_entry this);
 
+void print_list_of_edges(ptr_entry node);
+
 #endif /* _GRAPH_ENTRY_ */

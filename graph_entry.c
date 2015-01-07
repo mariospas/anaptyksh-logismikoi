@@ -94,3 +94,22 @@ int size_of_friend_list(ptr_entry this)
 
 	return size;
 }
+
+void print_list_of_edges(ptr_entry node)
+{
+	list_ptr list;
+	LL_iter_ptr iterList;
+	ptr_edge data;
+
+	list = ((list_ptr) Entry_take_list(node));
+
+	iterList = LL_iter_create(list);
+
+	data = LL_iter_data(iterList);
+	printf("Edge ID = %d and Type = %s\n",data->target_id,data->edge_type);
+	while(LL_iter_next(iterList))
+	{
+		data = LL_iter_data(iterList);
+		printf("Edge ID = %d and Type = %s\n",data->target_id,data->edge_type);
+	}
+}
