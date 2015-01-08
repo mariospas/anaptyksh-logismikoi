@@ -57,7 +57,7 @@ void person_delete( void *obj );
 struct post_info {
     int id;
     char *image_file;
-    struct date creation_date;
+    ptr_date creation_date;
     char *location_ip;
     char *browser_used;
     char *language;
@@ -67,7 +67,7 @@ struct post_info {
 
 struct post_info *post_create( int id,
                                char *image_file,
-                               struct date creation_date,
+                               ptr_date creation_date,
                                char *location_ip,
                                char *browser_used,
                                char *language,
@@ -81,12 +81,12 @@ void post_delete( void *obj );
 struct forum_info {
     int id;
     char *title;
-    struct date creation_date;
+    ptr_date creation_date;
 };
 
 struct forum_info *forum_create( int id,
                                  char *title,
-                                 struct date creation_date );
+                                 ptr_date creation_date );
 
 void forum_delete( void *obj );
 
@@ -94,13 +94,13 @@ void forum_delete( void *obj );
 
 struct comment_info {
     int id;
-    struct date creation_date;
+    ptr_date creation_date;
     char *location_ip;
     char *browser_used;
 };
 
 struct comment_info *comment_create( int id,
-                                     struct date creation_date,
+                                     ptr_date creation_date,
                                      char *location_ip,
                                      char *browser_used );
 

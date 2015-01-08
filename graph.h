@@ -7,6 +7,7 @@
 #include "linked_list.h"
 #include "graph_entry.h"
 #include "dataset_handlers.h"
+#include <stdio.h>
 
 #define GRAPH_ID_SIZE 50
 #define HASH_CONSTANT ((sqrt(5) - 1) / 2)
@@ -47,6 +48,10 @@ size_t Graph_size( ptr_graph graph );
 ht_ptr Graph_nodes( ptr_graph graph );
 
 void load_graph(ptr_graph graph);
+
+void load_2ids(ptr_graph graph,char *buf,FILE *fp,char *filename,int targ_type);
+
+void load_2ids_and_extra(ptr_graph graph,char *buf,FILE *fp,char *filename,int targ_type);
 
 ptr_date load_date(char* buf,int i);
 

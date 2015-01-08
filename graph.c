@@ -176,6 +176,10 @@ void load_graph(ptr_graph graph)
 	ptr_entry entry;
 	ptr_edge edge;
 
+	char *edge_type;
+	int target_type;
+	char *filename;
+
 	if (buf == NULL)
 	{
 		printf ("No memory\n");
@@ -197,8 +201,9 @@ void load_graph(ptr_graph graph)
 
 		int id1;
 		int id2;
+		ptr_date extra;
 
-
+		/************** person.cvs *************/
 		if ( ( fp = fopen( "dataset/person.csv", "r" ) ) == NULL ) //Reading a file
 		{
 			printf( "File could not be opened.\n" );
@@ -255,14 +260,24 @@ void load_graph(ptr_graph graph)
 			entry = create_entry(id,((void *)person),person_delete);
 
 			insertNode(graph,entry);
+
+			free(tempB);
+			free(tempCreat);
 		}
 
-
+		/********* person_knows_person.cvs **************/
 		if ( ( fp = fopen( "dataset/person_knows_person.csv", "r" ) ) == NULL ) //Reading a file
 		{
 			printf( "File could not be opened.\n" );
 		}
 
+		filename = strdup("person_knows_person.csv");
+
+		load_2ids(graph,buf,fp,filename,PERSON);
+
+		free(filename);
+
+		/*
 		fgets(buf, 1023, fp);   //first line
 
 		while (fgets(buf, 1023, fp) != NULL)
@@ -279,14 +294,231 @@ void load_graph(ptr_graph graph)
 			id2 = atoi(tmp);
 			printf("id2 = %d \n",id2);
 
-			char edge_type[EDGE_TYPE_BUF] = "PersonKnowsPerson";
-			int target_type = PERSON;
+			edge_type = strdup("person_knows_person.csv");
+			target_type = PERSON;
 
-			edge = create_edge(edge_type,id2,target_type,0);
+			edge = create_edge(edge_type,id2,target_type,0,NULL);
 
 			insertEdge(graph,id1,edge);
+
+			free(edge_type);
+		}
+		*/
+
+		/********* person_hasInterest_tag.csv *************/
+		if ( ( fp = fopen( "dataset/person_hasInterest_tag.csv", "r" ) ) == NULL ) //Reading a file
+		{
+			printf( "File could not be opened.\n" );
 		}
 
+		filename = strdup("person_hasInterest_tag.csv");
+
+		load_2ids(graph,buf,fp,filename,PERSON);
+
+		free(filename);
+
+		/********** person_isLocatedIn_place.csv ***********/
+		if ( ( fp = fopen( "dataset/person_isLocatedIn_place.csv", "r" ) ) == NULL ) //Reading a file
+		{
+			printf( "File could not be opened.\n" );
+		}
+
+		filename = strdup("person_isLocatedIn_place.csv");
+
+		load_2ids(graph,buf,fp,filename,PERSON);
+
+		free(filename);
+
+		/********** person_workAt_organisation.csv ************/
+		if ( ( fp = fopen( "dataset/person_workAt_organisation.csv", "r" ) ) == NULL ) //Reading a file
+		{
+			printf( "File could not be opened.\n" );
+		}
+
+		filename = strdup("person_workAt_organisation.csv");
+
+		load_2ids_and_extra(graph,buf,fp,filename,PERSON);
+
+		free(filename);
+
+
+
+		/*
+		fgets(buf, 1023, fp);   //first line
+
+		while (fgets(buf, 1023, fp) != NULL)
+		{
+			if ((strlen(buf)>0) && (buf[strlen (buf) - 1] == '\n'))
+				buf[strlen (buf) - 1] = '\0';
+
+
+			tmp = strtok(buf, "|");
+			id1 = atoi(tmp);
+			printf(" id1 = %d ",id1);
+
+			tmp = strtok(NULL, "|");
+			id2 = atoi(tmp);
+			printf("id2 = %d ",id2);
+
+			tmp = strtok(NULL, "|");
+			tempB = strdup(tmp);
+			printf("extra = %s \n",tempB);
+
+			extra = load_date(tempB,1);
+
+
+			edge_type = strdup("person_workAt_organisation.csv");
+			target_type = PERSON;
+
+			edge = create_edge(edge_type,id2,target_type,0,((void *) extra));
+
+			insertEdge(graph,id1,edge);
+
+			free(tempB);
+			free(edge_type);
+		}
+		*/
+
+
+		/*********** person_studyAt_organisation.csv ************/
+		if ( ( fp = fopen( "dataset/person_studyAt_organisation.csv", "r" ) ) == NULL ) //Reading a file
+		{
+			printf( "File could not be opened.\n" );
+		}
+
+		filename = strdup("person_studyAt_organisation.csv");
+
+		load_2ids_and_extra(graph,buf,fp,filename,PERSON);
+
+		free(filename);
+
+
+		/********** person_likes_post.csv ************/
+		if ( ( fp = fopen( "dataset/person_likes_post.csv", "r" ) ) == NULL ) //Reading a file
+		{
+			printf( "File could not be opened.\n" );
+		}
+
+
+		fgets(buf, 1023, fp);   //first line
+
+		while (fgets(buf, 1023, fp) != NULL)
+		{
+			if ((strlen(buf)>0) && (buf[strlen (buf) - 1] == '\n'))
+				buf[strlen (buf) - 1] = '\0';
+
+
+			tmp = strtok(buf, "|");
+			id1 = atoi(tmp);
+			printf(" id1 = %d ",id1);
+
+			tmp = strtok(NULL, "|");
+			id2 = atoi(tmp);
+			printf("id2 = %d ",id2);
+
+			tmp = strtok(NULL, "|");
+			tempB = strdup(tmp);
+			printf("extra = %s \n",tempB);
+
+			extra = load_date(tempB,5);
+
+
+			edge_type = strdup("person_likes_post.csv");
+			target_type = PERSON;
+
+			edge = create_edge(edge_type,id2,target_type,0,((void *) extra));
+
+			insertEdge(graph,id1,edge);
+
+			free(tempB);
+			free(edge_type);
+		}
+
+
+
+	}
+}
+
+
+void load_2ids(ptr_graph graph,char *buf,FILE *fp,char *filename,int targ_type)
+{
+	char *tmp;
+	int id1;
+	int id2;
+	char *edge_type;
+	int target_type;
+	ptr_edge edge;
+
+	fgets(buf, 1023, fp);   //first line
+
+	while (fgets(buf, 1023, fp) != NULL)
+	{
+		if ((strlen(buf)>0) && (buf[strlen (buf) - 1] == '\n'))
+			buf[strlen (buf) - 1] = '\0';
+
+
+		tmp = strtok(buf, "|");
+		id1 = atoi(tmp);
+		printf("id1 = %d ",id1);
+
+		tmp = strtok(NULL, "|");
+		id2 = atoi(tmp);
+		printf("id2 = %d \n",id2);
+
+		edge_type = strdup(filename);
+		target_type = targ_type;
+
+		edge = create_edge(edge_type,id2,target_type,0,NULL);
+
+		insertEdge(graph,id1,edge);
+
+		free(edge_type);
+	}
+}
+
+void load_2ids_and_extra(ptr_graph graph,char *buf,FILE *fp,char *filename,int targ_type)
+{
+	char *tmp;
+	int id1;
+	int id2;
+	char *edge_type;
+	int target_type;
+	ptr_edge edge;
+	ptr_date extra;
+	char *tempB;
+
+	fgets(buf, 1023, fp);   //first line
+
+	while (fgets(buf, 1023, fp) != NULL)
+	{
+		if ((strlen(buf)>0) && (buf[strlen (buf) - 1] == '\n'))
+			buf[strlen (buf) - 1] = '\0';
+
+
+		tmp = strtok(buf, "|");
+		id1 = atoi(tmp);
+		printf(" id1 = %d ",id1);
+
+		tmp = strtok(NULL, "|");
+		id2 = atoi(tmp);
+		printf("id2 = %d ",id2);
+
+		tmp = strtok(NULL, "|");
+		tempB = strdup(tmp);
+		printf("extra = %s \n",tempB);
+
+		extra = load_date(tempB,1);
+
+
+		edge_type = strdup("person_workAt_organisation.csv");
+		target_type = PERSON;
+
+		edge = create_edge(edge_type,id2,target_type,0,((void *) extra));
+
+		insertEdge(graph,id1,edge);
+
+		free(tempB);
+		free(edge_type);
 	}
 }
 
@@ -303,6 +535,22 @@ ptr_date load_date(char* buf,int i)
 	size_t minute;
 	size_t sec;
 	int j;
+
+	if(i == 1)
+	{
+		year = atoi(buf);
+		month = 0;
+		day = 0;
+		hour = 0;
+		minute = 0;
+		sec = 0;
+
+		date = date_create(year,month,day,hour,minute,sec);
+
+		return date;
+
+	}
+
 
 	tmpo = strtok(buf, "-");
 	year = atoi(tmpo);

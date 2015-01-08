@@ -3,7 +3,7 @@
 
 #include "linked_list.h"
 
-#define EDGE_TYPE_BUF 20
+#define EDGE_TYPE_BUF 100
 
 typedef void (*deallocator_f)(void *obj);
 
@@ -26,6 +26,7 @@ struct edge
     int target_type;  /* This should be enum type cast */
 	int target_id;
 	int weight;
+	void* extra_data;
 };
 
 typedef struct entry *ptr_entry;
@@ -37,7 +38,7 @@ ptr_entry create_entry(int id, void* properties, deallocator_f destroy_propertie
 
 void destroy_entry(void *entry);
 
-ptr_edge create_edge(char edge_type[EDGE_TYPE_BUF], int target_id, int target_type, int weight );
+ptr_edge create_edge(char edge_type[EDGE_TYPE_BUF], int target_id, int target_type, int weight, void *extra );
 
 void destroy_edge(void *edge);
 

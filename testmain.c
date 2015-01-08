@@ -323,7 +323,7 @@ int main( int argc, char *argv[] )
 
 	load_graph(g);
 
-	ptr_entry N60 = lookupNode(g,9800);
+	ptr_entry N60 = lookupNode(g,6906);  //9800
 	printPersonProperties(N60);
 
 	print_list_of_edges(N60);
@@ -359,7 +359,7 @@ ptr_edge setEdgeProperties(int endNodeID, char* type, int weight) {
     int target_type = PERSON;
 
     /*create an edge */
-    ptr_edge e = create_edge(edge_type,target_id,target_type,weight);
+    ptr_edge e = create_edge(edge_type,target_id,target_type,weight,NULL);
 
     return e;
 }
@@ -403,16 +403,16 @@ void testBetweennessCentrality(int bucketsNumber, int bucketSize) {
 
 
     /* Create edges and set properties */
-	ptr_edge e1Betw = create_edge(edge_type,2,target_type,10);
-	ptr_edge e2Betw = create_edge(edge_type, 1, target_type,10);
-    ptr_edge e3Betw = create_edge(edge_type, 3, target_type,10);
-    ptr_edge e4Betw = create_edge(edge_type, 4, target_type,10);
-    ptr_edge e5Betw = create_edge(edge_type, 2, target_type,10);
-    ptr_edge e6Betw = create_edge(edge_type, 5, target_type,10);
-    ptr_edge e7Betw = create_edge(edge_type, 2, target_type,10);
-    ptr_edge e8Betw = create_edge(edge_type, 5, target_type,10);
-    ptr_edge e9Betw = create_edge(edge_type, 3, target_type,10);
-    ptr_edge e10Betw = create_edge(edge_type, 4, target_type,10);
+	ptr_edge e1Betw = create_edge(edge_type,2,target_type,10,NULL);
+	ptr_edge e2Betw = create_edge(edge_type, 1, target_type,10,NULL);
+    ptr_edge e3Betw = create_edge(edge_type, 3, target_type,10,NULL);
+    ptr_edge e4Betw = create_edge(edge_type, 4, target_type,10,NULL);
+    ptr_edge e5Betw = create_edge(edge_type, 2, target_type,10,NULL);
+    ptr_edge e6Betw = create_edge(edge_type, 5, target_type,10,NULL);
+    ptr_edge e7Betw = create_edge(edge_type, 2, target_type,10,NULL);
+    ptr_edge e8Betw = create_edge(edge_type, 5, target_type,10,NULL);
+    ptr_edge e9Betw = create_edge(edge_type, 3, target_type,10,NULL);
+    ptr_edge e10Betw = create_edge(edge_type, 4, target_type,10,NULL);
 
     /* Insert edges in graph */
     insertEdge(gBetw, 1, e1Betw);
@@ -469,23 +469,23 @@ void testClosenessCentrality(int bucketsNumber, int bucketSize) {
 
 
     /* Create edges and set properties */
-    ptr_edge e1Clos = create_edge(edge_type,2,target_type,10);
-	ptr_edge e2Clos = create_edge(edge_type, 3, target_type,10);
-	ptr_edge e3Clos = create_edge(edge_type, 1, target_type,10);
-	ptr_edge e4Clos = create_edge(edge_type, 3, target_type,10);
-	ptr_edge e5Clos = create_edge(edge_type, 1, target_type,10);
-	ptr_edge e6Clos = create_edge(edge_type, 2, target_type,10);
-	ptr_edge e7Clos = create_edge(edge_type, 4, target_type,10);
-	ptr_edge e8Clos = create_edge(edge_type, 3, target_type,10);
-	ptr_edge e9Clos = create_edge(edge_type, 5, target_type,10);
-	ptr_edge e10Clos = create_edge(edge_type, 4, target_type,10);
+    ptr_edge e1Clos = create_edge(edge_type,2,target_type,10,NULL);
+	ptr_edge e2Clos = create_edge(edge_type, 3, target_type,10,NULL);
+	ptr_edge e3Clos = create_edge(edge_type, 1, target_type,10,NULL);
+	ptr_edge e4Clos = create_edge(edge_type, 3, target_type,10,NULL);
+	ptr_edge e5Clos = create_edge(edge_type, 1, target_type,10,NULL);
+	ptr_edge e6Clos = create_edge(edge_type, 2, target_type,10,NULL);
+	ptr_edge e7Clos = create_edge(edge_type, 4, target_type,10,NULL);
+	ptr_edge e8Clos = create_edge(edge_type, 3, target_type,10,NULL);
+	ptr_edge e9Clos = create_edge(edge_type, 5, target_type,10,NULL);
+	ptr_edge e10Clos = create_edge(edge_type, 4, target_type,10,NULL);
 
-	ptr_edge e11Clos = create_edge(edge_type,6,target_type,10);
-	ptr_edge e12Clos = create_edge(edge_type, 7, target_type,10);
-	ptr_edge e13Clos = create_edge(edge_type, 5, target_type,10);
-	ptr_edge e14Clos = create_edge(edge_type, 7, target_type,10);
-	ptr_edge e15Clos = create_edge(edge_type, 5, target_type,10);
-	ptr_edge e16Clos = create_edge(edge_type, 6, target_type,10);
+	ptr_edge e11Clos = create_edge(edge_type,6,target_type,10,NULL);
+	ptr_edge e12Clos = create_edge(edge_type, 7, target_type,10,NULL);
+	ptr_edge e13Clos = create_edge(edge_type, 5, target_type,10,NULL);
+	ptr_edge e14Clos = create_edge(edge_type, 7, target_type,10,NULL);
+	ptr_edge e15Clos = create_edge(edge_type, 5, target_type,10,NULL);
+	ptr_edge e16Clos = create_edge(edge_type, 6, target_type,10,NULL);
 
 
 

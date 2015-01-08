@@ -30,7 +30,7 @@ void destroy_entry(void *entry )
 	free(entry1);
 }
 
-ptr_edge create_edge(char edge_type[EDGE_TYPE_BUF], int target_id, int target_type, int weight )
+ptr_edge create_edge(char edge_type[EDGE_TYPE_BUF], int target_id, int target_type, int weight, void *extra  )
 {
 	ptr_edge new_edge = malloc(sizeof(struct edge));
 
@@ -38,6 +38,7 @@ ptr_edge create_edge(char edge_type[EDGE_TYPE_BUF], int target_id, int target_ty
 	new_edge->target_id = target_id;
 	new_edge->target_type = target_type;
 	new_edge->weight = 0;
+	new_edge->extra_data = extra;
 
 	return new_edge;
 }
@@ -45,6 +46,19 @@ ptr_edge create_edge(char edge_type[EDGE_TYPE_BUF], int target_id, int target_ty
 
 void destroy_edge(void *edge)
 {
+	ptr_edge data = ((ptr_edge) edge);
+	if(strcmp(data->edge_type,"person_workAt_organisation.csv") == 0)
+	{
+		free(data->extra_data);
+	}
+	else if(strcmp(data->edge_type,"person_studyAt_organisation.csv") == 0)
+	{
+		free(data->extra_data);
+	}
+	else if(strcmp(data->edge_type,"person_likes_post.csv") == 0)
+	{
+		free(data->extra_data);
+	}
 	free(edge);
 }
 

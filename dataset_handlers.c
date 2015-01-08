@@ -65,7 +65,7 @@ void person_delete( void *obj )
 
 struct post_info *post_create( int id,
                                char *image_file,
-                               struct date creation_date,
+                               ptr_date creation_date,
                                char *location_ip,
                                char *browser_used,
                                char *language,
@@ -93,6 +93,7 @@ void post_delete( void *obj )
     free( obj1->browser_used );
     free( obj1->language );
     free( obj1->content );
+    free( obj1->creation_date);
     free( obj1 );
 }
 
@@ -100,7 +101,7 @@ void post_delete( void *obj )
 
 struct forum_info *forum_create( int id,
                                  char *title,
-                                 struct date creation_date )
+                                 ptr_date creation_date )
 {
     struct forum_info *retval = malloc( sizeof(struct forum_info) );
     retval->id = id;
@@ -116,13 +117,14 @@ void forum_delete( void *obj )
     assert( obj != NULL );
 
     free( obj1->title );
+    free( obj1->creation_date );
     free( obj1 );
 }
 
 /************************* Comment **************************/
 
 struct comment_info *comment_create( int id,
-                                     struct date creation_date,
+                                     ptr_date creation_date,
                                      char *location_ip,
                                      char *browser_used )
 {
@@ -142,6 +144,7 @@ void comment_delete( void *obj )
 
     free( obj1->location_ip );
     free( obj1->browser_used );
+    free( obj1->creation_date );
     free( obj1 );
 }
 
