@@ -23,6 +23,16 @@ ptr_date date_create( size_t year,
     return retval;
 }
 
+void get_date(ptr_date date,size_t* year,size_t* month,size_t* day,size_t* hour,size_t* minute,size_t* second)
+{
+	*year = date->year;
+	*month = date->month;
+	*day = date->day;
+	*hour = date->hour;
+	*minute = date->minute;
+	*second = date->second;
+}
+
 /************************ Person **************************/
 
 struct person_info *person_create( int id,

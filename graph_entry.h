@@ -51,6 +51,14 @@ void* Entry_take_list(ptr_entry this);
 
 int size_of_friend_list(ptr_entry this);
 
+int location_of_entry(ptr_entry node);
+
+int last_work_or_study_of_entry(ptr_entry node,char *target_type);
+
+list_ptr interest_list(ptr_entry node);
+
+int common_interests_two_entries(ptr_entry node1,ptr_entry node2);
+
 void print_list_of_edges(ptr_entry node);
 
 #endif /* _GRAPH_ENTRY_ */

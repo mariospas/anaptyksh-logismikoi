@@ -23,6 +23,8 @@ ptr_date date_create( size_t year,
                          size_t minute,
                          size_t second );
 
+void get_date(ptr_date date,size_t* year,size_t* month,size_t* day,size_t* hour,size_t* minute,size_t* second);
+
 /************************ Person **************************/
 
 typedef enum {

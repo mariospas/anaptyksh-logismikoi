@@ -326,9 +326,26 @@ int main( int argc, char *argv[] )
 	ptr_entry N60 = lookupNode(g,6906);  //9800
 	printPersonProperties(N60);
 
+	ptr_entry N70 = lookupNode(g,1631);  //9800
+	printPersonProperties(N70);
+
 	print_list_of_edges(N60);
 
+	int loc = location_of_entry(N60);
+	printf("\nLocation id = %d\n",loc);
 
+	int last_work = last_work_or_study_of_entry(N60,"person_workAt_organisation.csv");
+	printf("\nLast Work id = %d\n",last_work);
+
+	int last_study = last_work_or_study_of_entry(N60,"person_studyAt_organisation.csv");
+	printf("\nLast Study id = %d\n",last_study);
+
+	int com_int = common_interests_two_entries(N60,N70);
+	printf("\nCommon Interest k = %d\n",com_int);
+
+	//uparxei problhma sthn reachNode afou to gemiso
+	//int reach8 = reachNode1(g,6906,4814);
+	//printf("reach8 = %d\n\n",reach8);
 
 
 }
