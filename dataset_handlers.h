@@ -37,6 +37,7 @@ struct person_info {
     char *first_name;
     char *surname;
     gender_t gender;
+    ptr_date birthday;
     ptr_date creation_date;
     char *location_ip;
     char *browser_used;
@@ -48,6 +49,7 @@ struct person_info *person_create( int id,
                                    char *first_name,
                                    char *surname,
                                    gender_t gender,
+                                   ptr_date birthday,
                                    ptr_date creation_date,
                                    char *location_ip,
                                    char *browser_used );

@@ -6,6 +6,7 @@
 #include "graph_entry.h"
 #include "linked_list.h"
 #include "dataset_handlers.h"
+#include <math.h>
 
 ptr_entry create_entry(int id,void* properties, deallocator_f properties_destroy )      //create node
 {
@@ -194,7 +195,7 @@ int last_work_or_study_of_entry(ptr_entry node,char *target_type)
 
 
 
-list_ptr interest_list(ptr_entry node)
+list_ptr type_list(ptr_entry node,char *type)
 {
 	list_ptr list;
 	LL_iter_ptr iterList;
@@ -209,18 +210,20 @@ list_ptr interest_list(ptr_entry node)
 	new_list = LL_create(match_edge);
 
 	data = LL_iter_data(iterList);
-	if(strcmp(data->edge_type,"person_hasInterest_tag.csv") == 0)
+	if(strcmp(data->edge_type,type) == 0)
 	{
 		ptr_edge new = create_edge(data->edge_type,data->target_id,data->target_type,data->weight,data->extra_data);
+		//printf("NEWLIST Edge_type = %s and id = %d\n",new->edge_type,new->target_id);
 		LL_insert(new_list,((void *)new));
 	}
 
 	while(LL_iter_next(iterList))
 	{
 		data = LL_iter_data(iterList);
-		if(strcmp(data->edge_type,"person_hasInterest_tag.csv") == 0)
+		if(strcmp(data->edge_type,type) == 0)
 		{
 			ptr_edge new = create_edge(data->edge_type,data->target_id,data->target_type,data->weight,data->extra_data);
+			//printf("NEWLIST Edge_type = %s and id = %d\n",new->edge_type,new->target_id);
 			LL_insert(new_list,((void *)new));
 		}
 	}
@@ -235,24 +238,22 @@ int common_interests_two_entries(ptr_entry node1,ptr_entry node2)
 {
 	int com_int = 0;
 
-	list_ptr list1 = interest_list(node1);
-	list_ptr list2 = interest_list(node2);
+	list_ptr list1 = type_list(node1,"person_hasInterest_tag.csv");
+	//print_list(list1);
+	list_ptr list2 = type_list(node2,"person_hasInterest_tag.csv");
+	//print_list(list2);
 	LL_iter_ptr iterList1;
 	LL_iter_ptr iterList2;
 	ptr_edge data1;
 	ptr_edge data2;
 
 
-	printf("insert in common00\n");
-	//list1 = ((list_ptr) Entry_take_list(node1));
 	iterList1 = LL_iter_create(list1);
 
-	//list2 = ((list_ptr) Entry_take_list(node2));
 	iterList2 = LL_iter_create(list2);
 
-	printf("insert in common000\n");
-
 	data1 = LL_iter_data(iterList1);
+	data2 = LL_iter_data(iterList2);
 	if(strcmp(data1->edge_type,"person_hasInterest_tag.csv") == 0)
 	{
 		if(strcmp(data2->edge_type,"person_hasInterest_tag.csv") == 0)
@@ -273,23 +274,19 @@ int common_interests_two_entries(ptr_entry node1,ptr_entry node2)
 
 	while(LL_iter_next(iterList1))
 	{
-		printf("insert in common1\n");
 		data1 = LL_iter_data(iterList1);
+		data2 = LL_iter_data(iterList2);
 		if(strcmp(data1->edge_type,"person_hasInterest_tag.csv") == 0)
 		{
-			printf("insert in common2\n");
 			if(strcmp(data2->edge_type,"person_hasInterest_tag.csv") == 0)
 			{
-				printf("insert in common3\n");
 				if(data2->target_id == data1->target_id) com_int++;
 			}
 			while(LL_iter_next(iterList2))
 			{
-				printf("insert in common in loop2\n");
 				data2 = LL_iter_data(iterList2);
 				if(strcmp(data2->edge_type,"person_hasInterest_tag.csv") == 0)
 				{
-					printf("insert in common4\n");
 					if(data2->target_id == data1->target_id) com_int++;
 				}
 			}
@@ -299,7 +296,6 @@ int common_interests_two_entries(ptr_entry node1,ptr_entry node2)
 
 	}
 
-	printf("insert in common5\n");
 
 	LL_iter_destroy(iterList1);
 	LL_iter_destroy(iterList2);
@@ -311,6 +307,51 @@ int common_interests_two_entries(ptr_entry node1,ptr_entry node2)
 
 }
 
+
+int generation_gap(ptr_entry node1,ptr_entry node2)
+{
+	int gap = -1;
+
+	int year1;
+	size_t month1;
+	size_t day1;
+	size_t hour1;
+	size_t minute1;
+	size_t second1;
+
+	int year2;
+	size_t month2;
+	size_t day2;
+	size_t hour2;
+	size_t minute2;
+	size_t second2;
+
+	ptr_person_info p_info1 = ((ptr_person_info)(node1->properties));
+	ptr_date date1 = p_info1->birthday;
+
+	ptr_person_info p_info2 = ((ptr_person_info)(node2->properties));
+	ptr_date date2 = p_info2->birthday;
+
+	get_date(date1,((size_t *) &year1),&month1,&day1,&hour1,&minute1,&second1);
+	get_date(date2,((size_t *) &year2),&month2,&day2,&hour2,&minute2,&second2);
+
+	gap = year1 - year2;
+	gap = abs(gap);
+
+	return gap;
+
+}
+
+int same_gender(ptr_entry node1,ptr_entry node2)
+{
+	ptr_person_info p_info1 = ((ptr_person_info)(node1->properties));
+	gender_t gender1 = p_info1->gender;
+
+	ptr_person_info p_info2 = ((ptr_person_info)(node2->properties));
+	gender_t gender2 = p_info2->gender;
+
+	return (gender1 == gender2);
+}
 
 
 void print_list_of_edges(ptr_entry node)
@@ -329,6 +370,24 @@ void print_list_of_edges(ptr_entry node)
 	{
 		data = LL_iter_data(iterList);
 		printf("Edge ID = %d and Type = %s\n",data->target_id,data->edge_type);
+	}
+
+	LL_iter_destroy(iterList);
+}
+
+void print_list(list_ptr list)
+{
+	LL_iter_ptr iterList;
+	ptr_edge data;
+
+	iterList = LL_iter_create(list);
+
+	data = LL_iter_data(iterList);
+	printf("*****Edge ID = %d and Type = %s\n",data->target_id,data->edge_type);
+	while(LL_iter_next(iterList))
+	{
+		data = LL_iter_data(iterList);
+		printf("*****Edge ID = %d and Type = %s\n",data->target_id,data->edge_type);
 	}
 
 	LL_iter_destroy(iterList);

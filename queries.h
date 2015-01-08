@@ -7,8 +7,8 @@ typedef struct Matches *ptr_matches;
 
 typedef struct array_matches *ptr_array_matches;
 
-#if 0
-ptr_array_matches matchSuggestion(ptr_entry n, int k, int h, int x, int limit, ptr_entity entity);
-#endif
+
+ptr_array_matches matchSuggestion(ptr_entry node, int commonInterest, int hops, int ageDiff, int limit, ptr_graph graph);
+
 
 #endif /* _QUERIES_ */

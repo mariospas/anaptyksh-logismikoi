@@ -314,9 +314,9 @@ int main( int argc, char *argv[] )
 	int ok = density(g,&denc);
 	printf("\nDensity = %f\n",denc);
 
-	testBetweennessCentrality(2,3);
+	//testBetweennessCentrality(2,3);
 
-	testClosenessCentrality(2,3);
+	//testClosenessCentrality(2,3);
 
 
 	///load and test///
@@ -343,7 +343,15 @@ int main( int argc, char *argv[] )
 	int com_int = common_interests_two_entries(N60,N70);
 	printf("\nCommon Interest k = %d\n",com_int);
 
-	//uparxei problhma sthn reachNode afou to gemiso
+	int gap = generation_gap(N60,N70);
+	printf("\nGap Years = %d\n",gap);
+
+	int same_sex = same_gender(N60,N70);
+	printf("\nSame Gender ? : ");
+	if(same_sex) printf("Yes !!!\n");
+	else printf("No !!!\n");
+
+	//prepei na beltiothei gt einai argh
 	//int reach8 = reachNode1(g,6906,4814);
 	//printf("reach8 = %d\n\n",reach8);
 
@@ -359,7 +367,7 @@ ptr_entry setPersonProperties(int id, char* name, char* surname, int age) {
 	char location_ip[30] = "192.168.1.1";
 	char browser[20] = "chrome";
 
-    ptr_person_info prop = person_create(id,name,surname,gender,creation_date,location_ip,browser);
+    ptr_person_info prop = person_create(id,name,surname,gender,creation_date,creation_date,location_ip,browser);
 
     /*create ptr_entry*/
     ptr_entry n = create_entry(id,((void*) prop),person_delete);
@@ -371,7 +379,7 @@ ptr_entry setPersonProperties(int id, char* name, char* surname, int age) {
 ptr_edge setEdgeProperties(int endNodeID, char* type, int weight) {
 
     /*create edge properties*/
-    char edge_type[EDGE_TYPE_BUF] = "PersonKnowsPerson";
+    char edge_type[EDGE_TYPE_BUF] = "person_knows_person.csv";
     int target_id = endNodeID;
     int target_type = PERSON;
 
@@ -413,7 +421,7 @@ void testBetweennessCentrality(int bucketsNumber, int bucketSize) {
     insertNode(gBetw,n5Betw);
 
 
-    char edge_type[EDGE_TYPE_BUF] = "PersonKnowsPerson";
+    char edge_type[EDGE_TYPE_BUF] = "person_knows_person.csv";
 	int target_type = PERSON;
 
 	/*create an edge */
@@ -481,7 +489,7 @@ void testClosenessCentrality(int bucketsNumber, int bucketSize) {
     insertNode( gClos, n6Clos);
     insertNode( gClos, n7Clos);
 
-    char edge_type[EDGE_TYPE_BUF] = "PersonKnowsPerson";
+    char edge_type[EDGE_TYPE_BUF] = "person_knows_person.csv";
 	int target_type = PERSON;
 
 

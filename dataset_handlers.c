@@ -39,6 +39,7 @@ struct person_info *person_create( int id,
                                    char *first_name,
                                    char *surname,
                                    gender_t gender,
+                                   ptr_date birthday,
                                    ptr_date creation_date,
                                    char *location_ip,
                                    char *browser_used )
@@ -48,6 +49,7 @@ struct person_info *person_create( int id,
     retval->first_name = strdup( first_name );
     retval->surname = strdup( surname );
     retval->gender = gender;
+    retval->birthday = birthday;
     retval->creation_date = creation_date;
     retval->location_ip = strdup( location_ip );
     retval->browser_used = strdup( browser_used );
@@ -65,6 +67,7 @@ void person_delete( void *obj )
     free( obj1->location_ip );
     free( obj1->browser_used );
     free( obj1->creation_date );
+    free( obj1->birthday );
     free( obj1 );
 }
 

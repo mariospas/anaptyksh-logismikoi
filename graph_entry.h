@@ -55,10 +55,16 @@ int location_of_entry(ptr_entry node);
 
 int last_work_or_study_of_entry(ptr_entry node,char *target_type);
 
-list_ptr interest_list(ptr_entry node);
+list_ptr type_list(ptr_entry node,char *type);
 
 int common_interests_two_entries(ptr_entry node1,ptr_entry node2);
 
+int generation_gap(ptr_entry node1,ptr_entry node2);
+
+int same_gender(ptr_entry node1,ptr_entry node2);
+
 void print_list_of_edges(ptr_entry node);
+
+void print_list(list_ptr list);
 
 #endif /* _GRAPH_ENTRY_ */

@@ -104,12 +104,14 @@ int rec_search( ptr_graph this, int start, int end, int level )
     list_ptr edges;
     ptr_edge edge;
     LL_iter_ptr edge_it;
+    ptr_entry entry;
     if ( level == 0 )
     {
         return start == end;
     }
 
-    edges = ( (ptr_entry) HT_search( this->table, start ) )->edges;
+    entry = ( (ptr_entry) HT_search( this->table, start ) );
+    edges = type_list(entry,"person_knows_person.csv");       //( (ptr_entry) HT_search( this->table, start ) )->edges;
 
     list_size = LL_size(edges);
     if(list_size == 0) return result;
@@ -122,7 +124,8 @@ int rec_search( ptr_graph this, int start, int end, int level )
         {
             edge = LL_iter_data( edge_it );
             if ( edge->target_type == this->id
-              && rec_search( this, edge->target_id, end, level - 1 ) != 0 )
+              && rec_search( this, edge->target_id, end, level - 1 ) != 0
+              && strcmp(edge->edge_type,"person_knows_person.csv") == 0)
             {
                 result = 1;
                 break;
@@ -132,6 +135,7 @@ int rec_search( ptr_graph this, int start, int end, int level )
         LL_iter_reset( edge_it );
     }
     LL_iter_destroy( edge_it );
+    LL_destroy(edges,destroy_edge);
     return result;
 }
 
@@ -255,7 +259,7 @@ void load_graph(ptr_graph graph)
 			birthday = load_date(tempB,4);
 			creationDate = load_date(tempCreat,5);
 
-			ptr_person_info person = person_create(id,firstname,lastname,gender,creationDate,location_ip,browser);
+			ptr_person_info person = person_create(id,firstname,lastname,gender,birthday,creationDate,location_ip,browser);
 
 			entry = create_entry(id,((void *)person),person_delete);
 
@@ -276,34 +280,6 @@ void load_graph(ptr_graph graph)
 		load_2ids(graph,buf,fp,filename,PERSON);
 
 		free(filename);
-
-		/*
-		fgets(buf, 1023, fp);   //first line
-
-		while (fgets(buf, 1023, fp) != NULL)
-		{
-			if ((strlen(buf)>0) && (buf[strlen (buf) - 1] == '\n'))
-				buf[strlen (buf) - 1] = '\0';
-
-
-			tmp = strtok(buf, "|");
-			id1 = atoi(tmp);
-			printf("id1 = %d ",id1);
-
-			tmp = strtok(NULL, "|");
-			id2 = atoi(tmp);
-			printf("id2 = %d \n",id2);
-
-			edge_type = strdup("person_knows_person.csv");
-			target_type = PERSON;
-
-			edge = create_edge(edge_type,id2,target_type,0,NULL);
-
-			insertEdge(graph,id1,edge);
-
-			free(edge_type);
-		}
-		*/
 
 		/********* person_hasInterest_tag.csv *************/
 		if ( ( fp = fopen( "dataset/person_hasInterest_tag.csv", "r" ) ) == NULL ) //Reading a file
@@ -341,43 +317,6 @@ void load_graph(ptr_graph graph)
 
 		free(filename);
 
-
-
-		/*
-		fgets(buf, 1023, fp);   //first line
-
-		while (fgets(buf, 1023, fp) != NULL)
-		{
-			if ((strlen(buf)>0) && (buf[strlen (buf) - 1] == '\n'))
-				buf[strlen (buf) - 1] = '\0';
-
-
-			tmp = strtok(buf, "|");
-			id1 = atoi(tmp);
-			printf(" id1 = %d ",id1);
-
-			tmp = strtok(NULL, "|");
-			id2 = atoi(tmp);
-			printf("id2 = %d ",id2);
-
-			tmp = strtok(NULL, "|");
-			tempB = strdup(tmp);
-			printf("extra = %s \n",tempB);
-
-			extra = load_date(tempB,1);
-
-
-			edge_type = strdup("person_workAt_organisation.csv");
-			target_type = PERSON;
-
-			edge = create_edge(edge_type,id2,target_type,0,((void *) extra));
-
-			insertEdge(graph,id1,edge);
-
-			free(tempB);
-			free(edge_type);
-		}
-		*/
 
 
 		/*********** person_studyAt_organisation.csv ************/
