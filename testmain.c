@@ -9,6 +9,7 @@
 #include "hash_table.h"
 #include "database.h"
 #include "linked_list.h"
+#include "queries.h"
 
 #define TRUST_GRAPH_REL_PROPERTIES_NUM 1
 
@@ -100,6 +101,7 @@ int main( int argc, char *argv[] )
 	ptr_graph g;
 	g = createGraph(PERSON,m,c);
 
+#if 0
 	printf("Set Person Properties\n");
 	/*create node and set node properties*/
 	ptr_entry n1 = setPersonProperties(5, "lonely", "loner", 29);
@@ -296,6 +298,7 @@ int main( int argc, char *argv[] )
 
 	//degreeDistribution(g);
 
+	/*
 	int diam = diameter(g);
 	printf("\nDIAMETER = %d\n",diam);
 
@@ -313,12 +316,13 @@ int main( int argc, char *argv[] )
 	double denc = 1.0;
 	int ok = density(g,&denc);
 	printf("\nDensity = %f\n",denc);
+	*/
 
 	//testBetweennessCentrality(2,3);
 
 	//testClosenessCentrality(2,3);
 
-
+#endif
 	///load and test///
 
 	load_graph(g);
@@ -354,6 +358,14 @@ int main( int argc, char *argv[] )
 	//prepei na beltiothei gt einai argh
 	//int reach8 = reachNode1(g,6906,4814);
 	//printf("reach8 = %d\n\n",reach8);
+
+	ptr_entry N80 = lookupNode(g,7107);
+
+	ptr_array_matches array = matchSuggestion(N80,1,400,40,5,g);
+	printf("finish matchSugg\n");
+	int id_match = get_match(0,array);
+	printf("\nMatch id = %d\n",id_match);
+	delete_array_matches(array);
 
 
 }

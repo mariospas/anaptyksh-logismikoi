@@ -247,6 +247,11 @@ int common_interests_two_entries(ptr_entry node1,ptr_entry node2)
 	ptr_edge data1;
 	ptr_edge data2;
 
+	if(LL_size(list1) == 0 || LL_size(list2) == 0)
+	{
+		return com_int;
+	}
+
 
 	iterList1 = LL_iter_create(list1);
 
