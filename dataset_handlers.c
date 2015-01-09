@@ -5,22 +5,32 @@
 
 /********************** Date *****************************/
 
-struct date date_create( size_t year,
+ptr_date date_create( size_t year,
                          size_t month,
                          size_t day,
                          size_t hour,
                          size_t minute,
                          size_t second )
 {
-    struct date retval;
-    retval.year = year;
-    retval.month = month;
-    retval.day = day;
-    retval.hour = hour;
-    retval.minute = minute;
-    retval.second = second;
+	ptr_date retval = malloc(sizeof(struct date));
+    retval->year = year;
+    retval->month = month;
+    retval->day = day;
+    retval->hour = hour;
+    retval->minute = minute;
+    retval->second = second;
 
     return retval;
+}
+
+void get_date(ptr_date date,size_t* year,size_t* month,size_t* day,size_t* hour,size_t* minute,size_t* second)
+{
+	*year = date->year;
+	*month = date->month;
+	*day = date->day;
+	*hour = date->hour;
+	*minute = date->minute;
+	*second = date->second;
 }
 
 /************************ Person **************************/
@@ -29,7 +39,8 @@ struct person_info *person_create( int id,
                                    char *first_name,
                                    char *surname,
                                    gender_t gender,
-                                   struct date creation_date,
+                                   ptr_date birthday,
+                                   ptr_date creation_date,
                                    char *location_ip,
                                    char *browser_used )
 {
@@ -38,6 +49,7 @@ struct person_info *person_create( int id,
     retval->first_name = strdup( first_name );
     retval->surname = strdup( surname );
     retval->gender = gender;
+    retval->birthday = birthday;
     retval->creation_date = creation_date;
     retval->location_ip = strdup( location_ip );
     retval->browser_used = strdup( browser_used );
@@ -54,14 +66,19 @@ void person_delete( void *obj )
     free( obj1->surname );
     free( obj1->location_ip );
     free( obj1->browser_used );
+    free( obj1->creation_date );
+    free( obj1->birthday );
     free( obj1 );
 }
+
+
+
 
 /************************* Post **************************/
 
 struct post_info *post_create( int id,
                                char *image_file,
-                               struct date creation_date,
+                               ptr_date creation_date,
                                char *location_ip,
                                char *browser_used,
                                char *language,
@@ -89,6 +106,7 @@ void post_delete( void *obj )
     free( obj1->browser_used );
     free( obj1->language );
     free( obj1->content );
+    free( obj1->creation_date);
     free( obj1 );
 }
 
@@ -96,7 +114,7 @@ void post_delete( void *obj )
 
 struct forum_info *forum_create( int id,
                                  char *title,
-                                 struct date creation_date )
+                                 ptr_date creation_date )
 {
     struct forum_info *retval = malloc( sizeof(struct forum_info) );
     retval->id = id;
@@ -112,13 +130,14 @@ void forum_delete( void *obj )
     assert( obj != NULL );
 
     free( obj1->title );
+    free( obj1->creation_date );
     free( obj1 );
 }
 
 /************************* Comment **************************/
 
 struct comment_info *comment_create( int id,
-                                     struct date creation_date,
+                                     ptr_date creation_date,
                                      char *location_ip,
                                      char *browser_used )
 {
@@ -138,6 +157,7 @@ void comment_delete( void *obj )
 
     free( obj1->location_ip );
     free( obj1->browser_used );
+    free( obj1->creation_date );
     free( obj1 );
 }
 

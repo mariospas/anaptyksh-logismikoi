@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 
 #include "graph.h"
 #include "graph_entry.h"
@@ -17,6 +18,8 @@ typedef struct katanomh *ptr_katanomh;
 int match_friend( const void *a, const void *key);
 
 ptr_katanomh create_data(int arithmos_filon);
+
+void destroy_data(void* data);
 
 void manage_list(list_ptr list,int arithmos_filon);
 
@@ -32,9 +35,15 @@ int diameter(ptr_graph g);
 
 void sum_from_result(Result_ptr result,int size,double *sum);
 
-double averagePathLength(ptr_graph g);
+int averagePathLength(ptr_graph g,double *apotel);
 
 /********** COHERENT GRAPHS ***********/
+
+typedef struct dataCC *dataCC_ptr;
+
+dataCC_ptr create_dataCC(int id);
+
+void destroy_dataCC(void* data);
 
 int match_id( const void *a, const void *key);
 
@@ -46,7 +55,7 @@ int numberOfCCs(ptr_graph g);
 
 int maxCC(ptr_graph g);
 
-double density(ptr_graph g);
+double density(ptr_graph g,double *d);
 
 /********** CENTRALITY *************/
 

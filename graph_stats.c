@@ -36,6 +36,11 @@ ptr_katanomh create_data(int arithmos_filon)
 	return node;
 }
 
+void destroy_data(void* data)
+{
+	free(data);
+}
+
 void manage_list(list_ptr list,int arithmos_filon)
 {
 	void* data;
@@ -94,6 +99,7 @@ void degreeDistribution(ptr_graph g)
 
 		LL_iter_destroy(iterList);
 		HT_iter_destroy(iter);
+		LL_destroy(list,destroy_data);
 
 		/*********GNUPLOT******************/
 
@@ -155,10 +161,12 @@ int diameter(ptr_graph g)
 	if(g != NULL)
 	{
 		iter = HT_iter_create(nodes);
+		printf("In Diameter\n");
 
 		for(i=0;i<graph_size;i++)
 		{
 			data = ((ptr_entry)HT_iter_data(iter));
+			printf("Check for id = %d\n",data->id);
 			result = reachNodeN(g,data->id);
 			return_maxN(result,graph_size,&max);
 
@@ -190,11 +198,12 @@ void sum_from_result(Result_ptr result,int size,double *sum)
 			continue;
 		}
 		*sum = *sum + distance;
+		//printf("sum = %f\n",*sum);
 	}
 }
 
 
-double averagePathLength(ptr_graph g)
+int averagePathLength(ptr_graph g, double *apotel)
 {
 
 	int i, graph_size = Graph_size(g);
@@ -202,38 +211,60 @@ double averagePathLength(ptr_graph g)
     ht_ptr nodes = Graph_nodes(g);
 	ptr_entry data;
 	Result_ptr result;
-	double apotel = 0.0;
+	//double apotel = 0.0;
 
 	if(g != NULL)
 	{
 		iter = HT_iter_create(nodes);
+		printf("In averagePathLenght\n");
 
 		for(i=0;i<graph_size;i++)
 		{
 			data = ((ptr_entry)HT_iter_data(iter));
+			printf("Check for id = %d\n",data->id);
 			result = reachNodeN(g,data->id);
-			sum_from_result(result,graph_size,&apotel);
+			sum_from_result(result,graph_size,apotel);
 
 			HT_iter_next(iter);
 		}
 
 		HT_iter_destroy(iter);
 
-		apotel = (apotel*2)/((graph_size)*((graph_size)-1));
+		*apotel = ((*apotel)*2)/((graph_size)*((graph_size)-1));
+
+		//printf("apotel = %f\n",*apotel);
 
 	}
 
-	return apotel;
+	return 1;
 
 }
 
 
 //#########plithos sunektikon grafimaton######
 
+struct dataCC
+{
+	int id;
+};
+
+dataCC_ptr create_dataCC(int id)
+{
+	dataCC_ptr data = malloc(sizeof(struct dataCC));
+	data->id = id;
+	return data;
+}
+
+void destroy_dataCC(void* data)
+{
+	free(data);
+}
 
 int match_id( const void *a, const void *key)
 {
-	if( *((int*)a) == *((int*)key)  )
+	dataCC_ptr A = ((dataCC_ptr) a);
+	//printf("tsekarisma a = %d b = %d\n",A->id,*((int*)key));
+	if( A->id == *((int*)key)  )
 	{
 		return 0;
 	}
@@ -246,6 +277,7 @@ int node_exist(list_ptr list,ptr_entry node)     //0 an den to brei kai 1 an to 
 	int id = node->id;
 	void* data;
 
+	//printf("Size of list frienge = %d and id = %d\n",LL_size(list),id);
 	data = LL_search(list,((void*) &id));
 	if(data == NULL) return 0;
 	return 1;
@@ -254,57 +286,33 @@ int node_exist(list_ptr list,ptr_entry node)     //0 an den to brei kai 1 an to 
 
 void rec_search_dfs(ptr_graph g,list_ptr list,ptr_entry node,int *size)
 {
-	int id = node->id;
-	list_ptr friends_list;
-	LL_iter_ptr iterList;
-	ptr_edge data;
-	int size_friends_list;
-	int i;
-	ptr_entry next;
 
+	Result_ptr result;
+	int id = -3;
+	int distance = -3;
+	dataCC_ptr data;
 
-	if(LL_size(list) == 0)
+	result = reachNodeN(g,node->id);
+
+	while(ResultSet_next(result,&id,&distance))
 	{
-		LL_insert(list,((void*) &id));
+		if(distance != -1)
+		{
+			//printf("id = %d before i inserted in frienge\n",id);
+			data = create_dataCC(id);
+			LL_insert(list,((void*) data));
+			*size = *size + 1;
+		}
+	}
+	if(distance != -1)
+	{
+		//printf("id = %d before i inserted in frienge\n",id);
+		data = create_dataCC(id);
+		LL_insert(list,((void*) data));
 		*size = *size + 1;
 	}
-	else if(LL_size(list) > 0 && (!node_exist(list,node)) )
-	{
-		LL_insert(list,((void*) &id));
-		*size = *size + 1;
-	}
-	else
-	{
-		return;
-	}
-
-	friends_list = Entry_take_list(node);
-	iterList = LL_iter_create(friends_list);
-
-	size_friends_list = LL_size(friends_list);
-
-	for(i=0;i<size_friends_list;i++)
-	{
-		data = ((ptr_edge) LL_iter_data(iterList));
-		id = data->target_id;
-
-		next = lookupNode(g,id);             //hash lookupNode
-		if(next == NULL) return;
-		rec_search_dfs(g,list,next,size);
-
-
-		LL_iter_next(iterList);
-	}
-
-	LL_iter_destroy(iterList);
-
-
-	return;
-
-
-
-
 }
+
 
 
 
@@ -326,8 +334,11 @@ int numberOfCCs(ptr_graph g)
 		for(i=0;i<graph_size;i++)
 		{
 			node = ((ptr_entry)HT_iter_data(iter));
+			//printf("node id = %d\n",node->id);
+
 			if(!(node_exist(fringe,node)) )
 			{
+				//printf("node id = %d insert\n",node->id);
 				size = 0;
 				num_of_graphs++;
 				rec_search_dfs(g,fringe,node,&size);
@@ -339,6 +350,7 @@ int numberOfCCs(ptr_graph g)
 
 
 		HT_iter_destroy(iter);
+		LL_destroy(fringe,destroy_dataCC);
 	}
 
 	return num_of_graphs;
@@ -386,14 +398,14 @@ int maxCC(ptr_graph g)
 
 
 
-double density(ptr_graph g)
+double density(ptr_graph g,double *d)
 {
 	int i, graph_size = Graph_size(g);
 	HT_iter_ptr iter;
     ht_ptr nodes = Graph_nodes(g);
 	ptr_entry node;
 	long sizeEdges = 0;
-	double d = 1;
+	//double d = 1;
 
 	if(g != NULL)
 	{
@@ -405,6 +417,7 @@ double density(ptr_graph g)
 			if(node != NULL)
 			{
 				sizeEdges = sizeEdges + size_of_friend_list(node);
+				//printf("sizeEdges = %ld\n",sizeEdges);
 			}
 
 			HT_iter_next(iter);
@@ -413,11 +426,12 @@ double density(ptr_graph g)
 
 		HT_iter_destroy(iter);
 
-		d = (2 * sizeEdges) / ((graph_size) * (graph_size - 1));
-
+		*d = (2 * ((double)sizeEdges)) / (((double)graph_size) * ((double)graph_size - 1));
+		//printf("D = %f\n",*d);
 	}
 
-	return d;
+	//printf("D = %f\n",*d);
+	return 1;
 }
 
 double closeness_centrality( ptr_entry n, ptr_graph g )
@@ -432,6 +446,7 @@ double closeness_centrality( ptr_entry n, ptr_graph g )
     } while ( HT_iter_next( inode ) );
     HT_iter_destroy( inode );
 
+    printf("result = %f\n",(sumdist / ( (double) size )));
     return sumdist / ( (double) size );
 }
 
@@ -453,7 +468,8 @@ double betweenness_centrality( ptr_entry n, ptr_graph g )
 
         /* Check every shortest path */
         for ( i = 0; i < size; ++i ) {
-            assert( ResultSet_next( set, &id, &dist ) );
+        	ResultSet_next( set, &id, &dist );
+           // assert( ResultSet_next( set, &id, &dist ) );
             if ( dist <= 0 || node->id == id ) {
                 continue;
             }
@@ -465,9 +481,10 @@ double betweenness_centrality( ptr_entry n, ptr_graph g )
         }
 
         ret += (double) betweendist / alldist;
-        free( set );
+        //free( set );
     } while ( HT_iter_next( node_it ) );
     HT_iter_destroy( node_it );
 
+    printf("result = %f\n",(( 2 * ret ) / ( (double) ( size - 1 ) * ( size - 2 ) )));
     return ( 2 * ret ) / ( (double) ( size - 1 ) * ( size - 2 ) );
 }

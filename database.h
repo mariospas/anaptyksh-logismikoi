@@ -3,6 +3,7 @@
 
 #include "graph.h"
 
+
 #define NUMBER_OF_ENTITIES 8
 
 typedef enum {
@@ -24,6 +25,7 @@ ptr_database DB_create(void);
 void DB_destroy( ptr_database this );
 
 ptr_graph DB_get_entity( ptr_database this, entity_type id );
+
 
 
 

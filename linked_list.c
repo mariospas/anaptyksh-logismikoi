@@ -158,7 +158,7 @@ int LL_iter_next( LL_iter_ptr it )
 
 void LL_iter_reset( LL_iter_ptr it )
 {
-    it->data = it->base->head;
+    it->data = it->base->head->data;
     it->next = it->base->head->next;
 }
 

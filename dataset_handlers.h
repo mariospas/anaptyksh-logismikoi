@@ -14,12 +14,16 @@ struct date {
     size_t second;
 };
 
-struct date date_create( size_t year,
+typedef struct date *ptr_date;
+
+ptr_date date_create( size_t year,
                          size_t month,
                          size_t day,
                          size_t hour,
                          size_t minute,
                          size_t second );
+
+void get_date(ptr_date date,size_t* year,size_t* month,size_t* day,size_t* hour,size_t* minute,size_t* second);
 
 /************************ Person **************************/
 
@@ -33,16 +37,20 @@ struct person_info {
     char *first_name;
     char *surname;
     gender_t gender;
-    struct date creation_date;
+    ptr_date birthday;
+    ptr_date creation_date;
     char *location_ip;
     char *browser_used;
 };
+
+typedef struct person_info *ptr_person_info;
 
 struct person_info *person_create( int id,
                                    char *first_name,
                                    char *surname,
                                    gender_t gender,
-                                   struct date creation_date,
+                                   ptr_date birthday,
+                                   ptr_date creation_date,
                                    char *location_ip,
                                    char *browser_used );
                                    
@@ -53,7 +61,7 @@ void person_delete( void *obj );
 struct post_info {
     int id;
     char *image_file;
-    struct date creation_date;
+    ptr_date creation_date;
     char *location_ip;
     char *browser_used;
     char *language;
@@ -63,7 +71,7 @@ struct post_info {
 
 struct post_info *post_create( int id,
                                char *image_file,
-                               struct date creation_date,
+                               ptr_date creation_date,
                                char *location_ip,
                                char *browser_used,
                                char *language,
@@ -77,12 +85,12 @@ void post_delete( void *obj );
 struct forum_info {
     int id;
     char *title;
-    struct date creation_date;
+    ptr_date creation_date;
 };
 
 struct forum_info *forum_create( int id,
                                  char *title,
-                                 struct date creation_date );
+                                 ptr_date creation_date );
 
 void forum_delete( void *obj );
 
@@ -90,13 +98,13 @@ void forum_delete( void *obj );
 
 struct comment_info {
     int id;
-    struct date creation_date;
+    ptr_date creation_date;
     char *location_ip;
     char *browser_used;
 };
 
 struct comment_info *comment_create( int id,
-                                     struct date creation_date,
+                                     ptr_date creation_date,
                                      char *location_ip,
                                      char *browser_used );
 
