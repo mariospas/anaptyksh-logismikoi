@@ -1,5 +1,7 @@
 #include <string.h>
 #include <assert.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #include "dataset_handlers.h"
 
@@ -86,13 +88,35 @@ struct post_info *post_create( int id,
 {
     struct post_info *retval = malloc( sizeof(struct post_info) );
     retval->id = id;
-    retval->image_file = strdup( image_file );
-    retval->creation_date = creation_date;
-    retval->location_ip = strdup( location_ip );
-    retval->browser_used = strdup( browser_used );
-    retval->language = strdup( language );
-    retval->content = strdup( content );
+ //   printf("insert in post_create\n");
 
+    if(image_file != NULL)
+	{
+    //	printf("image_file in post_create\n");
+    	retval->image_file = strdup( image_file );
+	}
+
+    retval->creation_date = creation_date;
+  //  printf("creation_date in post_create\n");
+
+    retval->location_ip = strdup( location_ip );
+  //  printf("location_ip in post_create\n");
+
+    retval->browser_used = strdup( browser_used );
+   // printf("browser_used in post_create\n");
+
+    if(language != NULL)
+	{
+    	retval->language = strdup( language );
+    	//printf("language in post_create\n");
+	}
+    if(content != NULL)
+	{
+    	retval->content = strdup( content );
+    	//printf("content in post_create\n");
+	}
+
+    //printf("exiting in post_create\n");
     return retval;
 }
 

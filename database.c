@@ -17,12 +17,15 @@ struct database {
 
 ptr_database DB_create(void)
 {
+	//printf("insert DB_create\n");
     int i;
     ptr_database retval = malloc( sizeof(struct database) );
     for ( i = 0; i < NUMBER_OF_ENTITIES; ++i ) {
         retval->entities[i].id = i;
         retval->entities[i].assignment = createGraph( i, TABLE_DEFAULT_SIZE, BUCKET_DEFAULT_SIZE );
     }
+    //printf("exiting DB_create\n");
+    return retval;
 }
 
 void DB_destroy( ptr_database this )
@@ -36,5 +39,6 @@ void DB_destroy( ptr_database this )
 
 ptr_graph DB_get_entity( ptr_database this, entity_type id )
 {
+	printf("this->entities[id].id = %d   and id = %d\n",this->entities[id].id,id);
     return this->entities[id].assignment;
 }

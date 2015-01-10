@@ -325,7 +325,16 @@ int main( int argc, char *argv[] )
 #endif
 	///load and test///
 
+	ptr_database database = DB_create();
+
+	g = DB_get_entity(database,PERSON);
+	ptr_graph post_graph = DB_get_entity(database,POST);
+	printf("get_graph\n");
+
 	load_graph(g);
+	printf("\n\n\n^^^^^^^^^^^^^^ POST_graph load ^^^^^^^^^^^^^^^\n\n\n");
+	load_graph(post_graph);
+	printf("\n\n\n^^^^^^^^^^^^^^ POST_graph finish load ^^^^^^^^^^^^^^^\n\n\n");
 
 	ptr_entry N60 = lookupNode(g,6906);  //9800
 	printPersonProperties(N60);
@@ -344,7 +353,8 @@ int main( int argc, char *argv[] )
 	int last_study = last_work_or_study_of_entry(N60,"person_studyAt_organisation.csv");
 	printf("\nLast Study id = %d\n",last_study);
 
-	int com_int = common_interests_two_entries(N60,N70);
+	int int1,int2;
+	int com_int = common_interests_two_entries(N60,N70,&int1,&int2);
 	printf("\nCommon Interest k = %d\n",com_int);
 
 	int gap = generation_gap(N60,N70);
@@ -359,7 +369,7 @@ int main( int argc, char *argv[] )
 	//int reach8 = reachNode1(g,6906,4814);
 	//printf("reach8 = %d\n\n",reach8);
 
-	ptr_entry N80 = lookupNode(g,7107);
+	ptr_entry N80 = lookupNode(g,3755);
 
 	ptr_array_matches array = matchSuggestion(N80,1,400,40,5,g);
 	printf("finish matchSugg\n");

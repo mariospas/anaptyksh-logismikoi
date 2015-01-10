@@ -68,6 +68,7 @@ struct post_info {
     char *content;
 };
 
+typedef struct post_info *ptr_post_info;
 
 struct post_info *post_create( int id,
                                char *image_file,
@@ -87,6 +88,8 @@ struct forum_info {
     char *title;
     ptr_date creation_date;
 };
+
+typedef struct forum_info *ptr_forum_info;
 
 struct forum_info *forum_create( int id,
                                  char *title,

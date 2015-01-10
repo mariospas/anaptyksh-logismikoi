@@ -85,7 +85,7 @@ ptr_array_matches create_array_match(int limit)
 
 void delete_array_matches(ptr_array_matches array)
 {
-	int limit = array->limit;
+	int limit = array->current_size;
 	int i;
 
 	for(i=0;i<=limit;i++)
@@ -115,6 +115,8 @@ ptr_array_matches matchSuggestion(ptr_entry node, int commonInterest, int hops, 
 	int work = last_work_or_study_of_entry(node,"person_workAt_organisation.csv");
 	int study = last_work_or_study_of_entry(node,"person_studyAt_organisation.csv");
 	int koinaEndiaf;
+	int node_interest;
+	int data_interest;
 	int gap;
 	int same_sex;
 	int apostash;
@@ -138,6 +140,7 @@ ptr_array_matches matchSuggestion(ptr_entry node, int commonInterest, int hops, 
 	for(i=0;i<graph_size;i++)
 	{
 		data = ((ptr_entry)HT_iter_data(iter));
+		if(data->id == node->id) continue;
 		printf("Node id = %d and Data id = %d\n",node->id,data->id);
 
 		location_node2 = location_of_entry(data);
@@ -146,8 +149,8 @@ ptr_array_matches matchSuggestion(ptr_entry node, int commonInterest, int hops, 
 		//printf("work\n");
 		study2 = last_work_or_study_of_entry(data,"person_studyAt_organisation.csv");
 		//printf("study\n");
-		koinaEndiaf = common_interests_two_entries(node,data);
-		//printf("koinaEndiaf\n");
+		koinaEndiaf = common_interests_two_entries(node,data,&node_interest,&data_interest);
+		printf("koinaEndiaf = %d and commonInt = %d\n",koinaEndiaf,commonInterest);
 		gap = generation_gap(node,data);
 		//printf("gap\n");
 		same_sex = same_gender(node,data);
@@ -156,17 +159,17 @@ ptr_array_matches matchSuggestion(ptr_entry node, int commonInterest, int hops, 
 		//printf("apostash\n");
 
 
+
 		if(work == -1)
 		{
-			if((location_node == location_node2)
-				&& (study == study2)
-				&& (koinaEndiaf > commonInterest)
+			if( ((location_node == location_node2) || (study == study2))
+				&& (koinaEndiaf >= commonInterest)
 				&& (gap <= ageDiff)
-				&& (same_sex)
+				&& (!same_sex)
 				&& (apostash <= hops) )
 			{
 				printf("*****insert one match data id = %d\n",data->id);
-				similarity = i;
+				similarity = koinaEndiaf/(node_interest + data_interest);
 				match = create_match(data->id,similarity);
 
 				insert_match(array,match);
@@ -174,15 +177,14 @@ ptr_array_matches matchSuggestion(ptr_entry node, int commonInterest, int hops, 
 		}
 		else if(study == -1)
 		{
-			if((location_node == location_node2)
-				&& (work == work2)
-				&& (koinaEndiaf > commonInterest)
+			if( ((location_node == location_node2) || (work == work2))
+				&& (koinaEndiaf >= commonInterest)
 				&& (gap <= ageDiff)
-				&& (same_sex)
+				&& (!same_sex)
 				&& (apostash <= hops) )
 			{
 				printf("*****insert one match data id = %d\n",data->id);
-				similarity = i;
+				similarity = koinaEndiaf/(node_interest + data_interest);
 				match = create_match(data->id,similarity);
 
 				insert_match(array,match);

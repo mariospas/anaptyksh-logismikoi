@@ -184,23 +184,27 @@ void load_graph(ptr_graph graph)
 	int target_type;
 	char *filename;
 
+	int id;
+	ptr_date creationDate;
+	char *location_ip;
+	char *browser;
+
 	if (buf == NULL)
 	{
 		printf ("No memory\n");
 		return;
 	}
 
-
+	printf("here!\n");
 	if(graph->id == PERSON)
 	{
-		int id;
+		printf("here!!!\n");
+
 		char *firstname;
 		char *lastname;
 		gender_t gender;
 		ptr_date birthday;
-		ptr_date creationDate;
-		char *location_ip;
-		char *browser;
+
 
 
 		int id1;
@@ -373,7 +377,198 @@ void load_graph(ptr_graph graph)
 			free(edge_type);
 		}
 
+	}
+	else if(graph->id == POST)
+	{
+		char *imageFile;
+		char *language;
+		char *content;
+		int flag = 0;
 
+		/************** post.csv *************/
+		if ( ( fp = fopen( "dataset/post.csv", "r" ) ) == NULL ) //Reading a file
+		{
+			printf( "File could not be opened.\n" );
+		}
+
+		fgets(buf, 1023, fp);   //first line
+
+		while (fgets(buf, 1023, fp) != NULL)
+		{
+			if ((strlen(buf)>0) && (buf[strlen (buf) - 1] == '\n'))
+				buf[strlen (buf) - 1] = '\0';
+
+
+			tmp = strtok(buf, "|");
+			id = atoi(tmp);
+			printf("id = %d ",id);
+
+			tmp = strtok(NULL, "|");
+			imageFile = strdup(tmp);
+			//printf("imageFile = %s ",imageFile);
+
+
+			tmp = strtok(NULL, "|");
+			//printf("Creation Date = %s \n",tmp);
+			tempCreat = strdup(tmp);
+			if(imageFile[0] >= '0' && imageFile[0] <= '9')
+			{
+				free(tempCreat);
+				tempCreat = strdup(imageFile);
+				free(imageFile);
+				imageFile = NULL;
+				flag = 1;
+
+			}
+			else printf("imageFile = %s ",imageFile);
+			printf("Creation Date = %s \n",tempCreat);
+
+
+			if(flag == 0) tmp = strtok(NULL, "|");
+			else flag = 0;
+			location_ip = strdup(tmp);
+			printf("location_ip = %s ",tmp);
+
+			tmp = strtok(NULL, "|");
+			browser = strdup(tmp);
+			printf("browser = %s\n",tmp);
+
+			tmp = strtok(NULL, "|");
+			//printf("tmp = %s\n",tmp);
+			if(tmp != NULL && tmp[0] != '\0')
+			{
+				language = strdup(tmp);
+				printf("language = %s ",language);
+			}
+			else language = NULL;
+
+			tmp = strtok(NULL, "|");
+			//printf("tmp = %s\n",tmp);
+			if(tmp != NULL && tmp[0] != '\0')
+			{
+				content = strdup(tmp);
+				printf("content = %s ",content);
+			}
+			else content = NULL;
+
+			printf("\n");
+			//printf("before creation date\n");
+
+			creationDate = load_date(tempCreat,5);
+
+			//printf("before create post\n");
+
+			ptr_post_info post = post_create(id,imageFile,creationDate,location_ip,browser,language,content);
+
+			//printf("before create entry\n");
+
+			entry = create_entry(id,((void *)post),post_delete);
+
+			//printf("before insert node\n");
+
+			insertNode(graph,entry);
+
+			//printf("before free\n");
+
+			free(tempCreat);
+			//printf("finish POST\n");
+		}
+
+
+		/*********** post_hasCreator_person.csv ************/
+		if ( ( fp = fopen( "dataset/post_hasCreator_person.csv", "r" ) ) == NULL ) //Reading a file
+		{
+			printf( "File could not be opened.\n" );
+		}
+
+		filename = strdup("post_hasCreator_person.csv");
+
+		//printf("start load_2ids_and_extra\n");
+		load_2ids(graph,buf,fp,filename,POST);
+		//printf("finish load_2ids_and_extra\n");
+
+		free(filename);
+
+	}
+	else if(graph->id == FORUM)
+	{
+		char *title;
+
+		/************** forum.csv *************/
+		if ( ( fp = fopen( "dataset/forum.csv", "r" ) ) == NULL ) //Reading a file
+		{
+			printf( "File could not be opened.\n" );
+		}
+
+		fgets(buf, 1023, fp);   //first line
+
+		while (fgets(buf, 1023, fp) != NULL)
+		{
+			if ((strlen(buf)>0) && (buf[strlen (buf) - 1] == '\n'))
+				buf[strlen (buf) - 1] = '\0';
+
+
+			tmp = strtok(buf, "|");
+			id = atoi(tmp);
+			printf("id = %d ",id);
+
+			tmp = strtok(NULL, "|");
+			title = strdup(tmp);
+			printf("title = %s ",title);
+
+
+			tmp = strtok(NULL, "|");
+			//printf("Creation Date = %s \n",tmp);
+			tempCreat = strdup(tmp);
+
+			printf("\n");
+			//printf("before creation date\n");
+
+			creationDate = load_date(tempCreat,5);
+
+			//printf("before create post\n");
+
+			ptr_forum_info forum = forum_create(id,title,creationDate);
+
+			//printf("before create entry\n");
+
+			entry = create_entry(id,((void *)forum),forum_delete);
+
+			//printf("before insert node\n");
+
+			insertNode(graph,entry);
+
+			//printf("before free\n");
+
+			free(tempCreat);
+			//printf("finish POST\n");
+		}
+
+		/*********** forum_containerOf_post.csv ************/
+		if ( ( fp = fopen( "dataset/forum_containerOf_post.csv", "r" ) ) == NULL ) //Reading a file
+		{
+			printf( "File could not be opened.\n" );
+		}
+
+		filename = strdup("forum_containerOf_post.csv");
+
+		//printf("start load_2ids_and_extra\n");
+		load_2ids(graph,buf,fp,filename,FORUM);
+		//printf("finish load_2ids_and_extra\n");
+
+		free(filename);
+
+		/*********** forum_hasMember_person.csv ************/
+		if ( ( fp = fopen( "dataset/forum_hasMember_person.csv", "r" ) ) == NULL ) //Reading a file
+		{
+			printf( "File could not be opened.\n" );
+		}
+
+		filename = strdup("forum_hasMember_person.csv");
+
+		load_2ids_and_extra(graph,buf,fp,filename,FORUM);
+
+		free(filename);
 
 	}
 }

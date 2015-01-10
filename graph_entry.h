@@ -55,9 +55,11 @@ int location_of_entry(ptr_entry node);
 
 int last_work_or_study_of_entry(ptr_entry node,char *target_type);
 
+int work_or_study_in_same_place(ptr_entry node1,ptr_entry node2,char *target_type);
+
 list_ptr type_list(ptr_entry node,char *type);
 
-int common_interests_two_entries(ptr_entry node1,ptr_entry node2);
+int common_interests_two_entries(ptr_entry node1,ptr_entry node2,int *interest1,int *interest2);
 
 int generation_gap(ptr_entry node1,ptr_entry node2);
 

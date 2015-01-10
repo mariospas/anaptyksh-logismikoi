@@ -144,6 +144,7 @@ int location_of_entry(ptr_entry node)
 
 int last_work_or_study_of_entry(ptr_entry node,char *target_type)
 {
+
 	list_ptr list;
 	LL_iter_ptr iterList;
 	ptr_edge data;
@@ -194,6 +195,85 @@ int last_work_or_study_of_entry(ptr_entry node,char *target_type)
 }
 
 
+int work_or_study_in_same_place(ptr_entry node1,ptr_entry node2,char *target_type)
+{
+	int com_int = 0;
+
+	list_ptr list1 = type_list(node1,target_type);
+	//print_list(list1);
+	list_ptr list2 = type_list(node2,target_type);
+	//print_list(list2);
+	LL_iter_ptr iterList1;
+	LL_iter_ptr iterList2;
+	ptr_edge data1;
+	ptr_edge data2;
+
+
+	if(LL_size(list1) == 0 || LL_size(list2) == 0)
+	{
+		return com_int;
+	}
+
+
+	iterList1 = LL_iter_create(list1);
+
+	iterList2 = LL_iter_create(list2);
+
+	data1 = LL_iter_data(iterList1);
+	data2 = LL_iter_data(iterList2);
+	if(strcmp(data1->edge_type,target_type) == 0)
+	{
+		if(strcmp(data2->edge_type,target_type) == 0)
+		{
+			if(data2->target_id == data1->target_id) com_int++;
+		}
+		while(LL_iter_next(iterList2))
+		{
+			data2 = LL_iter_data(iterList2);
+			if(strcmp(data2->edge_type,target_type) == 0)
+			{
+				if(data2->target_id == data1->target_id) com_int++;
+			}
+		}
+		LL_iter_reset(iterList2);
+
+	}
+
+	while(LL_iter_next(iterList1))
+	{
+		data1 = LL_iter_data(iterList1);
+		data2 = LL_iter_data(iterList2);
+		if(strcmp(data1->edge_type,target_type) == 0)
+		{
+			if(strcmp(data2->edge_type,target_type) == 0)
+			{
+				if(data2->target_id == data1->target_id) com_int++;
+			}
+			while(LL_iter_next(iterList2))
+			{
+				data2 = LL_iter_data(iterList2);
+				if(strcmp(data2->edge_type,target_type) == 0)
+				{
+					if(data2->target_id == data1->target_id) com_int++;
+				}
+			}
+			LL_iter_reset(iterList2);
+
+		}
+
+	}
+
+
+	LL_iter_destroy(iterList1);
+	LL_iter_destroy(iterList2);
+
+	LL_destroy(list1,destroy_edge);
+	LL_destroy(list2,destroy_edge);
+
+	return com_int;
+}
+
+
 
 list_ptr type_list(ptr_entry node,char *type)
 {
@@ -234,7 +314,7 @@ list_ptr type_list(ptr_entry node,char *type)
 }
 
 
-int common_interests_two_entries(ptr_entry node1,ptr_entry node2)
+int common_interests_two_entries(ptr_entry node1,ptr_entry node2,int *interest1,int *interest2)
 {
 	int com_int = 0;
 
@@ -246,6 +326,9 @@ int common_interests_two_entries(ptr_entry node1,ptr_entry node2)
 	LL_iter_ptr iterList2;
 	ptr_edge data1;
 	ptr_edge data2;
+
+	*interest1 = LL_size(list1);
+	*interest2 = LL_size(list2);
 
 	if(LL_size(list1) == 0 || LL_size(list2) == 0)
 	{
