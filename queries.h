@@ -8,7 +8,7 @@ typedef struct Matches *ptr_matches;
 typedef struct array_matches *ptr_array_matches;
 
 
-ptr_matches create_match(int id,int similarity);
+ptr_matches create_match(int id,double similarity);
 
 void delete_match(ptr_matches match);
 

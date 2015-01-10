@@ -65,6 +65,8 @@ int generation_gap(ptr_entry node1,ptr_entry node2);
 
 int same_gender(ptr_entry node1,ptr_entry node2);
 
+int creator_of_post(ptr_entry node);
+
 void print_list_of_edges(ptr_entry node);
 
 void print_list(list_ptr list);

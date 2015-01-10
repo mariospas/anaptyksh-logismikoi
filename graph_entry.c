@@ -442,6 +442,39 @@ int same_gender(ptr_entry node1,ptr_entry node2)
 }
 
 
+
+int creator_of_post(ptr_entry node)
+{
+	list_ptr list;
+	LL_iter_ptr iterList;
+	ptr_edge data;
+
+	list = ((list_ptr) Entry_take_list(node));
+
+	iterList = LL_iter_create(list);
+
+	data = LL_iter_data(iterList);
+	if(strcmp(data->edge_type,"post_hasCreator_person.csv") == 0)
+	{
+		LL_iter_destroy(iterList);
+		return data->target_id;
+	}
+	while(LL_iter_next(iterList))
+	{
+		data = LL_iter_data(iterList);
+		if(strcmp(data->edge_type,"post_hasCreator_person.csv") == 0)
+		{
+			LL_iter_destroy(iterList);
+			return data->target_id;
+		}
+	}
+
+	return -1;   //an den brei tpt
+}
+
+
+
+
 void print_list_of_edges(ptr_entry node)
 {
 	list_ptr list;

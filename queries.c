@@ -6,7 +6,7 @@
 struct Matches
 {
 	int id;
-	int similarity_score;
+	double similarity_score;
 };
 
 struct array_matches
@@ -17,7 +17,7 @@ struct array_matches
 };
 
 
-ptr_matches create_match(int id,int similarity)
+ptr_matches create_match(int id,double similarity)
 {
 	ptr_matches match = malloc(sizeof(struct Matches));
 
@@ -132,7 +132,7 @@ ptr_array_matches matchSuggestion(ptr_entry node, int commonInterest, int hops, 
 
 	ptr_array_matches array = create_array_match(limit);
 	ptr_matches match;
-	int similarity = 0;
+	double similarity = 0.0;
 
 	iter = HT_iter_create(nodes);
 	printf("In matchSuggestion\n");
@@ -159,38 +159,41 @@ ptr_array_matches matchSuggestion(ptr_entry node, int commonInterest, int hops, 
 		//printf("apostash\n");
 
 
+		/*
+		printf("((location_node == location_node2) = %d || (study == study2) = %d )\n(koinaEndiaf >= commonInterest) = %d\n(gap <= ageDiff) = %d\n(!same_sex) = %d\n(apostash <= hops) = %d\n",
+				(location_node == location_node2),(study == study2),
+				(koinaEndiaf >= commonInterest),
+				(gap <= ageDiff),
+				(!same_sex),
+				(apostash <= hops));
+		printf("((location_node == location_node2) = %d || (work == work2) = %d )\n(koinaEndiaf >= commonInterest) = %d\n(gap <= ageDiff) = %d\n(!same_sex) = %d\n(apostash <= hops) = %d\n",
+				(location_node == location_node2),(work == work2),
+				(koinaEndiaf >= commonInterest),
+				(gap <= ageDiff),
+				(!same_sex),
+				(apostash <= hops));
 
-		if(work == -1)
+		printf("WORK -1\n");
+		printf("((location_node == location_node2) = %d || (study == study2) = %d || (work == work2) = %d )\n(koinaEndiaf >= commonInterest) = %d\n(gap <= ageDiff) = %d\n(!same_sex) = %d\n(apostash <= hops) = %d\n",
+			(location_node == location_node2),(study == study2),(work == work2),
+			(koinaEndiaf >= commonInterest),
+			(gap <= ageDiff),
+			(!same_sex),
+			(apostash <= hops));
+		*/
+
+		if( ((location_node == location_node2) || (study == study2) || (work == work2))
+			&& (koinaEndiaf >= commonInterest)
+			&& (gap <= ageDiff)
+			&& (!same_sex)
+			&& (apostash <= hops) )
 		{
-			if( ((location_node == location_node2) || (study == study2))
-				&& (koinaEndiaf >= commonInterest)
-				&& (gap <= ageDiff)
-				&& (!same_sex)
-				&& (apostash <= hops) )
-			{
-				printf("*****insert one match data id = %d\n",data->id);
-				similarity = koinaEndiaf/(node_interest + data_interest);
-				match = create_match(data->id,similarity);
+			printf("*****insert one match data id = %d\n",data->id);
+			similarity = ((double)koinaEndiaf)/((double)(node_interest + data_interest));
+			match = create_match(data->id,similarity);
 
-				insert_match(array,match);
-			}
+			insert_match(array,match);
 		}
-		else if(study == -1)
-		{
-			if( ((location_node == location_node2) || (work == work2))
-				&& (koinaEndiaf >= commonInterest)
-				&& (gap <= ageDiff)
-				&& (!same_sex)
-				&& (apostash <= hops) )
-			{
-				printf("*****insert one match data id = %d\n",data->id);
-				similarity = koinaEndiaf/(node_interest + data_interest);
-				match = create_match(data->id,similarity);
-
-				insert_match(array,match);
-			}
-		}
-
 
 		HT_iter_next(iter);
 	}
@@ -200,5 +203,88 @@ ptr_array_matches matchSuggestion(ptr_entry node, int commonInterest, int hops, 
 	return array;
 }
 
+/******************** Stalkers ************************/
+
+
+ptr_graph getTopStalkers(int stalkersNum,int likesNumber,int centralityMode,ptr_database database,ptr_array_matches stalkersCloseCentr)
+{
+	ptr_graph graph = DB_get_entity(database,PERSON);
+	ptr_graph post_graph = DB_get_entity(database,POST);
+
+	int i, graph_size = Graph_size(graph);
+	int j;
+	HT_iter_ptr iter;
+	ht_ptr nodes = Graph_nodes(graph);
+	ptr_entry data;
+
+
+	list_ptr person_like_post_list;
+	LL_iter_ptr iterList;
+	int list_size;
+	ptr_edge edge;
+	int post_id;
+	ptr_entry post_entry;
+	int id_creator_of_post;
+	ptr_katanomh dataKat;
+	list_ptr list = LL_create(match_friend);
+	LL_iter_ptr iterCreator;
+
+	ptr_matches stalker;
+	double centrality = 0.0;
+
+	iter = HT_iter_create(nodes);
+	printf("In matchSuggestion\n");
+
+	for(i=0;i<graph_size;i++)
+	{
+		data = ((ptr_entry)HT_iter_data(iter));
+		printf("Data id = %d\n",data->id);
+
+		person_like_post_list = type_list(data,"person_likes_post.csv");
+		list_size = LL_size(person_like_post_list);
+		iterList = LL_iter_create(person_like_post_list);
+
+		if(list_size > 0)
+		{
+			for(j=0;j<list_size;j++)
+			{
+				edge = ((ptr_edge)LL_iter_data(iterList));
+				post_id = edge->target_id;
+
+				post_entry = lookupNode(post_graph,post_id);
+
+				id_creator_of_post = creator_of_post(post_entry);
+				manage_list(list,id_creator_of_post);
+			}
+
+			iterCreator = LL_iter_create(list);
+
+			for(j=0;j<LL_size(list);j++)
+			{
+				dataKat = (ptr_katanomh)LL_iter_data(iterCreator);
+
+				if(katanomh_get_size(dataKat) > likesNumber)
+				{
+					///tote o data entry einai stalker
+					if(centralityMode == 0) centrality = closeness_centrality(data,graph);
+					else if(centralityMode == 1) centrality = betweenness_centrality(data,graph);
+
+					stalker = create_match(data->id,centrality);
+
+					insert_match(stalkersCloseCentr,stalker);
+
+					//meta na kataskeuaso ena graph stalker me entries
+
+				}
+
+				LL_iter_next(iterCreator);
+			}
+
+		}
+
+		HT_iter_next(iter);
+	}
+
+}
 
 

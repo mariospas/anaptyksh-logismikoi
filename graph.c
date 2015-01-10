@@ -317,7 +317,7 @@ void load_graph(ptr_graph graph)
 
 		filename = strdup("person_workAt_organisation.csv");
 
-		load_2ids_and_extra(graph,buf,fp,filename,PERSON);
+		load_2ids_and_extra(graph,buf,fp,filename,PERSON,1);
 
 		free(filename);
 
@@ -331,7 +331,7 @@ void load_graph(ptr_graph graph)
 
 		filename = strdup("person_studyAt_organisation.csv");
 
-		load_2ids_and_extra(graph,buf,fp,filename,PERSON);
+		load_2ids_and_extra(graph,buf,fp,filename,PERSON,1);
 
 		free(filename);
 
@@ -342,40 +342,11 @@ void load_graph(ptr_graph graph)
 			printf( "File could not be opened.\n" );
 		}
 
+		filename = strdup("person_likes_post.csv");
 
-		fgets(buf, 1023, fp);   //first line
+		load_2ids_and_extra(graph,buf,fp,filename,PERSON,5);
 
-		while (fgets(buf, 1023, fp) != NULL)
-		{
-			if ((strlen(buf)>0) && (buf[strlen (buf) - 1] == '\n'))
-				buf[strlen (buf) - 1] = '\0';
-
-
-			tmp = strtok(buf, "|");
-			id1 = atoi(tmp);
-			printf(" id1 = %d ",id1);
-
-			tmp = strtok(NULL, "|");
-			id2 = atoi(tmp);
-			printf("id2 = %d ",id2);
-
-			tmp = strtok(NULL, "|");
-			tempB = strdup(tmp);
-			printf("extra = %s \n",tempB);
-
-			extra = load_date(tempB,5);
-
-
-			edge_type = strdup("person_likes_post.csv");
-			target_type = PERSON;
-
-			edge = create_edge(edge_type,id2,target_type,0,((void *) extra));
-
-			insertEdge(graph,id1,edge);
-
-			free(tempB);
-			free(edge_type);
-		}
+		free(filename);
 
 	}
 	else if(graph->id == POST)
@@ -566,7 +537,7 @@ void load_graph(ptr_graph graph)
 
 		filename = strdup("forum_hasMember_person.csv");
 
-		load_2ids_and_extra(graph,buf,fp,filename,FORUM);
+		load_2ids_and_extra(graph,buf,fp,filename,FORUM,5);
 
 		free(filename);
 
@@ -610,7 +581,7 @@ void load_2ids(ptr_graph graph,char *buf,FILE *fp,char *filename,int targ_type)
 	}
 }
 
-void load_2ids_and_extra(ptr_graph graph,char *buf,FILE *fp,char *filename,int targ_type)
+void load_2ids_and_extra(ptr_graph graph,char *buf,FILE *fp,char *filename,int targ_type,int choice)
 {
 	char *tmp;
 	int id1;
@@ -641,11 +612,11 @@ void load_2ids_and_extra(ptr_graph graph,char *buf,FILE *fp,char *filename,int t
 		tempB = strdup(tmp);
 		printf("extra = %s \n",tempB);
 
-		extra = load_date(tempB,1);
+		extra = load_date(tempB,choice);
 
 
-		edge_type = strdup("person_workAt_organisation.csv");
-		target_type = PERSON;
+		edge_type = strdup(filename);
+		target_type = targ_type;
 
 		edge = create_edge(edge_type,id2,target_type,0,((void *) extra));
 

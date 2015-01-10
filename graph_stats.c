@@ -14,6 +14,12 @@ struct katanomh
 };
 
 
+int katanomh_get_size(ptr_katanomh data)
+{
+	return (data->size);
+}
+
+
 int match_friend(const void *a, const void *key)
 {
 	if( ((ptr_katanomh)a)->arithmos_filon == *((int*)key) )

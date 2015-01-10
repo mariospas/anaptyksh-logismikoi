@@ -51,7 +51,7 @@ void load_graph(ptr_graph graph);
 
 void load_2ids(ptr_graph graph,char *buf,FILE *fp,char *filename,int targ_type);
 
-void load_2ids_and_extra(ptr_graph graph,char *buf,FILE *fp,char *filename,int targ_type);
+void load_2ids_and_extra(ptr_graph graph,char *buf,FILE *fp,char *filename,int targ_type,int choice);
 
 ptr_date load_date(char* buf,int i);
 
