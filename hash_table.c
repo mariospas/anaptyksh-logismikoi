@@ -350,6 +350,10 @@ HT_iter_ptr HT_iter_create( ht_ptr this )
     it->current_bucket = it->base->buckets[0];
     it->record_index = 0;
 
+    if ( it->base->buckets[0]->counter == 0 ) {
+        HT_iter_next( it );
+    }
+
     return it;
 }
 
