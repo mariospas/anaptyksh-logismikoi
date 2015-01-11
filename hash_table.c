@@ -132,7 +132,7 @@ void HT_destroy( ht_ptr this, deallocator destroy_entry )
 
 void HT_insert( ht_ptr this, void *element, int key )
 {
-    int i, index, hashed = key + 1;//this->hash( key, this->size );
+    int i, index, hashed = this->hash( key, this->size );
     struct bucket **found;
 
     /* Apply small h first */
