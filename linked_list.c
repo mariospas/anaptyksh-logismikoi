@@ -131,10 +131,9 @@ int LL_size( list_ptr this )
 LL_iter_ptr LL_iter_create( list_ptr list )
 {
     assert( list->size > 0 );
-    LL_iter_ptr it = malloc( sizeof( struct LL_iterator ) );
+    LL_iter_ptr it = malloc( sizeof(struct LL_iterator) );
     it->base = list;
     it->data = it->base->head->data;
-
     it->next = it->base->head->next;
 
     return it;
