@@ -56,7 +56,11 @@ void load_2ids_and_extra(ptr_graph graph,char *buf,FILE *fp,char *filename,int t
 ptr_date load_date(char* buf,int i);
 
 /* Helpers */
-static int rec_search( ptr_graph this, int start, int end, int level );
+static int expand_( ptr_graph this, ht_ptr *frontier, ht_ptr visited, int *level );
+
+static int expand_reversed_( ptr_graph this, ht_ptr *frontier, ht_ptr visited, int *level );
+
+static int match_found_( ht_ptr frontier1, ht_ptr frontier2 );
 
 static size_t hash(int value, size_t size);
 

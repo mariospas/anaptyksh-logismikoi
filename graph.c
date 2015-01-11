@@ -116,15 +116,13 @@ int reachNode1( ptr_graph this, int start, int end )
             break;
         }
 
-#if 0
-        if ( expand_( this, &frontier2, visited2, &level ) == 0 ) {
+        if ( expand_reversed_( this, &frontier2, visited2, &level ) == 0 ) {
             break;
         }
         if ( match_found_( frontier1, frontier2 ) ) {
             found = 1;
             break;
         }
-#endif
     }
 
     /* Clean up */
@@ -136,31 +134,31 @@ int reachNode1( ptr_graph this, int start, int end )
     return found ? level : -1;
 }
 
-int expand_( ptr_graph this, ht_ptr *frontier, ht_ptr visited, int *level )
+static int expand_( ptr_graph this, ht_ptr *frontier, ht_ptr visited, int *level )
 {
     ht_ptr new_frontier = HT_create( 8, 8, hash );
-    HT_iter_ptr edge_it = HT_iter_create( *frontier );
-    LL_iter_ptr temp;
-    ptr_entry node;
-    ptr_edge edge;
+    HT_iter_ptr frontier_it = HT_iter_create( *frontier );
+    LL_iter_ptr edge_it;
+    ptr_entry node_tryout;
+    ptr_edge edge_tryout;
     int node_id, node_id2, advance = 0;
 
     /* Iterate over the frontier nodes */
     do {
-        node_id = (int) HT_iter_data( edge_it );
-        node = lookupNode( this, node_id );
-        if ( LL_size( node->edges ) == 0 ) {
+        node_id = (int) HT_iter_data( frontier_it );
+        node_tryout = lookupNode( this, node_id );
+        if ( LL_size( node_tryout->edges ) == 0 ) {
             continue;
         }
-        temp = LL_iter_create( node->edges );
+        edge_it = LL_iter_create( node_tryout->edges );
 
         /* For each node iterate over its edges */
         do {
-            edge = LL_iter_data( temp );
-            if ( edge->target_type != this->id ) {
+            edge_tryout = LL_iter_data( edge_it );
+            if ( edge_tryout->target_type != this->id ) {
                 continue;
             }
-            node_id2 = edge->target_id;
+            node_id2 = edge_tryout->target_id;
 
             /* If its not already explored add it to the new frontier */
             if ( HT_search( visited, node_id2 ) == NULL ) {
@@ -169,19 +167,66 @@ int expand_( ptr_graph this, ht_ptr *frontier, ht_ptr visited, int *level )
                 HT_insert( visited, (void*) node_id2, node_id2 );
                 HT_insert( new_frontier, (void*) node_id2, node_id2 );
             }
-        } while ( LL_iter_next( temp ) );
+        } while ( LL_iter_next( edge_it ) );
 
-        LL_iter_destroy( temp );
-    } while ( HT_iter_next( edge_it ) );
+        LL_iter_destroy( edge_it );
+    } while ( HT_iter_next( frontier_it ) );
 
-    HT_iter_destroy( edge_it );
+    HT_iter_destroy( frontier_it );
     HT_destroy( *frontier, NULL );
     *frontier = new_frontier;
     ++*level;
     return advance;
 }
 
-int match_found_( ht_ptr frontier1, ht_ptr frontier2 )
+static int expand_reversed_( ptr_graph this, ht_ptr *frontier, ht_ptr visited, int *level )
+{
+    ht_ptr new_frontier = HT_create( 8, 8, hash );
+    HT_iter_ptr frontier_it = HT_iter_create( *frontier );
+    HT_iter_ptr graph_it = HT_iter_create( this->table );
+    LL_iter_ptr edge_it;
+    ptr_entry node_tryout;
+    ptr_edge edge_tryout;
+    int node_id, advance = 0;
+
+    /* Iterate over the nodes on the frontier */
+    do {
+        node_id = (int) HT_iter_data( frontier_it );
+
+        /* For each such node search for other nodes that point to it */
+        do {
+            node_tryout = HT_iter_data( graph_it );
+            if ( LL_size( node_tryout->edges ) == 0
+              || HT_search( visited, node_tryout->id ) != NULL ) {
+                continue;
+            }
+            edge_it = LL_iter_create( node_tryout->edges );
+            do {
+                edge_tryout = LL_iter_data( edge_it );
+                if ( edge_tryout->target_type != this->id ) {
+                    continue;
+                }
+                if ( edge_tryout->target_id == node_id ) {
+                    advance = 1;
+                    HT_insert( visited, (void*) node_tryout->id, node_tryout->id );
+                    HT_insert( new_frontier, (void*) node_tryout->id, node_tryout->id );
+                    break;
+                }
+            } while ( LL_iter_next( edge_it ) );
+            LL_iter_destroy( edge_it );
+        } while ( HT_iter_next( graph_it ) );
+        HT_iter_reset( graph_it );
+    } while ( HT_iter_next( frontier_it ) );
+
+    HT_iter_destroy( frontier_it );
+    HT_iter_destroy( graph_it );
+    HT_destroy( *frontier, NULL );
+    *frontier = new_frontier;
+    ++*level;
+    return advance;
+}
+
+static int match_found_( ht_ptr frontier1, ht_ptr frontier2 )
 {
     int found = 0, id1, id2;
     HT_iter_ptr it1, it2;

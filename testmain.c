@@ -101,7 +101,6 @@ int main( int argc, char *argv[] )
 	ptr_graph g;
 	g = createGraph(PERSON,m,c);
 
-#if 0
 	printf("Set Person Properties\n");
 	/*create node and set node properties*/
 	ptr_entry n1 = setPersonProperties(5, "lonely", "loner", 29);
@@ -208,11 +207,13 @@ int main( int argc, char *argv[] )
 	insertEdge(g, 14, e26);
 
 	///ebala tis parakato gia na sundeso perissotera na ginei pio grhgoro
+#if 0
 	insertEdge(g, 4, e31);
 	insertEdge(g, 7, e32);
 	insertEdge(g, 14, e33);
 	insertEdge(g, 5, e20);
 	insertEdge(g, 5, e17);
+#endif
 
 
 	printf("Try to LookUp\n");
@@ -228,7 +229,7 @@ int main( int argc, char *argv[] )
 	int reach3 = reachNode1(g,3,16);
 	printf("reach3 = %d\n\n",reach3);
 
-	int reach4 = reachNode1(g,5,3);
+	int reach4 = reachNode1(g,3,5);
 	printf("reach4 = %d\n\n",reach4);
 
 
@@ -281,7 +282,7 @@ int main( int argc, char *argv[] )
 	ptr_entry N16 = lookupNode(g,16);
 	printPersonProperties(N16);
 
-/*
+#if 0
 	int id = -1,distance = -1;
 	Result_ptr result = reachNodeN(g,1);
 
@@ -290,7 +291,7 @@ int main( int argc, char *argv[] )
 		printf("Start id = %d to end id = %d and distance = %d\n",result->from,id,distance);
 	}
 	printf("Start id = %d to end id = %d and distance = %d\n",result->from,id,distance);
-*/
+#endif
 
 
 
@@ -322,19 +323,23 @@ int main( int argc, char *argv[] )
 
 	//testClosenessCentrality(2,3);
 
-#endif
 	///load and test///
 
+#if 0
 	load_graph(g);
 
 	ptr_entry N60 = lookupNode(g,6906);  //9800
-	printPersonProperties(N60);
+	//printPersonProperties(N60);
 
 	ptr_entry N70 = lookupNode(g,1631);  //9800
-	printPersonProperties(N70);
+	//printPersonProperties(N70);
+#endif
 
+#if 0
 	print_list_of_edges(N60);
+#endif
 
+#if 0
 	int loc = location_of_entry(N60);
 	printf("\nLocation id = %d\n",loc);
 
@@ -354,20 +359,25 @@ int main( int argc, char *argv[] )
 	printf("\nSame Gender ? : ");
 	if(same_sex) printf("Yes !!!\n");
 	else printf("No !!!\n");
+#endif
 
+#if 0
 	//prepei na beltiothei gt einai argh
-	//int reach8 = reachNode1(g,6906,4814);
-	//printf("reach8 = %d\n\n",reach8);
+	int reach8 = reachNode1(g,6906,4814);
+	printf("reach8 = %d\n\n",reach8);
 
 	ptr_entry N80 = lookupNode(g,7107);
+#endif
 
+#if 0
 	ptr_array_matches array = matchSuggestion(N80,1,400,40,5,g);
 	printf("finish matchSugg\n");
 	int id_match = get_match(0,array);
 	printf("\nMatch id = %d\n",id_match);
 	delete_array_matches(array);
+#endif
 
-
+    return 0;
 }
 
 
