@@ -343,6 +343,31 @@ int main( int argc, char *argv[] )
 	load_graph(forum_graph);
 	printf("\n\n\n^^^^^^^^^^^^^^ FORUM_graph finish load ^^^^^^^^^^^^^^^\n\n\n");
 
+
+	//prepei na beltiothei gt einai argh
+	int reach8 = reachNode1(g,6906,4814);
+	printf("reach8 = %d\n\n",reach8);
+
+	int diam = diameter(g);
+	printf("\nDIAMETER = %d\n",diam);
+
+	int aver = 0;
+	double apotel = 0.0;
+	aver = averagePathLength(g,&apotel);
+	printf("\nAVERAGE PATH = %f\n",apotel);
+
+	int numofCC = numberOfCCs(g);
+	printf("\nNumber of Connected Comp = %d\n",numofCC);
+
+	int max = maxCC(g);
+	printf("\nMax Connected Comp = %d\n",max);
+
+	double denc = 1.0;
+	int ok = density(g,&denc);
+	printf("\nDensity = %f\n",denc);
+
+
+/*
 	ptr_entry N60 = lookupNode(g,6906);  //9800
 	printPersonProperties(N60);
 
@@ -393,7 +418,7 @@ int main( int argc, char *argv[] )
 	delete_array_matches(array);
 
 	//degreeDistribution(stalker_graph);
-
+*/
 
 }
 
