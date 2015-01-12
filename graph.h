@@ -37,7 +37,7 @@ int insertEdge(ptr_graph graph,int id,ptr_edge filos);
 
 ptr_entry lookupNode(ptr_graph graph,int id);
 
-int reachNode1( ptr_graph this, int start, int end );
+int reachNode1( ptr_graph this, long start, long end );
 
 Result_ptr reachNodeN(ptr_graph graph, int start);
 

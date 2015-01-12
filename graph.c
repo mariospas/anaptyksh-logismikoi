@@ -83,7 +83,7 @@ ptr_entry lookupNode(ptr_graph graph,int id)
 	return node;
 }
 
-int reachNode1( ptr_graph this, int start, int end )
+int reachNode1( ptr_graph this, long start, long end )
 {
     int level = 0, found = 0, buckets, bucket_size;
     ht_ptr visited1, visited2;
@@ -454,6 +454,7 @@ void load_graph(ptr_graph graph)
 
 		free(filename);
 
+#if 0
 		/********* person_hasInterest_tag.csv *************/
 		if ( ( fp = fopen( "dataset/person_hasInterest_tag.csv", "r" ) ) == NULL ) //Reading a file
 		{
@@ -516,7 +517,7 @@ void load_graph(ptr_graph graph)
 		load_2ids_and_extra(graph,buf,fp,filename,PERSON,5);
 
 		free(filename);
-
+#endif
 	}
 	else if(graph->id == POST)
 	{

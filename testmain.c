@@ -336,13 +336,13 @@ int main( int argc, char *argv[] )
 	printf("get_graph\n");
 
 	load_graph(g);
-	printf("\n\n\n^^^^^^^^^^^^^^ POST_graph load ^^^^^^^^^^^^^^^\n\n\n");
+	/*printf("\n\n\n^^^^^^^^^^^^^^ POST_graph load ^^^^^^^^^^^^^^^\n\n\n");
 	load_graph(post_graph);
 	printf("\n\n\n^^^^^^^^^^^^^^ POST_graph finish load ^^^^^^^^^^^^^^^\n\n\n");
 	printf("\n\n\n^^^^^^^^^^^^^^ FORUM_graph load ^^^^^^^^^^^^^^^\n\n\n");
 	load_graph(forum_graph);
 	printf("\n\n\n^^^^^^^^^^^^^^ FORUM_graph finish load ^^^^^^^^^^^^^^^\n\n\n");
-
+*/
 
 	//prepei na beltiothei gt einai argh
 	int reach8 = reachNode1(g,6906,4814);
