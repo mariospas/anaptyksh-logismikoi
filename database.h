@@ -5,6 +5,8 @@
 
 
 #define NUMBER_OF_ENTITIES 8
+#define TABLE_DEFAULT_SIZE 4
+#define BUCKET_DEFAULT_SIZE 4
 
 typedef enum {
     NONE,
@@ -15,7 +17,8 @@ typedef enum {
     PLACE,
     POST,
     TAG,
-    TAGCLASS
+    TAGCLASS,
+    STALKER
 } entity_type;
 
 typedef struct database *ptr_database;

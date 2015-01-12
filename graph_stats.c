@@ -19,6 +19,11 @@ int katanomh_get_size(ptr_katanomh data)
 	return (data->size);
 }
 
+int katanomh_get_id(ptr_katanomh data)
+{
+	return (data->arithmos_filon);
+}
+
 
 int match_friend(const void *a, const void *key)
 {

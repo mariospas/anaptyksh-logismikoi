@@ -203,7 +203,7 @@ ptr_array_matches matchSuggestion(ptr_entry node, int commonInterest, int hops, 
 	return array;
 }
 
-/******************** Stalkers ************************/
+/************************ Stalkers ****************************/
 
 
 ptr_graph getTopStalkers(int stalkersNum,int likesNumber,int centralityMode,ptr_database database,ptr_array_matches stalkersCloseCentr)
@@ -211,11 +211,17 @@ ptr_graph getTopStalkers(int stalkersNum,int likesNumber,int centralityMode,ptr_
 	ptr_graph graph = DB_get_entity(database,PERSON);
 	ptr_graph post_graph = DB_get_entity(database,POST);
 
+	stalkersCloseCentr = create_array_match(stalkersNum);
+
 	int i, graph_size = Graph_size(graph);
 	int j;
 	HT_iter_ptr iter;
 	ht_ptr nodes = Graph_nodes(graph);
 	ptr_entry data;
+
+	ptr_graph stalker_graph = createGraph(STALKER,TABLE_DEFAULT_SIZE, BUCKET_DEFAULT_SIZE);
+	ptr_entry entry_stalker;
+	ptr_edge edge_stalker;
 
 
 	list_ptr person_like_post_list;
@@ -228,12 +234,14 @@ ptr_graph getTopStalkers(int stalkersNum,int likesNumber,int centralityMode,ptr_
 	ptr_katanomh dataKat;
 	list_ptr list = LL_create(match_friend);
 	LL_iter_ptr iterCreator;
+	int bhmata;
+	int id_creat;
 
 	ptr_matches stalker;
 	double centrality = 0.0;
 
 	iter = HT_iter_create(nodes);
-	printf("In matchSuggestion\n");
+	printf("In getTopStalkers\n");
 
 	for(i=0;i<graph_size;i++)
 	{
@@ -242,10 +250,12 @@ ptr_graph getTopStalkers(int stalkersNum,int likesNumber,int centralityMode,ptr_
 
 		person_like_post_list = type_list(data,"person_likes_post.csv");
 		list_size = LL_size(person_like_post_list);
-		iterList = LL_iter_create(person_like_post_list);
 
 		if(list_size > 0)
 		{
+			printf("If list_size_of_person_like_post > 0\n");
+			iterList = LL_iter_create(person_like_post_list);
+			//printf("If list_size_of_person_like_post > 0\n");
 			for(j=0;j<list_size;j++)
 			{
 				edge = ((ptr_edge)LL_iter_data(iterList));
@@ -253,31 +263,49 @@ ptr_graph getTopStalkers(int stalkersNum,int likesNumber,int centralityMode,ptr_
 
 				post_entry = lookupNode(post_graph,post_id);
 
-				id_creator_of_post = creator_of_post(post_entry);
-				manage_list(list,id_creator_of_post);
-			}
-
-			iterCreator = LL_iter_create(list);
-
-			for(j=0;j<LL_size(list);j++)
-			{
-				dataKat = (ptr_katanomh)LL_iter_data(iterCreator);
-
-				if(katanomh_get_size(dataKat) > likesNumber)
+				if(post_entry != NULL)
 				{
-					///tote o data entry einai stalker
-					if(centralityMode == 0) centrality = closeness_centrality(data,graph);
-					else if(centralityMode == 1) centrality = betweenness_centrality(data,graph);
-
-					stalker = create_match(data->id,centrality);
-
-					insert_match(stalkersCloseCentr,stalker);
-
-					//meta na kataskeuaso ena graph stalker me entries
-
+					id_creator_of_post = creator_of_post(post_entry);
+					if(id_creator_of_post != -1) manage_list(list,id_creator_of_post);
 				}
 
-				LL_iter_next(iterCreator);
+				LL_iter_next(iterList);
+			}
+
+			//printf("If list_size_of_person_like_post > 0\n");
+			if(LL_size(list) > 0)
+			{
+				printf("If list_size_of_creator_ids > 0\n");
+
+				iterCreator = LL_iter_create(list);
+
+				for(j=0;j<LL_size(list);j++)
+				{
+					dataKat = (ptr_katanomh)LL_iter_data(iterCreator);
+					id_creat = katanomh_get_id(dataKat);
+					bhmata = 2;//reachNode1(graph,data->id,id_creat);
+
+					if((katanomh_get_size(dataKat) > likesNumber) && (bhmata > 1))
+					{
+						//meta na kataskeuaso ena graph stalker me entries kai edges forums pou anhkei
+						entry_stalker = copy_entry_person_knows_person(data);
+						insertNode(stalker_graph,entry_stalker);
+
+
+						///tote o data entry einai stalker
+						if(centralityMode == 0) centrality = centrality + 1.5;//closeness_centrality(data,stalker_graph);
+						else if(centralityMode == 1) centrality = centrality + 1.5;//betweenness_centrality(data,stalker_graph);
+
+						stalker = create_match(data->id,centrality);
+
+						insert_match(stalkersCloseCentr,stalker);
+
+
+						break;
+					}
+
+					LL_iter_next(iterCreator);
+				}
 			}
 
 		}
@@ -285,6 +313,21 @@ ptr_graph getTopStalkers(int stalkersNum,int likesNumber,int centralityMode,ptr_
 		HT_iter_next(iter);
 	}
 
+	return stalker_graph;
+
 }
+
+
+
+
+/************************* findTrends ***************************/
+
+
+
+
+
+
+
+
 
 

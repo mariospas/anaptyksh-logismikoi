@@ -46,6 +46,12 @@ int match_edge(const void *a, const void *key);
 
 int match_entry(void *a,void *key);
 
+ptr_edge copy_edge(ptr_edge data);
+
+ptr_entry copy_entry(ptr_entry data);
+
+ptr_entry copy_entry_person_knows_person(ptr_entry data);
+
 
 void* Entry_take_list(ptr_entry this);
 

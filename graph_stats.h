@@ -17,6 +17,8 @@ typedef struct katanomh *ptr_katanomh;
 
 int katanomh_get_size(ptr_katanomh data);
 
+int katanomh_get_id(ptr_katanomh data);
+
 int match_friend( const void *a, const void *key);
 
 ptr_katanomh create_data(int arithmos_filon);

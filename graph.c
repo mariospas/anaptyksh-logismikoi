@@ -62,7 +62,7 @@ int insertEdge( ptr_graph graph, int id, ptr_edge edge )
 	//printf("in insert edge ID = %d\n",node->id);
 	if(node == NULL)
 	{
-		printf("Entry not Found\n\n");
+		//printf("Entry not Found\n\n");
 		return 1;
 	}
 	else if(node != NULL)
@@ -198,7 +198,7 @@ void load_graph(ptr_graph graph)
 	printf("here!\n");
 	if(graph->id == PERSON)
 	{
-		printf("here!!!\n");
+		//printf("here!!!\n");
 
 		char *firstname;
 		char *lastname;
@@ -227,38 +227,38 @@ void load_graph(ptr_graph graph)
 
 			tmp = strtok(buf, "|");
 			id = atoi(tmp);
-			printf("id = %d ",id);
+			//printf("id = %d ",id);
 
 			tmp = strtok(NULL, "|");
 			firstname = strdup(tmp);
-			printf("firstname = %s ",firstname);
+			//printf("firstname = %s ",firstname);
 
 			tmp = strtok(NULL, "|");
 			lastname = strdup(tmp);
-			printf("lastname = %s ",lastname);
+			//printf("lastname = %s ",lastname);
 
 			tmp = strtok(NULL, "|");
 			if(strcmp(tmp,"male") == 0) gender = MALE;
 			if(strcmp(tmp,"female") == 0) gender = FEMALE;
-			printf("gender = %d \n",gender);
+			//printf("gender = %d \n",gender);
 
 			tmp = strtok(NULL, "|");
 			tempB = strdup(tmp);
-			printf("Birthday = %s ",tmp);
+			//printf("Birthday = %s ",tmp);
 			//birthday = load_date(temp,4);
 
 			tmp = strtok(NULL, "|");
-			printf("Creation Date = %s \n",tmp);
+			//printf("Creation Date = %s \n",tmp);
 			tempCreat = strdup(tmp);
 			//creationDate = load_date(temp,5);
 
 			tmp = strtok(NULL, "|");
 			location_ip = strdup(tmp);
-			printf("location_ip = %s ",tmp);
+			//printf("location_ip = %s ",tmp);
 
 			tmp = strtok(NULL, "|");
 			browser = strdup(tmp);
-			printf("browser = %s\n\n",tmp);
+			//printf("browser = %s\n\n",tmp);
 
 			birthday = load_date(tempB,4);
 			creationDate = load_date(tempCreat,5);
@@ -372,7 +372,7 @@ void load_graph(ptr_graph graph)
 
 			tmp = strtok(buf, "|");
 			id = atoi(tmp);
-			printf("id = %d ",id);
+			//printf("id = %d ",id);
 
 			tmp = strtok(NULL, "|");
 			imageFile = strdup(tmp);
@@ -391,25 +391,25 @@ void load_graph(ptr_graph graph)
 				flag = 1;
 
 			}
-			else printf("imageFile = %s ",imageFile);
-			printf("Creation Date = %s \n",tempCreat);
+			//else printf("imageFile = %s ",imageFile);
+			//printf("Creation Date = %s \n",tempCreat);
 
 
 			if(flag == 0) tmp = strtok(NULL, "|");
 			else flag = 0;
 			location_ip = strdup(tmp);
-			printf("location_ip = %s ",tmp);
+			//printf("location_ip = %s ",tmp);
 
 			tmp = strtok(NULL, "|");
 			browser = strdup(tmp);
-			printf("browser = %s\n",tmp);
+			//printf("browser = %s\n",tmp);
 
 			tmp = strtok(NULL, "|");
 			//printf("tmp = %s\n",tmp);
 			if(tmp != NULL && tmp[0] != '\0')
 			{
 				language = strdup(tmp);
-				printf("language = %s ",language);
+				//printf("language = %s ",language);
 			}
 			else language = NULL;
 
@@ -418,11 +418,11 @@ void load_graph(ptr_graph graph)
 			if(tmp != NULL && tmp[0] != '\0')
 			{
 				content = strdup(tmp);
-				printf("content = %s ",content);
+				//printf("content = %s ",content);
 			}
 			else content = NULL;
 
-			printf("\n");
+			//printf("\n");
 			//printf("before creation date\n");
 
 			creationDate = load_date(tempCreat,5);
@@ -481,18 +481,18 @@ void load_graph(ptr_graph graph)
 
 			tmp = strtok(buf, "|");
 			id = atoi(tmp);
-			printf("id = %d ",id);
+			//printf("id = %d ",id);
 
 			tmp = strtok(NULL, "|");
 			title = strdup(tmp);
-			printf("title = %s ",title);
+			//printf("title = %s ",title);
 
 
 			tmp = strtok(NULL, "|");
 			//printf("Creation Date = %s \n",tmp);
 			tempCreat = strdup(tmp);
 
-			printf("\n");
+			//printf("\n");
 			//printf("before creation date\n");
 
 			creationDate = load_date(tempCreat,5);
@@ -564,11 +564,11 @@ void load_2ids(ptr_graph graph,char *buf,FILE *fp,char *filename,int targ_type)
 
 		tmp = strtok(buf, "|");
 		id1 = atoi(tmp);
-		printf("id1 = %d ",id1);
+		//printf("id1 = %d ",id1);
 
 		tmp = strtok(NULL, "|");
 		id2 = atoi(tmp);
-		printf("id2 = %d \n",id2);
+		//printf("id2 = %d \n",id2);
 
 		edge_type = strdup(filename);
 		target_type = targ_type;
@@ -602,15 +602,15 @@ void load_2ids_and_extra(ptr_graph graph,char *buf,FILE *fp,char *filename,int t
 
 		tmp = strtok(buf, "|");
 		id1 = atoi(tmp);
-		printf(" id1 = %d ",id1);
+		//printf(" id1 = %d ",id1);
 
 		tmp = strtok(NULL, "|");
 		id2 = atoi(tmp);
-		printf("id2 = %d ",id2);
+		//printf("id2 = %d ",id2);
 
 		tmp = strtok(NULL, "|");
 		tempB = strdup(tmp);
-		printf("extra = %s \n",tempB);
+		//printf("extra = %s \n",tempB);
 
 		extra = load_date(tempB,choice);
 

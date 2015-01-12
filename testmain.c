@@ -24,7 +24,7 @@
   }
 
 #define CHECKDOUBLE(text, actual, expected)                         \
-if ( (actual - expected < 0.01) || (expected - actual < 0.01)) {                                   \
+if ( ABS(actual,expected) > 0.01 ) {                                   \
   printf("%-30s: Failed | actual = %3f, expected = %3f\n",  \
          text,                                              \
          actual,                                            \
@@ -32,6 +32,9 @@ if ( (actual - expected < 0.01) || (expected - actual < 0.01)) {                
 } else {                                                    \
   printf("%-30s: Success\n", text);                     \
 }
+
+#define ABS(value1, value2) (value1 - value2 < 0 ) ? value2 - value1 : value1 - value2
+
 
 
 #define PERSON_PROPERTIES_NUM 3
@@ -382,6 +385,16 @@ int main( int argc, char *argv[] )
 	delete_array_matches(array);
 
 
+	int stalkersNum = 5, likesNumber = 1, centralityMode = 1;
+	ptr_array_matches array_stalker;
+	ptr_graph stalker_graph = getTopStalkers(stalkersNum,likesNumber,centralityMode,database,array_stalker);
+	int id_stalker = get_match(0,array);
+	printf("\nStalker id = %d\n",id_stalker);
+	delete_array_matches(array);
+
+	//degreeDistribution(stalker_graph);
+
+
 }
 
 
@@ -478,19 +491,19 @@ void testBetweennessCentrality(int bucketsNumber, int bucketSize) {
     insertEdge(gBetw, 5, e10Betw);
 
     double betwCentrty1 = betweenness_centrality(n1Betw, gBetw);
-    CHECKDOUBLE("Small Graph betweenness centrality node:1 ", betwCentrty1, 0.0 / 6);
+    CHECKDOUBLE("Small Graph betweenness centrality node:1 ", betwCentrty1, 0.0 / 6.0);
 
     double betwCentrty2 = betweenness_centrality(n2Betw, gBetw);
-    CHECKDOUBLE("Small Graph betweenness centrality node:2 ", betwCentrty2, 3.5 / 6);
+    CHECKDOUBLE("Small Graph betweenness centrality node:2 ", betwCentrty2, 3.5 / 6.0);
 
     double betwCentrty3 = betweenness_centrality(n3Betw, gBetw);
-    CHECKDOUBLE("Small Graph betweenness centrality node:3 ", betwCentrty3, 1.0 / 6);
+    CHECKDOUBLE("Small Graph betweenness centrality node:3 ", betwCentrty3, 1.0 / 6.0);
 
     double betwCentrty4 = betweenness_centrality(n4Betw, gBetw);
-    CHECKDOUBLE("Small Graph betweenness centrality node:4 ", betwCentrty4, 1.0 / 6);
+    CHECKDOUBLE("Small Graph betweenness centrality node:4 ", betwCentrty4, 1.0 / 6.0);
 
     double betwCentrty5 = betweenness_centrality(n5Betw, gBetw);
-    CHECKDOUBLE("Small Graph betweenness centrality node:5 ", betwCentrty5, 0.5 / 6);
+    CHECKDOUBLE("Small Graph betweenness centrality node:5 ", betwCentrty5, 0.5 / 6.0);
 }
 
 

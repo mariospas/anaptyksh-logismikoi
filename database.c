@@ -2,8 +2,6 @@
 #include "database.h"
 #include "graph.h"
 
-#define TABLE_DEFAULT_SIZE 4
-#define BUCKET_DEFAULT_SIZE 4
 
 struct entity {
 	int id;
