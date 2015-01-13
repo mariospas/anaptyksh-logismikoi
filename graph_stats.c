@@ -172,12 +172,12 @@ int diameter(ptr_graph g)
 	if(g != NULL)
 	{
 		iter = HT_iter_create(nodes);
-		printf("In Diameter\n");
+		//printf("In Diameter\n");
 
 		for(i=0;i<graph_size;i++)
 		{
 			data = ((ptr_entry)HT_iter_data(iter));
-			printf("Check for id = %d\n",data->id);
+			//printf("Check for id = %d\n",data->id);
 			result = reachNodeN(g,data->id);
 			return_maxN(result,graph_size,&max);
 
@@ -227,12 +227,12 @@ int averagePathLength(ptr_graph g, double *apotel)
 	if(g != NULL)
 	{
 		iter = HT_iter_create(nodes);
-		printf("In averagePathLenght\n");
+		//printf("In averagePathLenght\n");
 
 		for(i=0;i<graph_size;i++)
 		{
 			data = ((ptr_entry)HT_iter_data(iter));
-			printf("Check for id = %d\n",data->id);
+			//printf("Check for id = %d\n",data->id);
 			result = reachNodeN(g,data->id);
 			sum_from_result(result,graph_size,apotel);
 
@@ -241,7 +241,9 @@ int averagePathLength(ptr_graph g, double *apotel)
 
 		HT_iter_destroy(iter);
 
-		*apotel = ((*apotel)*2)/((graph_size)*((graph_size)-1));
+		*apotel = *apotel/2.0;
+
+		*apotel = ((*apotel)*2.0)/((double)((graph_size)*((graph_size)-1)));
 
 		//printf("apotel = %f\n",*apotel);
 
@@ -338,6 +340,9 @@ int numberOfCCs(ptr_graph g)
 	int num_of_graphs = 0;
 	fringe = LL_create(match_id);
 
+	LL_iter_ptr iterList;
+	dataCC_ptr data_CC;
+
 	if(g != NULL)
 	{
 		iter = HT_iter_create(nodes);
@@ -361,6 +366,21 @@ int numberOfCCs(ptr_graph g)
 
 
 		HT_iter_destroy(iter);
+
+		/*
+		 * iterList = LL_iter_create(fringe);
+
+		data_CC = LL_iter_data(iterList);
+		printf("In fringe id = %d\n",data_CC->id);
+		while(LL_iter_next(iterList))
+		{
+			data_CC = LL_iter_data(iterList);
+			printf("In fringe id = %d\n",data_CC->id);
+		}
+		LL_iter_destroy(iterList);
+		*/
+
+
 		LL_destroy(fringe,destroy_dataCC);
 	}
 
@@ -447,13 +467,18 @@ double density(ptr_graph g,double *d)
 
 double closeness_centrality( ptr_entry n, ptr_graph g )
 {
-    int sumdist = 0, size = Graph_size(g);
+    double sumdist = 0, size = Graph_size(g);
     ptr_entry entry;
     HT_iter_ptr inode = HT_iter_create( Graph_nodes(g) );
+    int k;
 
     do {
         entry = HT_iter_data( inode );
-        sumdist += reachNode1( g, n->id, entry->id );
+        k = reachNode1( g, n->id, entry->id );
+        if(k != -1)
+        {
+        	sumdist += k;
+        }
     } while ( HT_iter_next( inode ) );
     HT_iter_destroy( inode );
 

@@ -144,19 +144,19 @@ ptr_array_matches matchSuggestion(ptr_entry node, int commonInterest, int hops, 
 		printf("Node id = %d and Data id = %d\n",node->id,data->id);
 
 		location_node2 = location_of_entry(data);
-		//printf("location\n");
+		printf("location = %d\n",location_node2);
 		work2 = last_work_or_study_of_entry(data,"person_workAt_organisation.csv");
-		//printf("work\n");
+		printf("work = %d\n");
 		study2 = last_work_or_study_of_entry(data,"person_studyAt_organisation.csv");
-		//printf("study\n");
+		printf("study = %d\n");
 		koinaEndiaf = common_interests_two_entries(node,data,&node_interest,&data_interest);
 		printf("koinaEndiaf = %d and commonInt = %d\n",koinaEndiaf,commonInterest);
 		gap = generation_gap(node,data);
-		//printf("gap\n");
+		printf("gap\n");
 		same_sex = same_gender(node,data);
-		//printf("same_sex\n");
+		printf("same_sex\n");
 		apostash = 1;//reachNode1(graph,node->id,data->id);
-		//printf("apostash\n");
+		printf("apostash\n");
 
 
 		/*

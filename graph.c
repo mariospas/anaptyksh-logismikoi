@@ -57,6 +57,8 @@ int insertNode( ptr_graph graph, ptr_entry entry )
 
 int insertEdge( ptr_graph graph, int id, ptr_edge edge )
 {
+	ptr_data_list data_list;
+	ptr_data_list data2;
 	//printf("Search for id = %d \n",id);
 	ptr_entry node = HT_search( graph->table, id );
 	//printf("in insert edge ID = %d\n",node->id);
@@ -67,11 +69,20 @@ int insertEdge( ptr_graph graph, int id, ptr_edge edge )
 	}
 	else if(node != NULL)
 	{
+		data_list = LL_search(node->edges,((void *) (edge->edge_type)));
+		//printf("Normal SEARCH\n");
+		if(data_list == NULL)
+		{
+			//printf("First Insert\n");
+			data_list = data_list_create((edge->edge_type));
+			LL_insert(node->edges,(void *) data_list);
+		}
 		//printf("Normal Insert\n");
-		LL_insert( node->edges, (void*) edge );
+		LL_insert( data_list->list, (void*) edge );
+		//printf("Normal FINISH\n");
 	}
 
-
+	//printf("Normal FINISH2\n");
 	return 0;
 }
 
@@ -142,7 +153,7 @@ static int expand_( ptr_graph this, ht_ptr *frontier, ht_ptr visited, int *level
     ptr_entry node_tryout;
     ptr_edge edge_tryout;
     int node_id, node_id2, advance = 0;
-    //list_ptr list_person;
+    list_ptr list_person;
 
     /* Iterate over the frontier nodes */
     do {
@@ -150,10 +161,11 @@ static int expand_( ptr_graph this, ht_ptr *frontier, ht_ptr visited, int *level
         node_tryout = lookupNode( this, node_id );
         if(node_tryout != NULL)
         {
-			if ( LL_size( node_tryout->edges ) == 0 ) {
+        	list_person = type_list(node_tryout,"person_knows_person.csv");
+			if ( LL_size( list_person ) == 0 ) {
 				continue;
 			}
-			edge_it = LL_iter_create( node_tryout->edges );
+			edge_it = LL_iter_create( list_person );
 
 			/* For each node iterate over its edges */
 			do {
@@ -193,7 +205,7 @@ static int expand_reversed_( ptr_graph this, ht_ptr *frontier, ht_ptr visited, i
     ptr_entry node_tryout;
     ptr_edge edge_tryout;
     int node_id, advance = 0;
-    //list_ptr list_person;
+    list_ptr list_person;
 
     /* Iterate over the nodes on the frontier */
     do {
@@ -204,11 +216,13 @@ static int expand_reversed_( ptr_graph this, ht_ptr *frontier, ht_ptr visited, i
             node_tryout = HT_iter_data( graph_it );
             if(node_tryout != NULL)
             {
-				if ( LL_size( node_tryout->edges ) == 0
+            	list_person = type_list(node_tryout,"person_knows_person.csv");
+
+				if ( LL_size( list_person ) == 0
 				  || HT_search( visited, node_tryout->id ) != NULL ) {
 					continue;
 				}
-				edge_it = LL_iter_create( node_tryout->edges );
+				edge_it = LL_iter_create( list_person );
 				do {
 					edge_tryout = LL_iter_data( edge_it );
 					if ( (edge_tryout->target_type != this->id)  || (strcmp(edge_tryout->edge_type,"person_knows_person.csv") != 0))
@@ -454,7 +468,7 @@ void load_graph(ptr_graph graph)
 
 		free(filename);
 
-#if 0
+
 		/********* person_hasInterest_tag.csv *************/
 		if ( ( fp = fopen( "dataset/person_hasInterest_tag.csv", "r" ) ) == NULL ) //Reading a file
 		{
@@ -517,7 +531,7 @@ void load_graph(ptr_graph graph)
 		load_2ids_and_extra(graph,buf,fp,filename,PERSON,5);
 
 		free(filename);
-#endif
+
 	}
 	else if(graph->id == POST)
 	{
@@ -724,31 +738,32 @@ void load_2ids(ptr_graph graph,char *buf,FILE *fp,char *filename,int targ_type)
 	int target_type;
 	ptr_edge edge;
 
+	edge_type = strdup(filename);
+	target_type = targ_type;
+
 	fgets(buf, 1023, fp);   //first line
 
 	while (fgets(buf, 1023, fp) != NULL)
 	{
+		//printf("in while\n");
 		if ((strlen(buf)>0) && (buf[strlen (buf) - 1] == '\n'))
 			buf[strlen (buf) - 1] = '\0';
 
 
 		tmp = strtok(buf, "|");
 		id1 = atoi(tmp);
-		//printf("id1 = %d ",id1);
+		//printf("id1 = %d \n",id1);
 
 		tmp = strtok(NULL, "|");
 		id2 = atoi(tmp);
 		//printf("id2 = %d \n",id2);
 
-		edge_type = strdup(filename);
-		target_type = targ_type;
-
 		edge = create_edge(edge_type,id2,target_type,0,NULL);
 
 		insertEdge(graph,id1,edge);
-
-		free(edge_type);
+		//printf("again while\n");
 	}
+	free(edge_type);
 }
 
 void load_2ids_and_extra(ptr_graph graph,char *buf,FILE *fp,char *filename,int targ_type,int choice)

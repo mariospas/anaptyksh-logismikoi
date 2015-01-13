@@ -33,7 +33,7 @@ int destroyGraph(ptr_graph graph );
 
 int insertNode(ptr_graph graph,ptr_entry entry);
 
-int insertEdge(ptr_graph graph,int id,ptr_edge filos);
+int insertEdge( ptr_graph graph, int id, ptr_edge edge);
 
 ptr_entry lookupNode(ptr_graph graph,int id);
 

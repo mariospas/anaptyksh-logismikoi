@@ -5,6 +5,15 @@
 
 #define EDGE_TYPE_BUF 100
 
+struct data_of_list
+{
+	char *special_id;
+	list_ptr list;
+};
+
+
+typedef struct data_of_list *ptr_data_list;
+
 typedef void (*deallocator_f)(void *obj);
 
 struct entry
@@ -33,6 +42,12 @@ typedef struct entry *ptr_entry;
 
 typedef struct edge *ptr_edge;
 
+
+ptr_data_list data_list_create(char *special_id);
+
+void destroy_data_of_list(void *data);
+
+int match_data_list(const void* a,const void* special_key);
 
 ptr_entry create_entry(int id, void* properties, deallocator_f destroy_properties );      //create node
 
@@ -63,7 +78,7 @@ int last_work_or_study_of_entry(ptr_entry node,char *target_type);
 
 int work_or_study_in_same_place(ptr_entry node1,ptr_entry node2,char *target_type);
 
-list_ptr type_list(ptr_entry node,char *type);
+void* type_list(ptr_entry node,char *type);
 
 int common_interests_two_entries(ptr_entry node1,ptr_entry node2,int *interest1,int *interest2);
 

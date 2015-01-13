@@ -323,9 +323,9 @@ int main( int argc, char *argv[] )
 
 	//testBetweennessCentrality(2,3);
 
-	//testClosenessCentrality(2,3);
-
+	testClosenessCentrality(2,3);
 #endif
+
 	///load and test///
 
 	ptr_database database = DB_create();
@@ -336,13 +336,13 @@ int main( int argc, char *argv[] )
 	printf("get_graph\n");
 
 	load_graph(g);
-	/*printf("\n\n\n^^^^^^^^^^^^^^ POST_graph load ^^^^^^^^^^^^^^^\n\n\n");
+	printf("\n\n\n^^^^^^^^^^^^^^ POST_graph load ^^^^^^^^^^^^^^^\n\n\n");
 	load_graph(post_graph);
 	printf("\n\n\n^^^^^^^^^^^^^^ POST_graph finish load ^^^^^^^^^^^^^^^\n\n\n");
 	printf("\n\n\n^^^^^^^^^^^^^^ FORUM_graph load ^^^^^^^^^^^^^^^\n\n\n");
 	load_graph(forum_graph);
 	printf("\n\n\n^^^^^^^^^^^^^^ FORUM_graph finish load ^^^^^^^^^^^^^^^\n\n\n");
-*/
+
 
 	//prepei na beltiothei gt einai argh
 	int reach8 = reachNode1(g,6906,4814);
@@ -367,14 +367,14 @@ int main( int argc, char *argv[] )
 	printf("\nDensity = %f\n",denc);
 
 
-/*
+
 	ptr_entry N60 = lookupNode(g,6906);  //9800
 	printPersonProperties(N60);
 
 	ptr_entry N70 = lookupNode(g,1631);  //9800
 	printPersonProperties(N70);
 
-	print_list_of_edges(N60);
+	//print_list_of_edges(N60);
 
 	int loc = location_of_entry(N60);
 	printf("\nLocation id = %d\n",loc);
@@ -418,7 +418,7 @@ int main( int argc, char *argv[] )
 	delete_array_matches(array);
 
 	//degreeDistribution(stalker_graph);
-*/
+
 
 }
 
@@ -581,36 +581,42 @@ void testClosenessCentrality(int bucketsNumber, int bucketSize) {
 
     /* Insert edges in graph */
     insertEdge(gClos,1, e1Clos);
-    insertEdge(gClos,2, e2Clos);
+    insertEdge(gClos,1, e2Clos);
     insertEdge(gClos,2, e3Clos);
     insertEdge(gClos,2, e4Clos);
     insertEdge(gClos,3, e5Clos);
     insertEdge(gClos,3, e6Clos);
-    insertEdge(gClos,4, e7Clos);
+    insertEdge(gClos,3, e7Clos);
     insertEdge(gClos,4, e8Clos);
-    insertEdge(gClos,5, e9Clos);
+    insertEdge(gClos,4, e9Clos);
     insertEdge(gClos,5, e10Clos);
+    insertEdge(gClos,5, e11Clos);
+    insertEdge(gClos,5, e12Clos);
+    insertEdge(gClos,6, e13Clos);
+    insertEdge(gClos,6, e14Clos);
+    insertEdge(gClos,7, e15Clos);
+    insertEdge(gClos,7, e16Clos);
 
     double closCentrty1 = closeness_centrality(n1Clos, gClos);
-    CHECKDOUBLE("Small Graph closeness centrality node:1 ", closCentrty1, 0.4 / 6);
+    CHECKDOUBLE("Small Graph closeness centrality node:1 ", closCentrty1, 3.33 / 6.0);
 
     double closCentrty2 = closeness_centrality(n2Clos, gClos);
-    CHECKDOUBLE("Small Graph closeness centrality node:2 ", closCentrty2, 0.4 / 6);
+    CHECKDOUBLE("Small Graph closeness centrality node:2 ", closCentrty2, 3.33 / 6.0);
 
     double closCentrty3 = closeness_centrality(n3Clos, gClos);
-    CHECKDOUBLE("Small Graph closeness centrality node:3 ", closCentrty3, 0.55 / 6);
+    CHECKDOUBLE("Small Graph closeness centrality node:3 ", closCentrty3, 4.16 / 6.0);
 
     double closCentrty4 = closeness_centrality(n4Clos, gClos);
-    CHECKDOUBLE("Small Graph closeness centrality node:4 ", closCentrty4, 0.6 / 6);
+    CHECKDOUBLE("Small Graph closeness centrality node:4 ", closCentrty4, 4.0 / 6.0);
 
     double closCentrty5 = closeness_centrality(n5Clos, gClos);
-    CHECKDOUBLE("Small Graph closeness centrality node:5 ", closCentrty5, 0.55 / 6);
+    CHECKDOUBLE("Small Graph closeness centrality node:5 ", closCentrty5, 4.16 / 6.0);
 
     double closCentrty6 = closeness_centrality(n6Clos, gClos);
-    CHECKDOUBLE("Small Graph closeness centrality node:6 ", closCentrty6, 0.4 / 6);
+    CHECKDOUBLE("Small Graph closeness centrality node:6 ", closCentrty6, 3.33 / 6.0);
 
     double closCentrty7 = closeness_centrality(n7Clos, gClos);
-    CHECKDOUBLE("Small Graph closeness centrality node:7 ", closCentrty7, 0.4 / 6);
+    CHECKDOUBLE("Small Graph closeness centrality node:7 ", closCentrty7, 3.33 / 6.0);
 
 }
 
