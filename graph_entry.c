@@ -400,17 +400,15 @@ int common_interests_two_entries(ptr_entry node1,ptr_entry node2,int *interest1,
 {
 	int com_int = 0;
 
-	list_ptr list1 = NULL;
+	list_ptr list1 = type_list(node1,"person_hasInterest_tag.csv");
 	//print_list(list1);
-	list_ptr list2 = NULL;
+	list_ptr list2 = type_list(node2,"person_hasInterest_tag.csv");
 	//print_list(list2);
 	LL_iter_ptr iterList1;
 	LL_iter_ptr iterList2;
 	ptr_edge data1;
 	ptr_edge data2;
 
-	list1 = type_list(node1,"person_hasInterest_tag.csv");
-	list2 = type_list(node2,"person_hasInterest_tag.csv");
 
 	printf("size1 = %d size2 = %d\n",LL_size(list1),LL_size(list2));
 	if((list1 == NULL) || (list2 == NULL))

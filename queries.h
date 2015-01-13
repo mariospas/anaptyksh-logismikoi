@@ -2,6 +2,11 @@
 #define _QUERIES_
 
 #include "database.h"
+#include "graph.h"
+#include "graph_stats.h"
+#include "graph_entry.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 typedef struct Matches *ptr_matches;
 
