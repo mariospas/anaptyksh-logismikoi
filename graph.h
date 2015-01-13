@@ -67,4 +67,6 @@ static int match_found_( ht_ptr frontier1, ht_ptr frontier2 );
 
 static size_t hash(int value, size_t size);
 
+void print_graph(ptr_graph graph);
+
 #endif /* _GRAPH_ */

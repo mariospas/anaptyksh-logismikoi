@@ -37,6 +37,7 @@ list_ptr LL_create( int (*match)( const void *a, const void *b) )
 /* Deconstructor */
 void LL_destroy( list_ptr this, void (*destroy)(void*) )
 {
+	assert(this != NULL);
 	struct LL_node *node = this->head, *next;
 	while ( node != NULL ) {
 		next = node->next;

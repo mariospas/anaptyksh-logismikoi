@@ -73,7 +73,7 @@ ptr_array_matches create_array_match(int limit)
 {
 	ptr_array_matches array = malloc(sizeof(struct array_matches));
 
-	array->pinakas = malloc(limit * sizeof(ptr_matches));
+	array->pinakas = malloc(limit * sizeof(struct Matches *));
 	array->current_size = -1;
 	array->limit = limit - 1;
 
@@ -85,24 +85,27 @@ void delete_array_matches(ptr_array_matches array)
 {
 	int limit = array->current_size;
 	int i;
+	ptr_matches match;
 
-	for(i=0;i<=limit;i++)
+	for(i=0;i<limit;i++)
 	{
-		delete_match(array->pinakas[i]);
+		printf("only one\n");
+		delete_match((array->pinakas[i]));
 	}
 	free(array);
 }
 
-int get_match(int pos,ptr_array_matches array)
+int get_match(int pos,ptr_array_matches array,double *score)
 {
 	if(pos > array->current_size)
 	{
 		printf("Wrong pos !!!\n");
 		return -1;
 	}
-	printf("In get_match\n");
-	printf("ID = %d\n",(array->pinakas[pos])->id);
+	//printf("In get_match\n");
+	//printf("ID = %d\n",(array->pinakas[pos])->id);
 
+	*score = ((array->pinakas[pos])->similarity_score);
 	return ((array->pinakas[pos])->id);
 }
 
@@ -133,28 +136,28 @@ ptr_array_matches matchSuggestion(ptr_entry node, int commonInterest, int hops, 
 	double similarity = 0.0;
 
 	iter = HT_iter_create(nodes);
-	printf("In matchSuggestion\n");
+	//printf("In matchSuggestion\n");
 
 	for(i=0;i<graph_size;i++)
 	{
 		data = ((ptr_entry)HT_iter_data(iter));
 		if(data->id == node->id) continue;
-		printf("Node id = %d and Data id = %d\n",node->id,data->id);
+		//printf("Node id = %d and Data id = %d\n",node->id,data->id);
 
 		location_node2 = location_of_entry(data);
-		printf("location = %d\n",location_node2);
+		//printf("location = %d\n",location_node2);
 		work2 = last_work_or_study_of_entry(data,"person_workAt_organisation.csv");
-		printf("work = %d\n");
+		//printf("work = %d\n",work2);
 		study2 = last_work_or_study_of_entry(data,"person_studyAt_organisation.csv");
-		printf("study = %d\n");
+		//printf("study = %d\n",study2);
 		koinaEndiaf = common_interests_two_entries(node,data,&node_interest,&data_interest);
-		printf("koinaEndiaf = %d and commonInt = %d\n",koinaEndiaf,commonInterest);
+		//printf("koinaEndiaf = %d and commonInt = %d\n",koinaEndiaf,commonInterest);
 		gap = generation_gap(node,data);
-		printf("gap\n");
+		//printf("gap\n");
 		same_sex = same_gender(node,data);
-		printf("same_sex\n");
+		//printf("same_sex\n");
 		apostash = 1;//reachNode1(graph,node->id,data->id);
-		printf("apostash\n");
+		//printf("apostash\n");
 
 
 		/*
@@ -186,7 +189,7 @@ ptr_array_matches matchSuggestion(ptr_entry node, int commonInterest, int hops, 
 			&& (!same_sex)
 			&& (apostash <= hops) )
 		{
-			printf("*****insert one match data id = %d\n",data->id);
+			//printf("*****insert one match data id = %d\n",data->id);
 			similarity = ((double)koinaEndiaf)/((double)(node_interest + data_interest));
 			match = create_match(data->id,similarity);
 
@@ -203,13 +206,11 @@ ptr_array_matches matchSuggestion(ptr_entry node, int commonInterest, int hops, 
 
 /************************ Stalkers ****************************/
 
-
-ptr_graph getTopStalkers(int stalkersNum,int likesNumber,int centralityMode,ptr_database database,ptr_array_matches stalkersCloseCentr)
+ptr_graph Create_Stalkers_Graph(int stalkersNum,int likesNumber,int centralityMode,ptr_database database)
 {
 	ptr_graph graph = DB_get_entity(database,PERSON);
 	ptr_graph post_graph = DB_get_entity(database,POST);
 
-	stalkersCloseCentr = create_array_match(stalkersNum);
 
 	int i, graph_size = Graph_size(graph);
 	int j;
@@ -230,28 +231,29 @@ ptr_graph getTopStalkers(int stalkersNum,int likesNumber,int centralityMode,ptr_
 	ptr_entry post_entry;
 	int id_creator_of_post;
 	ptr_katanomh dataKat;
-	list_ptr list = LL_create(match_friend);
+	list_ptr list = NULL;
 	LL_iter_ptr iterCreator;
 	int bhmata;
 	int id_creat;
 
-	ptr_matches stalker;
-	double centrality = 0.0;
+
 
 	iter = HT_iter_create(nodes);
-	printf("In getTopStalkers\n");
+	//printf("In getTopStalkers\n");
 
 	for(i=0;i<graph_size;i++)
 	{
 		data = ((ptr_entry)HT_iter_data(iter));
-		printf("Data id = %d\n",data->id);
+		//printf("Data id = %d\n",data->id);
 
 		person_like_post_list = type_list(data,"person_likes_post.csv");
-		list_size = LL_size(person_like_post_list);
 
-		if(list_size > 0)
+
+		if(person_like_post_list != NULL)
 		{
-			printf("If list_size_of_person_like_post > 0\n");
+			list = LL_create(match_friend);
+			list_size = LL_size(person_like_post_list);
+			//printf("If list_size_of_person_like_post = %d\n",list_size);
 			iterList = LL_iter_create(person_like_post_list);
 			//printf("If list_size_of_person_like_post > 0\n");
 			for(j=0;j<list_size;j++)
@@ -263,8 +265,13 @@ ptr_graph getTopStalkers(int stalkersNum,int likesNumber,int centralityMode,ptr_
 
 				if(post_entry != NULL)
 				{
+					//printf("post_id = %d\n",post_id);
 					id_creator_of_post = creator_of_post(post_entry);
-					if(id_creator_of_post != -1) manage_list(list,id_creator_of_post);
+					if(id_creator_of_post != -1)
+					{
+						//printf("id_creator = %d\n",id_creator_of_post);
+						manage_list(list,id_creator_of_post);
+					}
 				}
 
 				LL_iter_next(iterList);
@@ -273,7 +280,7 @@ ptr_graph getTopStalkers(int stalkersNum,int likesNumber,int centralityMode,ptr_
 			//printf("If list_size_of_person_like_post > 0\n");
 			if(LL_size(list) > 0)
 			{
-				printf("If list_size_of_creator_ids > 0\n");
+				//printf("If list_size_of_creator_ids = %d\n",LL_size(list));
 
 				iterCreator = LL_iter_create(list);
 
@@ -281,23 +288,17 @@ ptr_graph getTopStalkers(int stalkersNum,int likesNumber,int centralityMode,ptr_
 				{
 					dataKat = (ptr_katanomh)LL_iter_data(iterCreator);
 					id_creat = katanomh_get_id(dataKat);
-					bhmata = 2;//reachNode1(graph,data->id,id_creat);
+					bhmata = reachNode1(graph,data->id,id_creat);
 
 					if((katanomh_get_size(dataKat) > likesNumber) && (bhmata > 1))
 					{
+						//printf("Find a stalker %d\n",data->id);
 						//meta na kataskeuaso ena graph stalker me entries kai edges forums pou anhkei
 						entry_stalker = copy_entry_person_knows_person(data);
+						//printf("TRY to Insert stalker %d\n",data->id);
 						insertNode(stalker_graph,entry_stalker);
 
-
-						///tote o data entry einai stalker
-						if(centralityMode == 0) centrality = centrality + 1.5;//closeness_centrality(data,stalker_graph);
-						else if(centralityMode == 1) centrality = centrality + 1.5;//betweenness_centrality(data,stalker_graph);
-
-						stalker = create_match(data->id,centrality);
-
-						insert_match(stalkersCloseCentr,stalker);
-
+						//printf("Insert stalker %d\n",data->id);
 
 						break;
 					}
@@ -306,7 +307,50 @@ ptr_graph getTopStalkers(int stalkersNum,int likesNumber,int centralityMode,ptr_
 				}
 			}
 
+			LL_destroy(list,destroy_data);
+
 		}
+
+		HT_iter_next(iter);
+	}
+
+	return stalker_graph;
+
+}
+
+
+ptr_graph getTopStalkers(int stalkersNum,int likesNumber,int centralityMode,ptr_database database,ptr_array_matches stalkersCloseCentr)
+{
+
+	ptr_matches stalker;
+	double centrality = 0.0;
+	stalkersCloseCentr = create_array_match(stalkersNum);
+
+	ptr_graph stalker_graph = Create_Stalkers_Graph(stalkersNum,likesNumber,centralityMode,database);
+
+	HT_iter_ptr iter;
+	ht_ptr nodes = Graph_nodes(stalker_graph);
+	ptr_entry data;
+	int i, graph_size = Graph_size(stalker_graph);
+	int j;
+
+
+
+	iter = HT_iter_create(nodes);
+	//printf("In getTopStalkers\n");
+
+	for(i=0;i<graph_size;i++)
+	{
+		data = ((ptr_entry)HT_iter_data(iter));
+		//printf("Data id = %d\n",data->id);
+
+		///tote o data entry einai stalker
+		if(centralityMode == 1) centrality = closeness_centrality(data,stalker_graph);
+		else if(centralityMode == 2) centrality = betweenness_centrality(data,stalker_graph);
+
+		stalker = create_match(data->id,centrality);
+
+		insert_match(stalkersCloseCentr,stalker);
 
 		HT_iter_next(iter);
 	}

@@ -25,11 +25,13 @@ ptr_array_matches create_array_match(int limit);
 
 void delete_array_matches(ptr_array_matches array);
 
-int get_match(int pos,ptr_array_matches array);
+int get_match(int pos,ptr_array_matches array,double *score);
 
 
 
 ptr_array_matches matchSuggestion(ptr_entry node, int commonInterest, int hops, int ageDiff, int limit, ptr_graph graph);
+
+ptr_graph Create_Stalkers_Graph(int stalkersNum,int likesNumber,int centralityMode,ptr_database database);
 
 ptr_graph getTopStalkers(int stalkersNum,int likesNumber,int centralityMode,ptr_database database,ptr_array_matches stalkersCloseCentr);
 

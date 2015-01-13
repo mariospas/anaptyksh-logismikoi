@@ -324,8 +324,8 @@ int main( int argc, char *argv[] )
 	//testBetweennessCentrality(2,3);
 
 	testClosenessCentrality(2,3);
-#endif
 
+#endif
 	///load and test///
 
 	ptr_database database = DB_create();
@@ -402,20 +402,34 @@ int main( int argc, char *argv[] )
 	//printf("reach8 = %d\n\n",reach8);
 
 	ptr_entry N80 = lookupNode(g,3755);
+	closeness_centrality(N80,g);
 
 	ptr_array_matches array = matchSuggestion(N80,1,400,40,5,g);
 	printf("finish matchSugg\n");
-	int id_match = get_match(0,array);
+
+	double simil = 0.0;
+	int id_match = get_match(0,array,&simil);
 	printf("\nMatch id = %d\n",id_match);
 	delete_array_matches(array);
 
+	printf("\n");
 
-	int stalkersNum = 5, likesNumber = 1, centralityMode = 1;
+	///
+	int stalkersNum = 7, likesNumber = 1, centralityMode = 1;
 	ptr_array_matches array_stalker;
 	ptr_graph stalker_graph = getTopStalkers(stalkersNum,likesNumber,centralityMode,database,array_stalker);
-	int id_stalker = get_match(0,array);
-	printf("\nStalker id = %d\n",id_stalker);
-	delete_array_matches(array);
+
+	double score = 0.0;
+	int w;
+	for(w=0;w<(stalkersNum);w++)
+	{
+		int id_stalker = get_match(w,array,&score);
+		printf("\nStalker id = %d and Score = %f\n",id_stalker,score);
+	}
+
+	print_graph(stalker_graph);
+
+	//delete_array_matches(array_stalker);  problem :(
 
 	//degreeDistribution(stalker_graph);
 
@@ -456,6 +470,7 @@ ptr_edge setEdgeProperties(int endNodeID, char* type, int weight) {
 
 void printPersonProperties(ptr_entry n)
 {
+	//printf("entry_id = %d\n",n->id);
 	ptr_person_info p = (ptr_person_info) (n->properties);
 	printf("Name : %s and ID = %d\n",p->first_name,p->id);
 }
@@ -536,14 +551,24 @@ void testClosenessCentrality(int bucketsNumber, int bucketSize) {
     //create small graph for testing betweenness Centrality
 	ptr_graph gClos = createGraph(PERSON,bucketsNumber, bucketSize);
 
+	/*
+    ptr_entry n1Clos = create_entry(1,13,person_delete);
+	ptr_entry n2Clos = create_entry(2, 13,person_delete);
+	ptr_entry n3Clos = create_entry(3, 13,person_delete);
+	ptr_entry n4Clos = create_entry(4, 13,person_delete);
+	ptr_entry n5Clos = create_entry(5, 13,person_delete);
+	ptr_entry n6Clos = create_entry(6, 13,person_delete);
+	ptr_entry n7Clos = create_entry(7, 13,person_delete);
+	*/
 
-    ptr_entry n1Clos = create_entry(1,NULL,person_delete);
-	ptr_entry n2Clos = create_entry(2, NULL,person_delete);
-	ptr_entry n3Clos = create_entry(3, NULL,person_delete);
-	ptr_entry n4Clos = create_entry(4, NULL,person_delete);
-	ptr_entry n5Clos = create_entry(5, NULL,person_delete);
-	ptr_entry n6Clos = create_entry(6, NULL,person_delete);
-	ptr_entry n7Clos = create_entry(7, NULL,person_delete);
+	ptr_entry n1Clos = setPersonProperties(1, "lonely", "loner", 29);
+	ptr_entry n2Clos = setPersonProperties(2, "herald", "kllapi", 22);
+	ptr_entry n3Clos = setPersonProperties(3, "marialena", "kiriakidi", 25);
+	ptr_entry n4Clos = setPersonProperties(4, "antonia", "saravanou", 18);
+	ptr_entry n5Clos = setPersonProperties(5, "manos", "karvounis", 19);
+	ptr_entry n6Clos = setPersonProperties(6, "giannis", "chronis", 20);
+	ptr_entry n7Clos = setPersonProperties(7, "christoforos", "sfiggos", 16);
+
 
     insertNode(gClos, n1Clos);
     insertNode( gClos, n2Clos);
@@ -554,11 +579,12 @@ void testClosenessCentrality(int bucketsNumber, int bucketSize) {
     insertNode( gClos, n7Clos);
 
     char edge_type[EDGE_TYPE_BUF] = "person_knows_person.csv";
+    printf("edge_type = %s\n",edge_type);
 	int target_type = PERSON;
 
 
     /* Create edges and set properties */
-    ptr_edge e1Clos = create_edge(edge_type,2,target_type,10,NULL);
+   /* ptr_edge e1Clos = create_edge(edge_type,2,target_type,10,NULL);
 	ptr_edge e2Clos = create_edge(edge_type, 3, target_type,10,NULL);
 	ptr_edge e3Clos = create_edge(edge_type, 1, target_type,10,NULL);
 	ptr_edge e4Clos = create_edge(edge_type, 3, target_type,10,NULL);
@@ -575,7 +601,24 @@ void testClosenessCentrality(int bucketsNumber, int bucketSize) {
 	ptr_edge e14Clos = create_edge(edge_type, 7, target_type,10,NULL);
 	ptr_edge e15Clos = create_edge(edge_type, 5, target_type,10,NULL);
 	ptr_edge e16Clos = create_edge(edge_type, 6, target_type,10,NULL);
+	*/
 
+	ptr_edge e1Clos = setEdgeProperties(2, "knows", 30);   //knows na bazame mia lista
+	ptr_edge e2Clos = setEdgeProperties(3, "knows", 30);
+	ptr_edge e3Clos = setEdgeProperties(1, "knows", 20);
+	ptr_edge e4Clos = setEdgeProperties(3, "knows", 20);
+	ptr_edge e5Clos = setEdgeProperties(1, "knows", 30);
+	ptr_edge e6Clos = setEdgeProperties(2, "knows", 30);
+	ptr_edge e7Clos = setEdgeProperties(4, "knows", 10);
+	ptr_edge e8Clos = setEdgeProperties(3, "knows", 10);
+	ptr_edge e9Clos = setEdgeProperties(5, "knows", 30);
+	ptr_edge e10Clos = setEdgeProperties(4, "knows", 30);
+	ptr_edge e11Clos = setEdgeProperties(6, "knows", 30);
+	ptr_edge e12Clos = setEdgeProperties(7, "knows", 30);
+	ptr_edge e13Clos = setEdgeProperties(5, "knows", 10);
+	ptr_edge e14Clos = setEdgeProperties(7, "knows", 10);
+	ptr_edge e15Clos = setEdgeProperties(5, "knows", 30);
+	ptr_edge e16Clos = setEdgeProperties(6, "knows", 30);
 
 
 
@@ -596,6 +639,16 @@ void testClosenessCentrality(int bucketsNumber, int bucketSize) {
     insertEdge(gClos,6, e14Clos);
     insertEdge(gClos,7, e15Clos);
     insertEdge(gClos,7, e16Clos);
+
+    printf("Try to LookUp\n");
+	ptr_entry Nl1 = lookupNode(gClos,3);
+	//printPersonProperties(Nl1);
+	print_list_of_edges(Nl1);
+
+    int reach_dok = reachNode1(gClos,4,3);
+    printf("reach_dok = %d\n\n",reach_dok);
+
+    print_graph(gClos);
 
     double closCentrty1 = closeness_centrality(n1Clos, gClos);
     CHECKDOUBLE("Small Graph closeness centrality node:1 ", closCentrty1, 3.33 / 6.0);

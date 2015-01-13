@@ -129,7 +129,14 @@ int match_entry(void *a,void *key)
 
 ptr_edge copy_edge(ptr_edge data)
 {
-	ptr_edge edge = create_edge(data->edge_type,data->target_id,data->target_type,data->weight,data->extra_data);
+	ptr_date date;
+	ptr_date date1 = NULL;
+	if((data->extra_data) != NULL)
+	{
+		date = ((ptr_date) (data->extra_data));
+		date1 = date_create(date->year,date->month,date->day,date->hour,date->minute,date->second);
+	}
+	ptr_edge edge = create_edge(data->edge_type,data->target_id,data->target_type,data->weight,(void *)date1);
 	return edge;
 }
 
@@ -159,23 +166,47 @@ ptr_entry copy_entry(ptr_entry data)
 
 ptr_entry copy_entry_person_knows_person(ptr_entry data)
 {
-	ptr_entry entry = create_entry(data->id,data->properties,data->properties_destroy);
+	ptr_person_info info = ((ptr_person_info) (data->properties));
+	ptr_date date = ((ptr_date)(info->birthday));
+	ptr_date birthday = date_create(date->year,date->month,date->day,date->hour,date->minute,date->second);
+	date = ((ptr_date)(info->creation_date));
+	ptr_date creationDate = date_create(date->year,date->month,date->day,date->hour,date->minute,date->second);
+	ptr_person_info info1 = person_create(info->id,info->first_name,info->surname,info->gender,birthday,creationDate,info->location_ip,info->browser_used);
+
+	ptr_entry entry = create_entry(data->id,info1,data->properties_destroy);
 	list_ptr list_of_person = type_list(data,"person_knows_person.csv");
 
-	ptr_edge* result = ((ptr_edge*)LL_export(list_of_person));
+	ptr_data_list data_list;
+	char *edge_type = strdup("person_knows_person.csv");
 
-	int size = LL_size(list_of_person);
-	int i;
 
-	ptr_edge edge;
-
-	for(i=0;i<size;i++)
+	if(list_of_person != NULL)
 	{
-		edge = copy_edge(result[i]);
-		LL_insert(entry->edges,edge);
-	}
+		ptr_edge* result = ((ptr_edge*)LL_export(list_of_person));
 
-	free(result);
+		int size = LL_size(list_of_person);
+		int i;
+
+		ptr_edge edge;
+
+		data_list = LL_search(entry->edges,((void *) (edge_type)));
+		//printf("Normal SEARCH\n");
+		if(data_list == NULL)
+		{
+			//printf("First Insert\n");
+			data_list = data_list_create((edge_type));
+			LL_insert(entry->edges,(void *) data_list);
+		}
+
+		for(i=0;i<size;i++)
+		{
+			edge = copy_edge(result[i]);
+			LL_insert(data_list->list,edge);
+		}
+
+		free(result);
+	}
+	free(edge_type);
 
 	return entry;
 }
@@ -210,12 +241,12 @@ int size_of_friend_list(ptr_entry this)
 
 int location_of_entry(ptr_entry node)
 {
-	ptr_data_list data_list = LL_search(node->edges,"person_isLocatedIn_place.csv");
 	list_ptr list;
 	LL_iter_ptr iterList;
 	ptr_edge data;
 
-	list = data_list->list;
+	list = type_list(node,"person_isLocatedIn_place.csv");
+	if(list == NULL) return -1;
 
 	iterList = LL_iter_create(list);
 
@@ -369,9 +400,6 @@ int work_or_study_in_same_place(ptr_entry node1,ptr_entry node2,char *target_typ
 	LL_iter_destroy(iterList1);
 	LL_iter_destroy(iterList2);
 
-	LL_destroy(list1,destroy_edge);
-	LL_destroy(list2,destroy_edge);
-
 	return com_int;
 }
 
@@ -386,7 +414,7 @@ void* type_list(ptr_entry node,char *type)
 	data_list = LL_search(node->edges,type);
 	if(data_list == NULL)
 	{
-		printf("return NULL\n");
+		//printf("return NULL %s\n",type);
 		return NULL;
 	}
 	else new_list =((void *) (data_list->list));
@@ -410,10 +438,10 @@ int common_interests_two_entries(ptr_entry node1,ptr_entry node2,int *interest1,
 	ptr_edge data2;
 
 
-	printf("size1 = %d size2 = %d\n",LL_size(list1),LL_size(list2));
+	//printf("size1 = %d size2 = %d\n",LL_size(list1),LL_size(list2));
 	if((list1 == NULL) || (list2 == NULL))
 	{
-		printf("size1 = %d size2 = %d\n",LL_size(list1),LL_size(list2));
+		//printf("size1 = %d size2 = %d\n",LL_size(list1),LL_size(list2));
 		*interest1 = 0;
 		*interest2 = 0;
 		return com_int;
@@ -475,9 +503,6 @@ int common_interests_two_entries(ptr_entry node1,ptr_entry node2,int *interest1,
 	LL_iter_destroy(iterList1);
 	LL_iter_destroy(iterList2);
 
-	LL_destroy(list1,destroy_edge);
-	LL_destroy(list2,destroy_edge);
-
 	return com_int;
 
 }
@@ -538,7 +563,7 @@ int creator_of_post(ptr_entry node)
 
 	list = type_list(node,"post_hasCreator_person.csv");
 
-	if(LL_size(list) > 0)
+	if(list != NULL)
 	{
 
 		iterList = LL_iter_create(list);
@@ -583,11 +608,11 @@ void print_list_of_edges(ptr_entry node)
 
 	iter = LL_iter_create(data_list->list);
 	data = LL_iter_data(iter);
-	printf("Edge ID = %d and Type = %s\n",data->target_id,data->edge_type);
+	printf("Edge ID = %d and Type = %s and Target_type = %d\n",data->target_id,data->edge_type,data->target_type);
 	while(LL_iter_next(iter))
 	{
 		data = LL_iter_data(iter);
-		printf("Edge ID = %d and Type = %s\n",data->target_id,data->edge_type);
+		printf("Edge ID = %d and Type = %s and Target_type = %d\n",data->target_id,data->edge_type,data->target_type);
 	}
 	LL_iter_destroy(iter);
 
@@ -595,11 +620,11 @@ void print_list_of_edges(ptr_entry node)
 	{
 		iter = LL_iter_create(data_list->list);
 		data = LL_iter_data(iter);
-		printf("Edge ID = %d and Type = %s\n",data->target_id,data->edge_type);
+		printf("Edge ID = %d and Type = %s and Target_type = %d\n",data->target_id,data->edge_type,data->target_type);
 		while(LL_iter_next(iter))
 		{
 			data = LL_iter_data(iter);
-			printf("Edge ID = %d and Type = %s\n",data->target_id,data->edge_type);
+			printf("Edge ID = %d and Type = %s and Target_type = %d\n",data->target_id,data->edge_type,data->target_type);
 		}
 		LL_iter_destroy(iter);
 	}

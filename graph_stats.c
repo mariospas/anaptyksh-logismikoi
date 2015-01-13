@@ -482,7 +482,7 @@ double closeness_centrality( ptr_entry n, ptr_graph g )
     } while ( HT_iter_next( inode ) );
     HT_iter_destroy( inode );
 
-    printf("result = %f\n",(sumdist / ( (double) size )));
+    printf("^^^^^^result = %f and size = %f^^^^^^^\n",(sumdist / ( (double) size )),size);
     return sumdist / ( (double) size );
 }
 

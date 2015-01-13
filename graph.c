@@ -162,7 +162,7 @@ static int expand_( ptr_graph this, ht_ptr *frontier, ht_ptr visited, int *level
         if(node_tryout != NULL)
         {
         	list_person = type_list(node_tryout,"person_knows_person.csv");
-			if ( LL_size( list_person ) == 0 ) {
+			if ( list_person == NULL ) {
 				continue;
 			}
 			edge_it = LL_iter_create( list_person );
@@ -218,7 +218,7 @@ static int expand_reversed_( ptr_graph this, ht_ptr *frontier, ht_ptr visited, i
             {
             	list_person = type_list(node_tryout,"person_knows_person.csv");
 
-				if ( LL_size( list_person ) == 0
+				if ( list_person == NULL
 				  || HT_search( visited, node_tryout->id ) != NULL ) {
 					continue;
 				}
@@ -923,6 +923,40 @@ size_t hash(int value, size_t size)
     return ( size * fmod( ( value * HASH_CONSTANT ), 1 ) );
     */
 }
+
+
+void print_graph(ptr_graph graph)
+{
+	int i, graph_size = Graph_size(graph);
+	HT_iter_ptr iter;
+	ht_ptr nodes = Graph_nodes(graph);
+	ptr_entry data;
+	Result_ptr result;
+	int max = -7;
+	ptr_person_info p;
+
+	if(graph != NULL)
+	{
+		iter = HT_iter_create(nodes);
+		//printf("In Diameter\n");
+		printf("****Graph id = %d and Size = %d\n",graph->id,graph->size);
+
+		for(i=0;i<graph_size;i++)
+		{
+			data = ((ptr_entry)HT_iter_data(iter));
+			p = (ptr_person_info) (data->properties);
+			printf("Name : %s and ID = %d\n",p->first_name,p->id);
+
+			print_list_of_edges(data);
+			printf("\n");
+
+			HT_iter_next(iter);
+		}
+
+		HT_iter_destroy(iter);
+	}
+}
+
 
 size_t Graph_size( ptr_graph graph )
 {
