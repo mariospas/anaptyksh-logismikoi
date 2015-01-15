@@ -333,6 +333,7 @@ int main( int argc, char *argv[] )
 	g = DB_get_entity(database,PERSON);
 	ptr_graph post_graph = DB_get_entity(database,POST);
 	ptr_graph forum_graph = DB_get_entity(database,FORUM);
+	ptr_graph tag_forum = DB_get_entity(database,TAG);
 	printf("get_graph\n");
 
 	load_graph(g);
@@ -342,11 +343,18 @@ int main( int argc, char *argv[] )
 	printf("\n\n\n^^^^^^^^^^^^^^ FORUM_graph load ^^^^^^^^^^^^^^^\n\n\n");
 	load_graph(forum_graph);
 	printf("\n\n\n^^^^^^^^^^^^^^ FORUM_graph finish load ^^^^^^^^^^^^^^^\n\n\n");
+	printf("\n\n\n^^^^^^^^^^^^^^ tag_forum load ^^^^^^^^^^^^^^^\n\n\n");
+	load_graph(tag_forum);
+	printf("\n\n\n^^^^^^^^^^^^^^ tag_forum finish load ^^^^^^^^^^^^^^^\n\n\n");
 
 
 	//prepei na beltiothei gt einai argh
 	int reach8 = reachNode1(g,6906,4814);
-	printf("reach8 = %d\n\n",reach8);
+	printf("reach = %d start id = %d and end id = %d\n\n",reach8,6906,4814);
+
+
+	reach8 = reachNode1(g,32,1631);
+	printf("reach = %d start id = %d and end id = %d\n\n",reach8,32,1631);
 
 	int diam = diameter(g);
 	printf("\nDIAMETER = %d\n",diam);
@@ -397,12 +405,12 @@ int main( int argc, char *argv[] )
 	if(same_sex) printf("Yes !!!\n");
 	else printf("No !!!\n");
 
-	//prepei na beltiothei gt einai argh
-	//int reach8 = reachNode1(g,6906,4814);
-	//printf("reach8 = %d\n\n",reach8);
+
 
 	ptr_entry N80 = lookupNode(g,3755);
 	closeness_centrality(N80,g);
+
+	betweenness_centrality(N80,g);
 
 	ptr_array_matches array = matchSuggestion(N80,1,400,40,5,g);
 	printf("finish matchSugg\n");
@@ -433,6 +441,20 @@ int main( int argc, char *argv[] )
 
 	//degreeDistribution(stalker_graph);
 
+
+	int trendsNum = 4;
+	    //allocate result tables before calling query and pass them as parameters
+	char** womenTrends;
+	womenTrends = (char**) malloc(trendsNum * sizeof (char*));
+	char** menTrends;
+	menTrends = (char**) malloc(trendsNum * sizeof (char*));
+	findTrends(trendsNum, database, womenTrends, menTrends);
+
+	int i;
+	for(i=0;i<trendsNum;i++)
+	{
+		printf("WomenTrend[%d] = %s  and  MenTrend[%d] = %s\n",i,womenTrends[i],i,menTrends[i]);
+	}
 
 }
 

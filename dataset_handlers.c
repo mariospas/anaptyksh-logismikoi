@@ -73,7 +73,10 @@ void person_delete( void *obj )
     free( obj1 );
 }
 
-
+int get_gender(ptr_person_info person)
+{
+	return person->gender;
+}
 
 
 /************************* Post **************************/
@@ -259,6 +262,12 @@ void tag_delete( void *obj )
     free( obj1->name );
     free( obj1->url );
     free( obj1 );
+}
+
+
+char* get_tag_name (ptr_tag_info tag)
+{
+	return tag->name;
 }
 
 /************************ Tagclass **************************/

@@ -395,6 +395,7 @@ void load_graph(ptr_graph graph)
 		ptr_date extra;
 
 		/************** person.cvs *************/
+		printf("!!! person !!!\n");
 		if ( ( fp = fopen( "dataset/person.csv", "r" ) ) == NULL ) //Reading a file
 		{
 			printf( "File could not be opened.\n" );
@@ -457,6 +458,7 @@ void load_graph(ptr_graph graph)
 		}
 
 		/********* person_knows_person.cvs **************/
+		printf("!!! person_knows_person !!!\n");
 		if ( ( fp = fopen( "dataset/person_knows_person.csv", "r" ) ) == NULL ) //Reading a file
 		{
 			printf( "File could not be opened.\n" );
@@ -470,6 +472,7 @@ void load_graph(ptr_graph graph)
 
 
 		/********* person_hasInterest_tag.csv *************/
+		printf("!!! person_hasInterest_tag !!!\n");
 		if ( ( fp = fopen( "dataset/person_hasInterest_tag.csv", "r" ) ) == NULL ) //Reading a file
 		{
 			printf( "File could not be opened.\n" );
@@ -482,6 +485,7 @@ void load_graph(ptr_graph graph)
 		free(filename);
 
 		/********** person_isLocatedIn_place.csv ***********/
+		printf("!!! person_isLocatedIn_place !!!\n");
 		if ( ( fp = fopen( "dataset/person_isLocatedIn_place.csv", "r" ) ) == NULL ) //Reading a file
 		{
 			printf( "File could not be opened.\n" );
@@ -494,6 +498,7 @@ void load_graph(ptr_graph graph)
 		free(filename);
 
 		/********** person_workAt_organisation.csv ************/
+		printf("!!! person_workAt_organisation !!!\n");
 		if ( ( fp = fopen( "dataset/person_workAt_organisation.csv", "r" ) ) == NULL ) //Reading a file
 		{
 			printf( "File could not be opened.\n" );
@@ -508,6 +513,7 @@ void load_graph(ptr_graph graph)
 
 
 		/*********** person_studyAt_organisation.csv ************/
+		printf("!!! person_studyAt_organisation !!!\n");
 		if ( ( fp = fopen( "dataset/person_studyAt_organisation.csv", "r" ) ) == NULL ) //Reading a file
 		{
 			printf( "File could not be opened.\n" );
@@ -521,6 +527,7 @@ void load_graph(ptr_graph graph)
 
 
 		/********** person_likes_post.csv ************/
+		printf("!!! person_likes_post !!!\n");
 		if ( ( fp = fopen( "dataset/person_likes_post.csv", "r" ) ) == NULL ) //Reading a file
 		{
 			printf( "File could not be opened.\n" );
@@ -650,6 +657,7 @@ void load_graph(ptr_graph graph)
 		char *title;
 
 		/************** forum.csv *************/
+		printf("!!! forum !!!\n");
 		if ( ( fp = fopen( "dataset/forum.csv", "r" ) ) == NULL ) //Reading a file
 		{
 			printf( "File could not be opened.\n" );
@@ -696,10 +704,12 @@ void load_graph(ptr_graph graph)
 			//printf("before free\n");
 
 			free(tempCreat);
+			free(title);
 			//printf("finish POST\n");
 		}
 
 		/*********** forum_containerOf_post.csv ************/
+		printf("!!! forum_containerOf_post !!!\n");
 		if ( ( fp = fopen( "dataset/forum_containerOf_post.csv", "r" ) ) == NULL ) //Reading a file
 		{
 			printf( "File could not be opened.\n" );
@@ -714,6 +724,7 @@ void load_graph(ptr_graph graph)
 		free(filename);
 
 		/*********** forum_hasMember_person.csv ************/
+		printf("!!! forum_hasMember_person !!!\n");
 		if ( ( fp = fopen( "dataset/forum_hasMember_person.csv", "r" ) ) == NULL ) //Reading a file
 		{
 			printf( "File could not be opened.\n" );
@@ -726,6 +737,55 @@ void load_graph(ptr_graph graph)
 		free(filename);
 
 	}
+	else if(graph->id == TAG)
+	{
+		char* name1;
+		char* url1;
+
+		/************** tag.csv *************/
+		printf("!!! forum !!!\n");
+		if ( ( fp = fopen( "dataset/tag.csv", "r" ) ) == NULL ) //Reading a file
+		{
+			printf( "File could not be opened.\n" );
+		}
+
+		fgets(buf, 1023, fp);   //first line
+
+		while (fgets(buf, 1023, fp) != NULL)
+		{
+			if ((strlen(buf)>0) && (buf[strlen (buf) - 1] == '\n'))
+				buf[strlen (buf) - 1] = '\0';
+
+
+			tmp = strtok(buf, "|");
+			id = atoi(tmp);
+			//printf("id = %d ",id);
+
+			tmp = strtok(NULL, "|");
+			name1 = strdup(tmp);
+			//printf("name1 = %s ",name1);
+
+			tmp = strtok(NULL, "|");
+			url1 = strdup(tmp);
+			//printf("url1 = %s \n",url1);
+
+			ptr_tag_info tag = tag_create(id,name1,url1);
+
+			//printf("before create entry\n");
+
+			entry = create_entry(id,((void *)tag),tag_delete);
+
+			//printf("before insert node\n");
+
+			insertNode(graph,entry);
+
+			free(name1);
+			free(url1);
+		}
+
+	}
+
+	close(fp);
 }
 
 

@@ -590,6 +590,77 @@ int creator_of_post(ptr_entry node)
 
 
 
+int there_is_in_forum_member_list(ptr_entry node,int id_person)
+{
+	list_ptr list;
+	LL_iter_ptr iterList;
+	ptr_edge data;
+
+	list = type_list(node,"forum_hasMember_person.csv");
+
+	if(list != NULL)
+	{
+
+		iterList = LL_iter_create(list);
+
+		data = LL_iter_data(iterList);
+		if(id_person == data->target_id)
+		{
+			LL_iter_destroy(iterList);
+			return 1;
+		}
+		while(LL_iter_next(iterList))
+		{
+			data = LL_iter_data(iterList);
+			if(id_person == data->target_id)
+			{
+				LL_iter_destroy(iterList);
+				return 1;
+			}
+		}
+	}
+
+	return 0;
+
+}
+
+
+int there_is_in_tag_list(ptr_entry node,int tag_id)
+{
+	list_ptr list;
+	LL_iter_ptr iterList;
+	ptr_edge data;
+
+	list = type_list(node,"person_hasInterest_tag.csv");
+
+	if(list != NULL)
+	{
+
+		iterList = LL_iter_create(list);
+
+		data = LL_iter_data(iterList);
+		if(tag_id == data->target_id)
+		{
+			LL_iter_destroy(iterList);
+			return 1;
+		}
+		while(LL_iter_next(iterList))
+		{
+			data = LL_iter_data(iterList);
+			if(tag_id == data->target_id)
+			{
+				LL_iter_destroy(iterList);
+				return 1;
+			}
+		}
+	}
+
+	return 0;
+
+}
+
+
+
 
 void print_list_of_edges(ptr_entry node)
 {
@@ -618,6 +689,7 @@ void print_list_of_edges(ptr_entry node)
 
 	while(LL_iter_next(iterList))
 	{
+		data_list = LL_iter_data(iterList);
 		iter = LL_iter_create(data_list->list);
 		data = LL_iter_data(iter);
 		printf("Edge ID = %d and Type = %s and Target_type = %d\n",data->target_id,data->edge_type,data->target_type);

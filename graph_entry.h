@@ -88,6 +88,10 @@ int same_gender(ptr_entry node1,ptr_entry node2);
 
 int creator_of_post(ptr_entry node);
 
+int there_is_in_forum_member_list(ptr_entry node,int id_person);
+
+int there_is_in_tag_list(ptr_entry node,int tag_id);
+
 void print_list_of_edges(ptr_entry node);
 
 void print_list(list_ptr list);

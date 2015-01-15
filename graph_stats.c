@@ -180,7 +180,7 @@ int diameter(ptr_graph g)
 			//printf("Check for id = %d\n",data->id);
 			result = reachNodeN(g,data->id);
 			return_maxN(result,graph_size,&max);
-
+			//free(result);
 			HT_iter_next(iter);
 		}
 
@@ -235,7 +235,7 @@ int averagePathLength(ptr_graph g, double *apotel)
 			//printf("Check for id = %d\n",data->id);
 			result = reachNodeN(g,data->id);
 			sum_from_result(result,graph_size,apotel);
-
+			//free(result);
 			HT_iter_next(iter);
 		}
 
@@ -304,25 +304,21 @@ void rec_search_dfs(ptr_graph g,list_ptr list,ptr_entry node,int *size)
 	int id = -3;
 	int distance = -3;
 	dataCC_ptr data;
+	int i;
+	int size_g = Graph_size(g);
 
 	result = reachNodeN(g,node->id);
 
-	while(ResultSet_next(result,&id,&distance))
+	for(i=0;i<size_g;i++)
 	{
+		ResultSet_next(result,&id,&distance);
 		if(distance != -1)
 		{
-			//printf("id = %d before i inserted in frienge\n",id);
+			//printf("^^^^^^ id = %d before i inserted in frienge\n",id);
 			data = create_dataCC(id);
 			LL_insert(list,((void*) data));
 			*size = *size + 1;
 		}
-	}
-	if(distance != -1)
-	{
-		//printf("id = %d before i inserted in frienge\n",id);
-		data = create_dataCC(id);
-		LL_insert(list,((void*) data));
-		*size = *size + 1;
 	}
 }
 
@@ -354,7 +350,7 @@ int numberOfCCs(ptr_graph g)
 
 			if(!(node_exist(fringe,node)) )
 			{
-				//printf("node id = %d insert\n",node->id);
+				//printf("node id = %d insert\n\n",node->id);
 				size = 0;
 				num_of_graphs++;
 				rec_search_dfs(g,fringe,node,&size);
@@ -472,18 +468,26 @@ double closeness_centrality( ptr_entry n, ptr_graph g )
     HT_iter_ptr inode = HT_iter_create( Graph_nodes(g) );
     int k;
 
-    do {
-        entry = HT_iter_data( inode );
-        k = reachNode1( g, n->id, entry->id );
-        if(k != -1)
-        {
-        	sumdist += k;
-        }
-    } while ( HT_iter_next( inode ) );
-    HT_iter_destroy( inode );
+    Result_ptr result;
+    int i;
+    int id = -3;
+    int distance = -3;
 
-    printf("^^^^^^result = %f and size = %f^^^^^^^\n",(sumdist / ( (double) size )),size);
-    return sumdist / ( (double) size );
+    result = reachNodeN(g,n->id);
+
+	for(i=0;i<size;i++)
+	{
+		ResultSet_next(result,&id,&distance);
+		if(distance != -1 && distance != 0)
+		{
+			//printf("******k = %f\n",((double)distance));
+			sumdist += 1.0/((double)distance);
+			//printf("******sumdist = %f\n",sumdist);
+		}
+	}
+
+    printf("^^^^^^result = %f and size = %f^^^^^^^\n",(sumdist / ( (double) (size - 1) )),size);
+    return sumdist / ( (double) (size - 1) );
 }
 
 double betweenness_centrality( ptr_entry n, ptr_graph g )
@@ -521,6 +525,6 @@ double betweenness_centrality( ptr_entry n, ptr_graph g )
     } while ( HT_iter_next( node_it ) );
     HT_iter_destroy( node_it );
 
-    printf("result = %f\n",(( 2 * ret ) / ( (double) ( size - 1 ) * ( size - 2 ) )));
+    printf("****** Betweness result = %f\n",(( 2 * ret ) / ( (double) ( size - 1 ) * ( size - 2 ) )));
     return ( 2 * ret ) / ( (double) ( size - 1 ) * ( size - 2 ) );
 }

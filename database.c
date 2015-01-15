@@ -40,3 +40,85 @@ ptr_graph DB_get_entity( ptr_database this, entity_type id )
 	printf("this->entities[id].id = %d   and id = %d\n",this->entities[id].id,id);
     return this->entities[id].assignment;
 }
+
+
+
+void isMemberInThisForum(ptr_graph graph,ptr_graph stalker_graph,int person_id)
+{
+	int i, graph_size = Graph_size(graph);
+	HT_iter_ptr iter;
+	ht_ptr nodes = Graph_nodes(graph);
+	ptr_entry data;
+	int flag = -3;
+	int err;
+	ptr_edge stalker_edge;
+
+
+	iter = HT_iter_create(nodes);
+
+
+	for(i=0;i<graph_size;i++)
+	{
+		data = ((ptr_entry)HT_iter_data(iter));
+
+		flag = there_is_in_forum_member_list(data,person_id);
+
+		if(flag == 1)
+		{
+			stalker_edge = create_edge("isMemberInForum",data->id,PERSON,0,NULL);
+			err = insertEdge(stalker_graph,person_id,stalker_edge);
+		}
+
+		HT_iter_next(iter);
+	}
+
+	return;
+
+}
+
+
+
+void personHasInterestTag(ptr_graph graph_person,ptr_graph women,ptr_graph men,int tag_id)
+{
+	int i, graph_size = Graph_size(graph_person);
+	HT_iter_ptr iter;
+	ht_ptr nodes = Graph_nodes(graph_person);
+	ptr_entry data;
+	int flag = -3;
+	int err;
+	ptr_entry person_entry;
+	ptr_person_info person_info;
+	int gender;
+
+
+	iter = HT_iter_create(nodes);
+
+
+	for(i=0;i<graph_size;i++)
+	{
+		data = ((ptr_entry)HT_iter_data(iter));
+
+		flag = there_is_in_tag_list(data,tag_id);
+
+		if(flag == 1)
+		{
+			person_entry = copy_entry_person_knows_person(data);
+			//printf("TRY to Insert stalker %d\n",data->id);
+			person_info = person_entry->properties;
+			gender = get_gender(person_info);
+			if(gender == MALE)
+			{
+				insertNode(men,person_entry);
+			}
+			else if(gender == FEMALE)
+			{
+				insertNode(women,person_entry);
+			}
+		}
+
+		HT_iter_next(iter);
+	}
+
+	return;
+
+}

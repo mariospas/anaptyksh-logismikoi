@@ -210,6 +210,7 @@ ptr_graph Create_Stalkers_Graph(int stalkersNum,int likesNumber,int centralityMo
 {
 	ptr_graph graph = DB_get_entity(database,PERSON);
 	ptr_graph post_graph = DB_get_entity(database,POST);
+	ptr_graph forum_graph = DB_get_entity(database,FORUM);
 
 
 	int i, graph_size = Graph_size(graph);
@@ -218,7 +219,7 @@ ptr_graph Create_Stalkers_Graph(int stalkersNum,int likesNumber,int centralityMo
 	ht_ptr nodes = Graph_nodes(graph);
 	ptr_entry data;
 
-	ptr_graph stalker_graph = createGraph(STALKER,TABLE_DEFAULT_SIZE, BUCKET_DEFAULT_SIZE);
+	ptr_graph stalker_graph = createGraph(PERSON,TABLE_DEFAULT_SIZE, BUCKET_DEFAULT_SIZE);
 	ptr_entry entry_stalker;
 	ptr_edge edge_stalker;
 
@@ -235,6 +236,9 @@ ptr_graph Create_Stalkers_Graph(int stalkersNum,int likesNumber,int centralityMo
 	LL_iter_ptr iterCreator;
 	int bhmata;
 	int id_creat;
+	int id_forum;
+	ptr_edge stalker_edge;
+	int err = 8;
 
 
 
@@ -297,6 +301,8 @@ ptr_graph Create_Stalkers_Graph(int stalkersNum,int likesNumber,int centralityMo
 						entry_stalker = copy_entry_person_knows_person(data);
 						//printf("TRY to Insert stalker %d\n",data->id);
 						insertNode(stalker_graph,entry_stalker);
+
+						isMemberInThisForum(forum_graph,stalker_graph,entry_stalker->id);
 
 						//printf("Insert stalker %d\n",data->id);
 
@@ -365,7 +371,221 @@ ptr_graph getTopStalkers(int stalkersNum,int likesNumber,int centralityMode,ptr_
 /************************* findTrends ***************************/
 
 
+struct trend
+{
+	int size;
+	char *tag_name;
+};
 
+struct array_trends
+{
+	int current_size;
+	int limit;
+	ptr_trend* pinakas;
+};
+
+
+ptr_trend create_trend(int size,char* tag_name)
+{
+	ptr_trend trend = malloc(sizeof(struct trend));
+
+	trend->size = size;
+	trend->tag_name = strdup(tag_name);
+
+	return trend;
+}
+
+void delete_trend(ptr_trend trend)
+{
+	free(trend->tag_name);
+	free(trend);
+}
+
+void insert_trend (ptr_array_trends array,ptr_trend trend)
+{
+
+	if( (array->current_size) < (array->limit) )
+	{
+		array->current_size++;
+		array->pinakas[array->current_size] = trend;
+		printf("array trend name = %s and trend name = %s\n",(array->pinakas[array->current_size])->tag_name,trend->tag_name);
+		printf("current = %d\n",array->current_size);
+
+		qsort (array->pinakas, ((array->current_size)+1), sizeof(struct trend), compare_trend);
+		printf("array trend name = %s and trend name = %s\n",(array->pinakas[array->current_size])->tag_name,trend->tag_name);
+	}
+	else if( (array->current_size) == (array->limit) )
+	{
+		if(compare_match(array->pinakas[array->limit],trend) > 0 )
+		{
+			delete_trend(array->pinakas[array->limit]);
+			array->pinakas[array->limit] = trend;
+			printf("array trend name = %s and trend name = %s\n",(array->pinakas[array->current_size])->tag_name,trend->tag_name);
+
+			qsort (array->pinakas, ((array->current_size)+1), sizeof(struct Matches), compare_trend);
+			printf("array trend name = %s and trend name = %s\n",(array->pinakas[array->current_size])->tag_name,trend->tag_name);
+		}
+	}
+}
+
+int compare_trend (const void * a, const void * b)
+{
+	ptr_trend trend1 = ((ptr_trend) a);
+	ptr_trend trend2 = ((ptr_trend) b);
+
+	int size1 = trend1->size;
+	int size2 = trend2->size;
+
+	return ( size2 - size1 );
+}
+
+
+ptr_array_trends create_array_trends(int limit)
+{
+	ptr_array_trends array = malloc(sizeof(struct array_trends));
+
+	array->pinakas = malloc(limit * sizeof(struct trend *));
+	array->current_size = -1;
+	array->limit = limit - 1;
+
+	return array;
+}
+
+
+void delete_array_trends(ptr_array_trends array)
+{
+	int limit = array->current_size;
+	int i;
+	ptr_trend trend;
+
+	for(i=0;i<limit;i++)
+	{
+		printf("only one\n");
+		delete_trend((array->pinakas[i]));
+	}
+	free(array);
+}
+
+
+
+char* get_trend_name(int pos,ptr_array_trends array,int *size)
+{
+	if(pos > array->current_size)
+	{
+		printf("Wrong pos !!!\n");
+		return "wrong Pos";
+	}
+	//printf("In get_match\n");
+	//printf("ID = %d\n",(array->pinakas[pos])->id);
+
+	*size = ((array->pinakas[pos])->size);
+	return ((array->pinakas[pos])->tag_name);
+}
+
+
+
+
+
+void findTrends(int trendsNum,ptr_database database,char** womenTrends,char** menTrends)
+{
+	ptr_graph graph = DB_get_entity(database,PERSON);
+	ptr_graph post_graph = DB_get_entity(database,POST);
+	ptr_graph forum_graph = DB_get_entity(database,FORUM);
+	ptr_graph tag_graph = DB_get_entity(database,TAG);
+
+	ptr_graph women;
+	ptr_graph men;
+
+
+	HT_iter_ptr iter;
+	ht_ptr nodes = Graph_nodes(tag_graph);
+	ptr_entry data_tag;
+	int i, graph_size = Graph_size(tag_graph);
+	int j;
+
+	int numCCwomen;
+	int maxCCwomen;
+	int numCCmen;
+	int maxCCmen;
+
+	ptr_array_trends women_trends = create_array_trends(trendsNum);
+	ptr_array_trends men_trends = create_array_trends(trendsNum);
+
+	ptr_trend trend_women;
+	ptr_trend trend_men;
+
+	ptr_tag_info tag_info;
+	char *tag_name;
+	char *tag_name1;
+	char *tag_name2;
+	int size_tag;
+	int women_size;
+	int men_size;
+
+
+	iter = HT_iter_create(nodes);
+	//printf("In getTopStalkers\n");
+
+	for(i=0;i<graph_size;i++)
+	{
+		women = createGraph(PERSON,TABLE_DEFAULT_SIZE, BUCKET_DEFAULT_SIZE);
+		men = createGraph(PERSON,TABLE_DEFAULT_SIZE, BUCKET_DEFAULT_SIZE);
+
+		data_tag = ((ptr_entry)HT_iter_data(iter));
+		//printf("Data id = %d\n",data->id);
+
+		personHasInterestTag(graph,women,men,data_tag->id);
+
+		printf("\n\n^^^^^^^^^^^^ WOMEN graph ^^^^^^^^^^^^\n\n");
+		print_graph(women);
+		printf("\n\n^^^^^^^^^^^^ MEN graph ^^^^^^^^^^^^\n\n");
+		print_graph(men);
+
+		women_size = Graph_size(women);
+		men_size = Graph_size(men);
+
+		if(women_size > 0) numCCwomen = numberOfCCs(women);
+		else numCCwomen = 0;
+		if(men_size > 0) numCCmen = numberOfCCs(men);
+		else numCCmen = 0;
+
+		if(women_size > 0) maxCCwomen = maxCC(women);
+		else maxCCwomen = 0;
+		if(men_size > 0) maxCCmen = maxCC(men);
+		else maxCCmen = 0;
+
+		tag_info = data_tag->properties;
+		tag_name = get_tag_name(tag_info);
+		tag_name1 = strdup(tag_name);
+		tag_name2 = strdup(tag_name);
+
+		trend_women = create_trend(maxCCwomen,tag_name1);
+		trend_men = create_trend(maxCCmen,tag_name1);
+
+		insert_trend(women_trends,trend_women);
+		insert_trend(men_trends,trend_women);
+
+		destroyGraph(women);
+		destroyGraph(men);
+
+		HT_iter_next(iter);
+	}
+
+	for(i=0;i<(women_trends->current_size);i++)
+	{
+		tag_name = get_trend_name(i,women_trends,&size_tag);
+		womenTrends[i] = strdup(tag_name);
+	}
+
+	for(i=0;i<(men_trends->current_size);i++)
+	{
+		tag_name = get_trend_name(i,men_trends,&size_tag);
+		menTrends[i] = strdup(tag_name);
+	}
+
+	return;
+
+}
 
 
 

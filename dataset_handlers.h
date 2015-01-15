@@ -56,6 +56,8 @@ struct person_info *person_create( int id,
                                    
 void person_delete( void *obj );
 
+int get_gender(ptr_person_info person);
+
 /************************ Post ****************************/
 
 struct post_info {
@@ -165,12 +167,15 @@ struct tag_info {
     char *url;
 };
 
+typedef struct tag_info *ptr_tag_info;
 
 struct tag_info *tag_create( int id,
                              char *name,
                              char *url );
 
 void tag_delete( void *obj );
+
+char* get_tag_name (ptr_tag_info tag);
 
 /************************ Tagclass **************************/
 

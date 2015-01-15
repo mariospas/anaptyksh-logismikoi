@@ -12,6 +12,10 @@ typedef struct Matches *ptr_matches;
 
 typedef struct array_matches *ptr_array_matches;
 
+typedef struct trend *ptr_trend;
+
+typedef struct array_trends *ptr_array_trends;
+
 
 ptr_matches create_match(int id,double similarity);
 
@@ -34,5 +38,26 @@ ptr_array_matches matchSuggestion(ptr_entry node, int commonInterest, int hops, 
 ptr_graph Create_Stalkers_Graph(int stalkersNum,int likesNumber,int centralityMode,ptr_database database);
 
 ptr_graph getTopStalkers(int stalkersNum,int likesNumber,int centralityMode,ptr_database database,ptr_array_matches stalkersCloseCentr);
+
+
+
+
+ptr_trend create_trend(int size,char* tag_name);
+
+void delete_trend(ptr_trend trend);
+
+void insert_trend (ptr_array_trends array,ptr_trend trend);
+
+int compare_trend (const void * a, const void * b);
+
+ptr_array_trends create_array_trends(int limit);
+
+void delete_array_trends(ptr_array_trends array);
+
+char* get_trend_name(int pos,ptr_array_trends array,int *size);
+
+
+void findTrends(int trendsNum,ptr_database database,char** womenTrends,char** menTrends);
+
 
 #endif /* _QUERIES_ */
