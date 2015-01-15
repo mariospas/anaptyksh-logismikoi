@@ -69,4 +69,14 @@ static size_t hash(int value, size_t size);
 
 void print_graph(ptr_graph graph);
 
+
+ptr_edge copy_edge(ptr_edge data);
+
+ptr_entry copy_entry(ptr_entry data);
+
+ptr_entry copy_entry_person_knows_person(ptr_entry data);
+
+
+
+
 #endif /* _GRAPH_ */

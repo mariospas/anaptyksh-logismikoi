@@ -5,7 +5,6 @@
 
 #include "graph_entry.h"
 #include "linked_list.h"
-#include "dataset_handlers.h"
 #include <math.h>
 
 
@@ -125,96 +124,6 @@ int match_entry(void *a,void *key)
 	}
 	else return 1;
 }
-
-
-ptr_edge copy_edge(ptr_edge data)
-{
-	ptr_date date;
-	ptr_date date1 = NULL;
-	if((data->extra_data) != NULL)
-	{
-		date = ((ptr_date) (data->extra_data));
-		date1 = date_create(date->year,date->month,date->day,date->hour,date->minute,date->second);
-	}
-	ptr_edge edge = create_edge(data->edge_type,data->target_id,data->target_type,data->weight,(void *)date1);
-	return edge;
-}
-
-
-ptr_entry copy_entry(ptr_entry data)
-{
-	ptr_entry entry = create_entry(data->id,data->properties,data->properties_destroy);
-
-	ptr_edge* result = ((ptr_edge*)LL_export(data->edges));
-
-	int size = LL_size(data->edges);
-	int i;
-
-	ptr_edge edge;
-
-	for(i=0;i<size;i++)
-	{
-		edge = copy_edge(result[i]);
-		LL_insert(entry->edges,edge);
-	}
-
-	free(result);
-
-	return entry;
-}
-
-
-ptr_entry copy_entry_person_knows_person(ptr_entry data)
-{
-	ptr_person_info info = ((ptr_person_info) (data->properties));
-	ptr_date date = ((ptr_date)(info->birthday));
-	ptr_date birthday = date_create(date->year,date->month,date->day,date->hour,date->minute,date->second);
-	date = ((ptr_date)(info->creation_date));
-	ptr_date creationDate = date_create(date->year,date->month,date->day,date->hour,date->minute,date->second);
-	ptr_person_info info1 = person_create(info->id,info->first_name,info->surname,info->gender,birthday,creationDate,info->location_ip,info->browser_used);
-
-	ptr_entry entry = create_entry(data->id,info1,data->properties_destroy);
-	list_ptr list_of_person = type_list(data,"person_knows_person.csv");
-
-	ptr_data_list data_list;
-	char *edge_type = strdup("person_knows_person.csv");
-
-
-	if(list_of_person != NULL)
-	{
-		ptr_edge* result = ((ptr_edge*)LL_export(list_of_person));
-
-		int size = LL_size(list_of_person);
-		int i;
-
-		ptr_edge edge;
-
-		data_list = LL_search(entry->edges,((void *) (edge_type)));
-		//printf("Normal SEARCH\n");
-		if(data_list == NULL)
-		{
-			//printf("First Insert\n");
-			data_list = data_list_create((edge_type));
-			LL_insert(entry->edges,(void *) data_list);
-		}
-
-		for(i=0;i<size;i++)
-		{
-			edge = copy_edge(result[i]);
-			LL_insert(data_list->list,edge);
-		}
-
-		free(result);
-	}
-	free(edge_type);
-
-	return entry;
-}
-
-
-
-
-
 
 
 

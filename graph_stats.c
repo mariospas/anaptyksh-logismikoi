@@ -350,7 +350,7 @@ int numberOfCCs(ptr_graph g)
 
 			if(!(node_exist(fringe,node)) )
 			{
-				//printf("node id = %d insert\n\n",node->id);
+				printf("node id = %d insert\n\n",node->id);
 				size = 0;
 				num_of_graphs++;
 				rec_search_dfs(g,fringe,node,&size);

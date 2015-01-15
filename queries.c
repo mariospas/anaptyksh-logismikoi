@@ -40,7 +40,7 @@ void insert_match (ptr_array_matches array,ptr_matches match)
 		printf("array match id = %d and match id = %d\n",(array->pinakas[array->current_size])->id,match->id);
 		printf("current = %d\n",array->current_size);
 
-		qsort (array->pinakas, ((array->current_size)+1), sizeof(struct Matches), compare_match);
+		qsort (array->pinakas, ((array->current_size)+1), sizeof(struct Matches *), compare_match);
 		printf("array match id = %d and match id = %d\n",(array->pinakas[array->current_size])->id,match->id);
 	}
 	else if( (array->current_size) == (array->limit) )
@@ -51,7 +51,7 @@ void insert_match (ptr_array_matches array,ptr_matches match)
 			array->pinakas[array->limit] = match;
 			printf("array match id = %d and match id = %d\n",(array->pinakas[array->current_size])->id,match->id);
 
-			qsort (array->pinakas, ((array->current_size)+1), sizeof(struct Matches), compare_match);
+			qsort (array->pinakas, ((array->current_size)+1), sizeof(struct Matches *), compare_match);
 			printf("array match id = %d and match id = %d\n",(array->pinakas[array->current_size])->id,match->id);
 		}
 	}
@@ -391,6 +391,7 @@ ptr_trend create_trend(int size,char* tag_name)
 
 	trend->size = size;
 	trend->tag_name = strdup(tag_name);
+	printf("CREATE TREND tag_name = %s\n",trend->tag_name);
 
 	return trend;
 }
@@ -411,18 +412,18 @@ void insert_trend (ptr_array_trends array,ptr_trend trend)
 		printf("array trend name = %s and trend name = %s\n",(array->pinakas[array->current_size])->tag_name,trend->tag_name);
 		printf("current = %d\n",array->current_size);
 
-		qsort (array->pinakas, ((array->current_size)+1), sizeof(struct trend), compare_trend);
+		qsort (array->pinakas, ((array->current_size)+1), sizeof(struct trend *), compare_trend);
 		printf("array trend name = %s and trend name = %s\n",(array->pinakas[array->current_size])->tag_name,trend->tag_name);
 	}
 	else if( (array->current_size) == (array->limit) )
 	{
-		if(compare_match(array->pinakas[array->limit],trend) > 0 )
+		if(compare_trend(array->pinakas[array->limit],trend) > 0 )
 		{
 			delete_trend(array->pinakas[array->limit]);
 			array->pinakas[array->limit] = trend;
 			printf("array trend name = %s and trend name = %s\n",(array->pinakas[array->current_size])->tag_name,trend->tag_name);
 
-			qsort (array->pinakas, ((array->current_size)+1), sizeof(struct Matches), compare_trend);
+			qsort (array->pinakas, ((array->current_size)+1), sizeof(struct trend *), compare_trend);
 			printf("array trend name = %s and trend name = %s\n",(array->pinakas[array->current_size])->tag_name,trend->tag_name);
 		}
 	}
@@ -446,7 +447,7 @@ ptr_array_trends create_array_trends(int limit)
 
 	array->pinakas = malloc(limit * sizeof(struct trend *));
 	array->current_size = -1;
-	array->limit = limit - 1;
+	array->limit = limit-1;
 
 	return array;
 }
@@ -479,6 +480,7 @@ char* get_trend_name(int pos,ptr_array_trends array,int *size)
 	//printf("ID = %d\n",(array->pinakas[pos])->id);
 
 	*size = ((array->pinakas[pos])->size);
+	printf("tag_name in get trend = %s\n",(array->pinakas[pos])->tag_name);
 	return ((array->pinakas[pos])->tag_name);
 }
 
@@ -528,11 +530,11 @@ void findTrends(int trendsNum,ptr_database database,char** womenTrends,char** me
 
 	for(i=0;i<graph_size;i++)
 	{
+		data_tag = ((ptr_entry)HT_iter_data(iter));
+		printf("Data id = %d\n",data_tag->id);
+
 		women = createGraph(PERSON,TABLE_DEFAULT_SIZE, BUCKET_DEFAULT_SIZE);
 		men = createGraph(PERSON,TABLE_DEFAULT_SIZE, BUCKET_DEFAULT_SIZE);
-
-		data_tag = ((ptr_entry)HT_iter_data(iter));
-		//printf("Data id = %d\n",data->id);
 
 		personHasInterestTag(graph,women,men,data_tag->id);
 
@@ -548,25 +550,37 @@ void findTrends(int trendsNum,ptr_database database,char** womenTrends,char** me
 		else numCCwomen = 0;
 		if(men_size > 0) numCCmen = numberOfCCs(men);
 		else numCCmen = 0;
+		printf("************ numCCwomen = %d   numCCmen = %d **********\n",numCCwomen,numCCmen);
 
 		if(women_size > 0) maxCCwomen = maxCC(women);
 		else maxCCwomen = 0;
 		if(men_size > 0) maxCCmen = maxCC(men);
 		else maxCCmen = 0;
+		printf("************ maxCCwomen = %d   maxCCmen = %d **********\n",maxCCwomen,maxCCmen);
 
 		tag_info = data_tag->properties;
 		tag_name = get_tag_name(tag_info);
+		printf("tag_name = %s\n",tag_name);
 		tag_name1 = strdup(tag_name);
 		tag_name2 = strdup(tag_name);
+		printf("tag_name1 = %s\n",tag_name1);
+		printf("tag_name2 = %s\n",tag_name2);
 
 		trend_women = create_trend(maxCCwomen,tag_name1);
-		trend_men = create_trend(maxCCmen,tag_name1);
+		trend_men = create_trend(maxCCmen,tag_name2);
 
 		insert_trend(women_trends,trend_women);
-		insert_trend(men_trends,trend_women);
+		insert_trend(men_trends,trend_men);
+
+		ptr_entry en = lookupNode(men,6995);
+		int omega = reachNode1(men,6995,6488);
+		printf("omega = %d\n",omega);
 
 		destroyGraph(women);
 		destroyGraph(men);
+
+		free(tag_name1);
+		free(tag_name2);
 
 		HT_iter_next(iter);
 	}
@@ -574,12 +588,14 @@ void findTrends(int trendsNum,ptr_database database,char** womenTrends,char** me
 	for(i=0;i<(women_trends->current_size);i++)
 	{
 		tag_name = get_trend_name(i,women_trends,&size_tag);
+		printf("WOMEN tag_name = %s\n",tag_name);
 		womenTrends[i] = strdup(tag_name);
 	}
 
 	for(i=0;i<(men_trends->current_size);i++)
 	{
 		tag_name = get_trend_name(i,men_trends,&size_tag);
+		printf("MEN tag_name = %s\n",tag_name);
 		menTrends[i] = strdup(tag_name);
 	}
 
