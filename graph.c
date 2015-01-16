@@ -790,6 +790,66 @@ void load_graph(ptr_graph graph)
 		}
 
 	}
+	else if(graph->id == COMMENT)
+	{
+
+		/************** comment_hasCreator_person.csv *************/
+		printf("!!! forum !!!\n");
+		if ( ( fp = fopen( "dataset/comment_hasCreator_person.csv", "r" ) ) == NULL ) //Reading a file
+		{
+			printf( "File could not be opened.\n" );
+		}
+
+		fgets(buf, 1023, fp);   //first line
+
+		while (fgets(buf, 1023, fp) != NULL)
+		{
+			if ((strlen(buf)>0) && (buf[strlen (buf) - 1] == '\n'))
+				buf[strlen (buf) - 1] = '\0';
+
+
+			tmp = strtok(buf, "|");
+			id = atoi(tmp);
+			//printf("id = %d ",id);
+
+			ptr_comment_info comment = comment_create(id,NULL,NULL,NULL);
+
+			//printf("before create entry\n");
+
+			entry = create_entry(id,((void *)comment),comment_delete);
+
+			//printf("before insert node\n");
+
+			insertNode(graph,entry);
+
+		}
+
+		/*********** comment_hasCreator_person.csv ************/
+		if ( ( fp = fopen( "dataset/comment_hasCreator_person.csv", "r" ) ) == NULL ) //Reading a file
+		{
+			printf( "File could not be opened.\n" );
+		}
+
+		filename = strdup("comment_hasCreator_person.csv");
+
+		load_2ids(graph,buf,fp,filename,COMMENT);
+
+		free(filename);
+
+		/*********** comment_replyOf_post.csv ************/
+		if ( ( fp = fopen( "dataset/comment_replyOf_post.csv", "r" ) ) == NULL ) //Reading a file
+		{
+			printf( "File could not be opened.\n" );
+		}
+
+		filename = strdup("comment_replyOf_post.csv");
+
+		load_2ids(graph,buf,fp,filename,COMMENT);
+
+		free(filename);
+
+
+	}
 
 	close(fp);
 }
@@ -1117,11 +1177,6 @@ ptr_entry copy_entry_person_knows_person(ptr_graph graph,ptr_entry data)
 
 	return entry;
 }
-
-
-
-
-
 
 
 

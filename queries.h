@@ -60,4 +60,10 @@ char* get_trend_name(int pos,ptr_array_trends array,int *size);
 void findTrends(int trendsNum,ptr_database database,char** womenTrends,char** menTrends);
 
 
+
+
+
+ptr_graph buildTrustGraph(int forumID,ptr_database database);
+
+
 #endif /* _QUERIES_ */

@@ -108,6 +108,8 @@ struct comment_info {
     char *browser_used;
 };
 
+typedef struct comment_info *ptr_comment_info;
+
 struct comment_info *comment_create( int id,
                                      ptr_date creation_date,
                                      char *location_ip,

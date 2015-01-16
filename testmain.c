@@ -334,6 +334,7 @@ int main( int argc, char *argv[] )
 	ptr_graph post_graph = DB_get_entity(database,POST);
 	ptr_graph forum_graph = DB_get_entity(database,FORUM);
 	ptr_graph tag_forum = DB_get_entity(database,TAG);
+	ptr_graph comment_graph = DB_get_entity(database,COMMENT);
 	printf("get_graph\n");
 
 	load_graph(g);
@@ -346,6 +347,9 @@ int main( int argc, char *argv[] )
 	printf("\n\n\n^^^^^^^^^^^^^^ tag_forum load ^^^^^^^^^^^^^^^\n\n\n");
 	load_graph(tag_forum);
 	printf("\n\n\n^^^^^^^^^^^^^^ tag_forum finish load ^^^^^^^^^^^^^^^\n\n\n");
+	printf("\n\n\n^^^^^^^^^^^^^^ comment_graph load ^^^^^^^^^^^^^^^\n\n\n");
+	load_graph(comment_graph);
+	printf("\n\n\n^^^^^^^^^^^^^^ comment_graph finish load ^^^^^^^^^^^^^^^\n\n\n");
 
 //#if 0
 	//prepei na beltiothei gt einai argh
@@ -480,7 +484,6 @@ int main( int argc, char *argv[] )
 	}
 
 	/************ TELOS Erothma 3 *************/
-
 
 
 

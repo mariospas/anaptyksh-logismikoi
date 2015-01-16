@@ -60,7 +60,7 @@ void destroy_edge(void *edge);
 
 int match_edge(const void *a, const void *key);
 
-int match_entry(void *a,void *key);
+int match_entry(const void *a,const void *key);
 
 
 

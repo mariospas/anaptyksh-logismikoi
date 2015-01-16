@@ -116,7 +116,7 @@ int match_edge(const void *a, const void *b)
 }
 
 
-int match_entry(void *a,void *key)
+int match_entry(const void *a,const void *key)
 {
 	if( ((ptr_entry)a)->id == ((ptr_entry)key)->id  )
 	{
@@ -487,6 +487,41 @@ int creator_of_post(ptr_entry node)
 		{
 			data = LL_iter_data(iterList);
 			if(strcmp(data->edge_type,"post_hasCreator_person.csv") == 0)
+			{
+				LL_iter_destroy(iterList);
+				return data->target_id;
+			}
+		}
+	}
+
+	return -1;   //an den brei tpt
+}
+
+
+
+int creator_of_comments(ptr_entry node)
+{
+	list_ptr list;
+	LL_iter_ptr iterList;
+	ptr_edge data;
+
+	list = type_list(node,"comment_hasCreator_person.csv");
+
+	if(list != NULL)
+	{
+
+		iterList = LL_iter_create(list);
+
+		data = LL_iter_data(iterList);
+		if(strcmp(data->edge_type,"comment_hasCreator_person.csv") == 0)
+		{
+			LL_iter_destroy(iterList);
+			return data->target_id;
+		}
+		while(LL_iter_next(iterList))
+		{
+			data = LL_iter_data(iterList);
+			if(strcmp(data->edge_type,"comment_hasCreator_person.csv") == 0)
 			{
 				LL_iter_destroy(iterList);
 				return data->target_id;

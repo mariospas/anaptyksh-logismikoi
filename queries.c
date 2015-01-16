@@ -613,4 +613,102 @@ void findTrends(int trendsNum,ptr_database database,char** womenTrends,char** me
 
 
 
+/***************** trust graph and estimate ****************/
+
+double trust(ptr_entry node_i,ptr_entry node_j,ptr_graph graph,ptr_graph post_graph,ptr_graph comment_graph)
+{
+
+	int i, graph_size = Graph_size(graph);
+	int j;
+	HT_iter_ptr iter;
+	ht_ptr nodes = Graph_nodes(graph);
+	ptr_entry data;
+
+
+	list_ptr person_like_post_list;
+	LL_iter_ptr iterList;
+	int list_size;
+	ptr_edge edge;
+	int post_id;
+	ptr_entry post_entry;
+	int id_creator_of_post;
+	ptr_katanomh dataKat;
+	list_ptr list = NULL;
+	LL_iter_ptr iterCreator;
+	int bhmata;
+	int id_creat;
+	int id_forum;
+	ptr_edge stalker_edge;
+	int err = 8;
+
+	int countIlikeJ = 0;
+
+	list_ptr list_posts_node_j;
+	list_ptr list_comments_node_i;
+
+
+
+	person_like_post_list = type_list(node_i,"person_likes_post.csv");
+
+
+	if(person_like_post_list != NULL)
+	{
+		list_size = LL_size(person_like_post_list);
+		//printf("If list_size_of_person_like_post = %d\n",list_size);
+		iterList = LL_iter_create(person_like_post_list);
+		//printf("If list_size_of_person_like_post > 0\n");
+		for(j=0;j<list_size;j++)
+		{
+			edge = ((ptr_edge)LL_iter_data(iterList));
+			post_id = edge->target_id;
+
+			post_entry = lookupNode(post_graph,post_id);
+
+			if(post_entry != NULL)
+			{
+				//printf("post_id = %d\n",post_id);
+				id_creator_of_post = creator_of_post(post_entry);
+				if(id_creator_of_post == node_j->id)
+				{
+					//printf("id_creator = %d\n",id_creator_of_post);
+					countIlikeJ = countIlikeJ + 1;
+				}
+			}
+
+			LL_iter_next(iterList);
+		}
+		LL_iter_destroy(iterList);
+	}
+
+
+	///gia replies menei
+
+	list_posts_node_j = list_of_post_from_person_node(node_j,post_graph);
+	list_comments_node_i = list_of_comments_from_person_node(node_i,comment_graph);
+
+
+
+
+
+}
+
+
+ptr_graph buildTrustGraph(int forumID,ptr_database database)
+{
+	ptr_graph graph = DB_get_entity(database,PERSON);
+	ptr_graph post_graph = DB_get_entity(database,POST);
+	ptr_graph forum_graph = DB_get_entity(database,FORUM);
+
+
+
+
+
+	ptr_graph trust_graph = createGraph(PERSON,TABLE_DEFAULT_SIZE, BUCKET_DEFAULT_SIZE);
+
+
+}
+
+
+
+
 

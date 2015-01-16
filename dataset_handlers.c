@@ -171,8 +171,10 @@ struct comment_info *comment_create( int id,
     struct comment_info *retval = malloc( sizeof(struct comment_info) );
     retval->id = id;
     retval->creation_date = creation_date;
-    retval->location_ip = strdup( location_ip );
-    retval->browser_used = strdup( browser_used );
+    if(location_ip != NULL) retval->location_ip = strdup( location_ip );
+    else retval->location_ip = NULL;
+    if(location_ip != NULL) retval->browser_used = strdup( browser_used );
+    else retval->browser_used = NULL;
 
     return retval;
 }

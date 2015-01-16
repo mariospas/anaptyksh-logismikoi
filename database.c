@@ -124,3 +124,87 @@ void personHasInterestTag(ptr_graph graph_person,ptr_graph women,ptr_graph men,i
 	return;
 
 }
+
+
+
+
+
+
+
+list_ptr list_of_post_from_person_node(ptr_entry data,ptr_graph post_graph)
+{
+	list_ptr list = LL_create(match_entry);
+
+	HT_iter_ptr iter;
+	ht_ptr nodes = Graph_nodes(post_graph);
+	ptr_entry data_post;
+	int i, graph_size = Graph_size(post_graph);
+	int j;
+
+	int post_creator = -3;
+
+	iter = HT_iter_create(nodes);
+	//printf("In getTopStalkers\n");
+
+	for(i=0;i<graph_size;i++)
+	{
+		data_post = ((ptr_entry)HT_iter_data(iter));
+		//printf("Data id = %d\n",data_tag->id);
+
+		post_creator = creator_of_post(data_post);
+
+		if(post_creator == data->id)
+		{
+			LL_insert(list,((void *) data_post));
+		}
+
+
+		HT_iter_next(iter);
+	}
+
+	return list;
+}
+
+
+
+
+list_ptr list_of_comments_from_person_node(ptr_entry data,ptr_graph comment_graph)
+{
+	list_ptr list = LL_create(match_entry);
+
+	HT_iter_ptr iter;
+	ht_ptr nodes = Graph_nodes(comment_graph);
+	ptr_entry data_comment;
+	int i, graph_size = Graph_size(comment_graph);
+	int j;
+
+	int comment_creator = -3;
+
+	iter = HT_iter_create(nodes);
+	//printf("In getTopStalkers\n");
+
+	for(i=0;i<graph_size;i++)
+	{
+		data_comment = ((ptr_entry)HT_iter_data(iter));
+		//printf("Data id = %d\n",data_tag->id);
+
+		comment_creator = creator_of_comments(data_comment);
+
+		if(comment_creator == data->id)
+		{
+			LL_insert(list,((void *) data_comment));
+		}
+
+
+		HT_iter_next(iter);
+	}
+
+	return list;
+}
+
+
+
+
+
+
+
