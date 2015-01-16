@@ -347,7 +347,7 @@ int main( int argc, char *argv[] )
 	load_graph(tag_forum);
 	printf("\n\n\n^^^^^^^^^^^^^^ tag_forum finish load ^^^^^^^^^^^^^^^\n\n\n");
 
-#if 0
+//#if 0
 	//prepei na beltiothei gt einai argh
 	int reach8 = reachNode1(g,6906,4814);
 	printf("reach = %d start id = %d and end id = %d\n\n",reach8,6906,4814);
@@ -412,6 +412,8 @@ int main( int argc, char *argv[] )
 
 	betweenness_centrality(N80,g);
 
+	/************ Erothma 1 *************/
+
 	ptr_array_matches array = matchSuggestion(N80,1,400,40,5,g);
 	printf("finish matchSugg\n");
 
@@ -422,7 +424,10 @@ int main( int argc, char *argv[] )
 
 	printf("\n");
 
-	///
+	/************ TELOS Erothma 1 *************/
+
+	/************ Erothma 2 *************/
+
 	int stalkersNum = 7, likesNumber = 1, centralityMode = 1;
 	ptr_array_matches array_stalker;
 	ptr_graph stalker_graph = getTopStalkers(stalkersNum,likesNumber,centralityMode,database,array_stalker);
@@ -440,11 +445,16 @@ int main( int argc, char *argv[] )
 
 	//print_graph(stalker_graph);
 
-	//delete_array_matches(array_stalker);  problem :(
+	//delete_array_matches(array_stalker); // problem :(
 
 	//degreeDistribution(stalker_graph);
 
-#endif
+	/************ TELOS Erothma 2 *************/
+
+//#endif
+
+	/************ Erothma 3 *************/
+
 	int trendsNum = 4;
 	    //allocate result tables before calling query and pass them as parameters
 	char** womenTrends;
@@ -453,11 +463,26 @@ int main( int argc, char *argv[] )
 	menTrends = (char**) malloc(trendsNum * sizeof (char*));
 	findTrends(trendsNum, database, womenTrends, menTrends);
 
-	int i;
+	int i,j;
+	int len;
 	for(i=0;i<trendsNum;i++)
 	{
-		printf("WomenTrend[%d] = %s  and  MenTrend[%d] = %s\n",i,womenTrends[i],i,menTrends[i]);
+		printf("WomenTrend[%d] = %s",i,womenTrends[i]);
+		len = strlen(womenTrends[i]);
+		if(len < 20)
+		{
+			for(j=0;j<20-len;j++)
+			{
+				printf(" ");
+			}
+		}
+		printf("MenTrend[%d] = %s\n",i,menTrends[i]);
 	}
+
+	/************ TELOS Erothma 3 *************/
+
+
+
 
 }
 
