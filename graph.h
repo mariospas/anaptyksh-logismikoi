@@ -74,7 +74,7 @@ ptr_edge copy_edge(ptr_edge data);
 
 ptr_entry copy_entry(ptr_entry data);
 
-ptr_entry copy_entry_person_knows_person(ptr_entry data);
+ptr_entry copy_entry_person_knows_person(ptr_graph graph,ptr_entry data);
 
 
 

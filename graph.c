@@ -96,6 +96,7 @@ ptr_entry lookupNode(ptr_graph graph,int id)
 
 int reachNode1( ptr_graph this, long start, long end )
 {
+	//printf("reachnode1 start = %d  end = %d\n",start,end);
     int level = 0, found = 0, buckets, bucket_size;
     ht_ptr visited1, visited2;
     ht_ptr frontier1, frontier2;
@@ -118,7 +119,12 @@ int reachNode1( ptr_graph this, long start, long end )
     HT_insert( visited2, (void*) end, end );
     HT_insert( frontier2, (void*) end, end );
 
-    while ( HT_size( visited1 ) < this->size && HT_size( visited2 ) < this->size ) {
+    //printf("HT_size( visited1 ) = %d, this->size = %d, HT_size( visited2 ) = %d, this->size = %d\n",HT_size( visited1 ),this->size,HT_size( visited2 ),this->size);
+
+    //while ( HT_size( visited1 ) < this->size && HT_size( visited2 ) < this->size )
+    while(1)
+    {
+    	//printf("in while reachnode1\n");
         if ( expand_( this, &frontier1, visited1, &level ) == 0 ) {
             break;
         }
@@ -1058,16 +1064,22 @@ ptr_entry copy_entry(ptr_entry data)
 }
 
 
-ptr_entry copy_entry_person_knows_person(ptr_entry data)
+ptr_entry copy_entry_person_knows_person(ptr_graph graph,ptr_entry data)
 {
 	ptr_person_info info = ((ptr_person_info) (data->properties));
+
 	ptr_date date = ((ptr_date)(info->birthday));
 	ptr_date birthday = date_create(date->year,date->month,date->day,date->hour,date->minute,date->second);
+
 	date = ((ptr_date)(info->creation_date));
 	ptr_date creationDate = date_create(date->year,date->month,date->day,date->hour,date->minute,date->second);
+
 	ptr_person_info info1 = person_create(info->id,info->first_name,info->surname,info->gender,birthday,creationDate,info->location_ip,info->browser_used);
 
 	ptr_entry entry = create_entry(data->id,info1,data->properties_destroy);
+
+	insertNode(graph,entry);
+
 	list_ptr list_of_person = type_list(data,"person_knows_person.csv");
 
 	ptr_data_list data_list;
@@ -1083,7 +1095,7 @@ ptr_entry copy_entry_person_knows_person(ptr_entry data)
 
 		ptr_edge edge;
 
-		data_list = LL_search(entry->edges,((void *) (edge_type)));
+		/*data_list = LL_search(entry->edges,((void *) (edge_type)));
 		//printf("Normal SEARCH\n");
 		if(data_list == NULL)
 		{
@@ -1091,11 +1103,13 @@ ptr_entry copy_entry_person_knows_person(ptr_entry data)
 			data_list = data_list_create((edge_type));
 			LL_insert(entry->edges,(void *) data_list);
 		}
+		*/
 
 		for(i=0;i<size;i++)
 		{
 			edge = copy_edge(result[i]);
-			LL_insert(data_list->list,edge);
+			//LL_insert(data_list->list,edge);
+			insertEdge(graph,entry->id,edge);
 		}
 
 		free(result);

@@ -347,7 +347,7 @@ int main( int argc, char *argv[] )
 	load_graph(tag_forum);
 	printf("\n\n\n^^^^^^^^^^^^^^ tag_forum finish load ^^^^^^^^^^^^^^^\n\n\n");
 
-
+#if 0
 	//prepei na beltiothei gt einai argh
 	int reach8 = reachNode1(g,6906,4814);
 	printf("reach = %d start id = %d and end id = %d\n\n",reach8,6906,4814);
@@ -435,13 +435,16 @@ int main( int argc, char *argv[] )
 		printf("\nStalker id = %d and Score = %f\n",id_stalker,score);
 	}
 
-	print_graph(stalker_graph);
+	int reach9 = reachNode1(stalker_graph,495,347);
+	printf("reach9 = %d \n",reach9);
+
+	//print_graph(stalker_graph);
 
 	//delete_array_matches(array_stalker);  problem :(
 
 	//degreeDistribution(stalker_graph);
 
-
+#endif
 	int trendsNum = 4;
 	    //allocate result tables before calling query and pass them as parameters
 	char** womenTrends;

@@ -102,17 +102,19 @@ void personHasInterestTag(ptr_graph graph_person,ptr_graph women,ptr_graph men,i
 
 		if(flag == 1)
 		{
-			person_entry = copy_entry_person_knows_person(data);
+
 			//printf("TRY to Insert stalker %d\n",data->id);
-			person_info = person_entry->properties;
+			person_info = data->properties;
 			gender = get_gender(person_info);
 			if(gender == MALE)
 			{
-				insertNode(men,person_entry);
+				person_entry = copy_entry_person_knows_person(men,data);
+				//insertNode(men,person_entry);
 			}
 			else if(gender == FEMALE)
 			{
-				insertNode(women,person_entry);
+				person_entry = copy_entry_person_knows_person(women,data);
+				//insertNode(women,person_entry);
 			}
 		}
 

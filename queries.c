@@ -298,9 +298,9 @@ ptr_graph Create_Stalkers_Graph(int stalkersNum,int likesNumber,int centralityMo
 					{
 						//printf("Find a stalker %d\n",data->id);
 						//meta na kataskeuaso ena graph stalker me entries kai edges forums pou anhkei
-						entry_stalker = copy_entry_person_knows_person(data);
+						entry_stalker = copy_entry_person_knows_person(stalker_graph,data);
 						//printf("TRY to Insert stalker %d\n",data->id);
-						insertNode(stalker_graph,entry_stalker);
+						//insertNode(stalker_graph,entry_stalker);
 
 						isMemberInThisForum(forum_graph,stalker_graph,entry_stalker->id);
 
@@ -412,7 +412,7 @@ void insert_trend (ptr_array_trends array,ptr_trend trend)
 		printf("array trend name = %s and trend name = %s\n",(array->pinakas[array->current_size])->tag_name,trend->tag_name);
 		printf("current = %d\n",array->current_size);
 
-		qsort (array->pinakas, ((array->current_size)+1), sizeof(struct trend *), compare_trend);
+		if(array->current_size > 0) qsort (array->pinakas, ((array->current_size)+1), sizeof(struct trend *), compare_trend);
 		printf("array trend name = %s and trend name = %s\n",(array->pinakas[array->current_size])->tag_name,trend->tag_name);
 	}
 	else if( (array->current_size) == (array->limit) )
@@ -431,11 +431,13 @@ void insert_trend (ptr_array_trends array,ptr_trend trend)
 
 int compare_trend (const void * a, const void * b)
 {
-	ptr_trend trend1 = ((ptr_trend) a);
-	ptr_trend trend2 = ((ptr_trend) b);
+	ptr_trend* trend1 = ((ptr_trend*) a);
+	ptr_trend* trend2 = ((ptr_trend*) b);
 
-	int size1 = trend1->size;
-	int size2 = trend2->size;
+	printf("---------trend1_name = %s  and trend2_name = %s--------\n",(*trend1)->tag_name,(*trend2)->tag_name);
+	printf("---------   size = %d      and     size2 = %d--------\n",(*trend1)->size,(*trend2)->size);
+	int size1 = (*trend1)->size;
+	int size2 = (*trend2)->size;
 
 	return ( size2 - size1 );
 }
@@ -573,6 +575,8 @@ void findTrends(int trendsNum,ptr_database database,char** womenTrends,char** me
 		insert_trend(men_trends,trend_men);
 
 		ptr_entry en = lookupNode(men,6995);
+		if(en == NULL) printf("NULL\n");
+		else printf("en->id = %d\n",en->id);
 		int omega = reachNode1(men,6995,6488);
 		printf("omega = %d\n",omega);
 
@@ -585,17 +589,17 @@ void findTrends(int trendsNum,ptr_database database,char** womenTrends,char** me
 		HT_iter_next(iter);
 	}
 
-	for(i=0;i<(women_trends->current_size);i++)
+	for(i=0;i<=(women_trends->current_size);i++)
 	{
 		tag_name = get_trend_name(i,women_trends,&size_tag);
-		printf("WOMEN tag_name = %s\n",tag_name);
+		printf("***** WOMEN[%d] tag_name = %s  and  size_tag = %d\n",i,tag_name,size_tag);
 		womenTrends[i] = strdup(tag_name);
 	}
 
-	for(i=0;i<(men_trends->current_size);i++)
+	for(i=0;i<=(men_trends->current_size);i++)
 	{
 		tag_name = get_trend_name(i,men_trends,&size_tag);
-		printf("MEN tag_name = %s\n",tag_name);
+		printf("+++++ MEN[%d] tag_name = %s  and  size_tag = %d\n",i,tag_name,size_tag);
 		menTrends[i] = strdup(tag_name);
 	}
 
