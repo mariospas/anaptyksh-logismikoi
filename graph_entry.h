@@ -35,7 +35,7 @@ struct edge
     char edge_type[EDGE_TYPE_BUF];
     int target_type;  /* This should be enum type cast */
 	int target_id;
-	int weight;
+	double weight;
 	void* extra_data;
 };
 
@@ -62,6 +62,7 @@ int match_edge(const void *a, const void *key);
 
 int match_entry(const void *a,const void *key);
 
+void edge_change_weight(ptr_edge edge,double weight);
 
 
 void* Entry_take_list(ptr_entry this);

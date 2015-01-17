@@ -126,6 +126,11 @@ int match_entry(const void *a,const void *key)
 }
 
 
+void edge_change_weight(ptr_edge edge,double weight)
+{
+	edge->weight = weight;
+}
+
 
 //Iterators
 

@@ -351,7 +351,7 @@ int main( int argc, char *argv[] )
 	load_graph(comment_graph);
 	printf("\n\n\n^^^^^^^^^^^^^^ comment_graph finish load ^^^^^^^^^^^^^^^\n\n\n");
 
-//#if 0
+#if 0
 	//prepei na beltiothei gt einai argh
 	int reach8 = reachNode1(g,6906,4814);
 	printf("reach = %d start id = %d and end id = %d\n\n",reach8,6906,4814);
@@ -482,9 +482,16 @@ int main( int argc, char *argv[] )
 		}
 		printf("MenTrend[%d] = %s\n",i,menTrends[i]);
 	}
-
+#endif
 	/************ TELOS Erothma 3 *************/
 
+
+	printf("\n\nTry 4 querry\n\n");
+
+	int forumId = 34680;
+	ptr_graph trust_graph = buildTrustGraph(forumId,database);
+
+	print_graph(trust_graph);
 
 
 }

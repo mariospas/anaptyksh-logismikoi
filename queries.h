@@ -62,6 +62,7 @@ void findTrends(int trendsNum,ptr_database database,char** womenTrends,char** me
 
 
 
+double trust(ptr_entry node_i,ptr_entry node_j,ptr_graph graph,ptr_graph post_graph,ptr_graph comment_graph);
 
 ptr_graph buildTrustGraph(int forumID,ptr_database database);
 

@@ -590,6 +590,8 @@ void findTrends(int trendsNum,ptr_database database,char** womenTrends,char** me
 		HT_iter_next(iter);
 	}
 
+	HT_iter_destroy(iter);
+
 	for(i=0;i<=(women_trends->current_size);i++)
 	{
 		tag_name = get_trend_name(i,women_trends,&size_tag);
@@ -686,9 +688,68 @@ double trust(ptr_entry node_i,ptr_entry node_j,ptr_graph graph,ptr_graph post_gr
 	list_posts_node_j = list_of_post_from_person_node(node_j,post_graph);
 	list_comments_node_i = list_of_comments_from_person_node(node_i,comment_graph);
 
+	LL_iter_ptr iter_com;
+	int list_com_size = LL_size(list_comments_node_i);
+	int list_post_size = LL_size(list_posts_node_j);
+	ptr_entry comment;
+	list_ptr list_comment_reply;
+	LL_iter_ptr iter_reply;
+	int reply_size;
+	int reply_size_all;
+	ptr_edge edge_reply;
+	ptr_entry new;
+	ptr_entry new1 = NULL;
+
+	int countReplies = 0;
+
+	if(list_com_size != 0 && list_post_size != 0)
+	{
+		iter_com = LL_iter_create(list_comments_node_i);
+
+		for(i=0;i<list_com_size;i++)
+		{
+			comment = ((ptr_entry) LL_iter_data(iter_com));
+
+			list_comment_reply = type_list(comment,"comment_replyOf_post.csv");
+			if(list_comment_reply != NULL)
+			{
+				reply_size = LL_size(list_comment_reply);
+				reply_size_all = reply_size_all + reply_size;
+				iter_reply = LL_iter_create(list_comment_reply);
+				for(j=0;j<reply_size;j++)
+				{
+					edge_reply = LL_iter_data(iter_reply);
+
+					new = create_entry(edge_reply->target_id,NULL,NULL);
+					new1 = LL_search(list_posts_node_j,((void *) new));
+					if(new1 != NULL)
+					{
+						countReplies = countReplies + 1;
+					}
+					destroy_entry(((void *) new));
+
+					LL_iter_next(iter_reply);
+				}
+				LL_iter_destroy(iter_reply);
+			}
 
 
+			LL_iter_next(iter_com);
+		}
+		LL_iter_destroy(iter_com);
+	}
 
+	printf("countLike = %d   and   countReply = %d\n",countIlikeJ,countReplies);
+	printf("listSize = %d   and   reply_size_all = %d\n",list_size,reply_size_all);
+
+	double apotel = 0.0;
+	if(list_size != 0 && reply_size_all != 0)
+	{
+		apotel = ( 0.3*(((double)countIlikeJ)/((double)list_size)) ) + ( 0.7*(((double)countReplies)/((double) reply_size_all)) );
+	}
+	printf("apotel = %f\n",apotel);
+
+	return apotel;
 
 }
 
@@ -698,14 +759,101 @@ ptr_graph buildTrustGraph(int forumID,ptr_database database)
 	ptr_graph graph = DB_get_entity(database,PERSON);
 	ptr_graph post_graph = DB_get_entity(database,POST);
 	ptr_graph forum_graph = DB_get_entity(database,FORUM);
+	ptr_graph comment_graph = DB_get_entity(database,COMMENT);
 
 
 
+	int trustANodeId = 30;
+	int trustBNodeId = 9805;
+	int trustCNodeId = 9700;
+	ptr_entry ta = lookupNode(graph,trustANodeId);
+	ptr_entry tb = lookupNode(graph,trustBNodeId);
+	ptr_entry tc = lookupNode(graph,trustCNodeId);
+
+	trust(ta,tb,graph,post_graph,comment_graph);
 
 
 	ptr_graph trust_graph = createGraph(PERSON,TABLE_DEFAULT_SIZE, BUCKET_DEFAULT_SIZE);
 
+	ptr_entry forum_entry = lookupNode(forum_graph,forumID);
+	list_ptr list_of_members = type_list(forum_entry,"forum_hasMember_person.csv");
 
+	LL_iter_ptr iter;
+	int list_size;
+	int i;
+	ptr_edge edge;
+	ptr_entry person_entry;
+
+	if(list_of_members != NULL)
+	{
+		iter = LL_iter_create(list_of_members);
+		list_size = LL_size(list_of_members);
+		for(i=0;i<list_size;i++)
+		{
+			edge = LL_iter_data(iter);
+
+			person_entry = lookupNode(graph,edge->target_id);
+			if(person_entry != NULL)
+			{
+				person_entry = copy_entry_person_knows_person(trust_graph,person_entry);
+			}
+
+			LL_iter_next(iter);
+		}
+		LL_iter_destroy(iter);
+	}
+
+
+	////after insert and create trust graph
+
+	HT_iter_ptr iterHT;
+	ht_ptr nodes = Graph_nodes(trust_graph);
+	ptr_entry data_trust;
+	int graph_size = Graph_size(trust_graph);
+	int j;
+	list_ptr list_person;
+	int size_person_list;
+
+	ptr_entry new_one;
+	ptr_edge trust_edge;
+
+	double trust_apotel;
+
+	iterHT = HT_iter_create(nodes);
+	//printf("In getTopStalkers\n");
+
+	for(i=0;i<graph_size;i++)
+	{
+		data_trust = ((ptr_entry)HT_iter_data(iterHT));
+		//printf("Data id = %d\n",data_trust->id);
+		list_person = type_list(data_trust,"person_knows_person.csv");
+		if(list_person != NULL)
+		{
+			iter = LL_iter_create(list_person);
+			size_person_list = LL_size(list_person);
+			for(j=0;j<size_person_list;j++)
+			{
+				trust_edge = LL_iter_data(iter);
+				new_one = lookupNode(trust_graph,trust_edge->target_id);
+				if(new_one != NULL)
+				{
+					printf("Data id = %d with new one = %d\n",data_trust->id,new_one->id);
+					trust_apotel = trust(data_trust,new_one,graph,post_graph,comment_graph);
+					edge_change_weight(trust_edge,trust_apotel);
+				}
+
+				LL_iter_next(iter);
+			}
+			LL_iter_destroy(iter);
+		}
+
+		HT_iter_next(iterHT);
+	}
+
+	HT_iter_destroy(iterHT);
+
+
+	return trust_graph;
 }
 
 
