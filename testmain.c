@@ -485,6 +485,9 @@ int main( int argc, char *argv[] )
 #endif
 	/************ TELOS Erothma 3 *************/
 
+	ptr_entry no = lookupNode(post_graph,4);
+	if(no == NULL) printf("NULL\n");
+	else printf("NOT NULL");
 
 	printf("\n\nTry 4 querry\n\n");
 

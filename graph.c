@@ -552,6 +552,7 @@ void load_graph(ptr_graph graph)
 		char *language;
 		char *content;
 		int flag = 0;
+		ptr_entry look;
 
 		/************** post.csv *************/
 		if ( ( fp = fopen( "dataset/post.csv", "r" ) ) == NULL ) //Reading a file
@@ -643,6 +644,38 @@ void load_graph(ptr_graph graph)
 		}
 
 
+		/************ insert more posts ****************/
+
+		if ( ( fp = fopen( "dataset/post_hasCreator_person.csv", "r" ) ) == NULL ) //Reading a file
+		{
+			printf( "File could not be opened.\n" );
+		}
+
+		fgets(buf, 1023, fp);   //first line
+
+		while (fgets(buf, 1023, fp) != NULL)
+		{
+			if ((strlen(buf)>0) && (buf[strlen (buf) - 1] == '\n'))
+				buf[strlen (buf) - 1] = '\0';
+
+
+			tmp = strtok(buf, "|");
+			id = atoi(tmp);
+			//printf("id = %d ",id);
+
+			look = lookupNode(graph,id);
+			if(look == NULL)
+			{
+				entry = create_entry(id,NULL,NULL);
+				//printf("insert one more post id = %d\n",id);
+
+				insertNode(graph,entry);
+			}
+
+
+		}
+
+
 		/*********** post_hasCreator_person.csv ************/
 		if ( ( fp = fopen( "dataset/post_hasCreator_person.csv", "r" ) ) == NULL ) //Reading a file
 		{
@@ -656,6 +689,8 @@ void load_graph(ptr_graph graph)
 		//printf("finish load_2ids_and_extra\n");
 
 		free(filename);
+
+
 
 	}
 	else if(graph->id == FORUM)
@@ -792,6 +827,7 @@ void load_graph(ptr_graph graph)
 	}
 	else if(graph->id == COMMENT)
 	{
+		ptr_entry look1;
 
 		/************** comment_hasCreator_person.csv *************/
 		printf("!!! forum !!!\n");
@@ -823,6 +859,38 @@ void load_graph(ptr_graph graph)
 			insertNode(graph,entry);
 
 		}
+
+		/************ insert more comments ****************/
+
+		if ( ( fp = fopen( "dataset/comment_replyOf_post.csv", "r" ) ) == NULL ) //Reading a file
+		{
+			printf( "File could not be opened.\n" );
+		}
+
+		fgets(buf, 1023, fp);   //first line
+
+		while (fgets(buf, 1023, fp) != NULL)
+		{
+			if ((strlen(buf)>0) && (buf[strlen (buf) - 1] == '\n'))
+				buf[strlen (buf) - 1] = '\0';
+
+
+			tmp = strtok(buf, "|");
+			id = atoi(tmp);
+			//printf("id = %d ",id);
+
+			look1 = lookupNode(graph,id);
+			if(look1 == NULL)
+			{
+				entry = create_entry(id,NULL,NULL);
+				//printf("insert one more comment id = %d\n",id);
+
+				insertNode(graph,entry);
+			}
+
+
+		}
+
 
 		/*********** comment_hasCreator_person.csv ************/
 		if ( ( fp = fopen( "dataset/comment_hasCreator_person.csv", "r" ) ) == NULL ) //Reading a file

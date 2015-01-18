@@ -629,7 +629,7 @@ double trust(ptr_entry node_i,ptr_entry node_j,ptr_graph graph,ptr_graph post_gr
 
 	list_ptr person_like_post_list;
 	LL_iter_ptr iterList;
-	int list_size;
+	int list_size = 0;
 	ptr_edge edge;
 	int post_id;
 	ptr_entry post_entry;
@@ -694,8 +694,8 @@ double trust(ptr_entry node_i,ptr_entry node_j,ptr_graph graph,ptr_graph post_gr
 	ptr_entry comment;
 	list_ptr list_comment_reply;
 	LL_iter_ptr iter_reply;
-	int reply_size;
-	int reply_size_all;
+	int reply_size = 0;
+	int reply_size_all = 0;
 	ptr_edge edge_reply;
 	ptr_entry new;
 	ptr_entry new1 = NULL;
@@ -743,10 +743,19 @@ double trust(ptr_entry node_i,ptr_entry node_j,ptr_graph graph,ptr_graph post_gr
 	printf("listSize = %d   and   reply_size_all = %d\n",list_size,reply_size_all);
 
 	double apotel = 0.0;
-	if(list_size != 0 && reply_size_all != 0)
+	double first = 0.0;
+	double second = 0.0;
+	if(list_size != 0 )
 	{
-		apotel = ( 0.3*(((double)countIlikeJ)/((double)list_size)) ) + ( 0.7*(((double)countReplies)/((double) reply_size_all)) );
+		first = ( 0.3*(((double)countIlikeJ)/((double)list_size)) );
+		printf("**** first = %f\n",first);
 	}
+	if(reply_size_all != 0)
+	{
+		second = ( 0.7*(((double)countReplies)/((double) reply_size_all)) );
+		printf("**** second = %f\n",second);
+	}
+	apotel = first + second;
 	printf("apotel = %f\n",apotel);
 
 	return apotel;

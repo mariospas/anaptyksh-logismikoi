@@ -99,14 +99,23 @@ struct post_info *post_create( int id,
     	retval->image_file = strdup( image_file );
 	}
 
-    retval->creation_date = creation_date;
-  //  printf("creation_date in post_create\n");
+    if(creation_date != NULL)
+    {
+    	retval->creation_date = creation_date;
+    }
+    //  printf("creation_date in post_create\n");
 
-    retval->location_ip = strdup( location_ip );
-  //  printf("location_ip in post_create\n");
+    if(location_ip != NULL)
+    {
+    	retval->location_ip = strdup( location_ip );
+    }
+    //  printf("location_ip in post_create\n");
 
-    retval->browser_used = strdup( browser_used );
-   // printf("browser_used in post_create\n");
+    if(browser_used != NULL)
+	{
+    	retval->browser_used = strdup( browser_used );
+	}
+    // printf("browser_used in post_create\n");
 
     if(language != NULL)
 	{
