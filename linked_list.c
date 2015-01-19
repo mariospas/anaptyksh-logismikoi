@@ -95,6 +95,24 @@ void *LL_delete( list_ptr this, void *key )
 	return result;
 }
 
+void *LL_pop( list_ptr this)
+{
+	struct LL_node *node = this->head, *temp;
+	void *result;
+	if ( node == NULL) {
+		return NULL;
+	}
+
+	result = this->head->data;
+	temp = this->head;
+	this->head = this->head->next;
+	free( temp );
+	--this->size;
+	return result;
+
+}
+
+
 void *LL_search( list_ptr this, void *key )
 {
 	struct LL_node *node = this->head;

@@ -54,7 +54,7 @@ ptr_entry create_entry(int id, void* properties, deallocator_f destroy_propertie
 
 void destroy_entry(void *entry);
 
-ptr_edge create_edge(char edge_type[EDGE_TYPE_BUF], int target_id, int target_type, int weight, void *extra );
+ptr_edge create_edge(char edge_type[EDGE_TYPE_BUF], int target_id, int target_type, double weight, void *extra );
 
 void destroy_edge(void *edge);
 

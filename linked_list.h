@@ -14,6 +14,8 @@ void LL_insert( list_ptr this, void *element );
 
 void *LL_delete( list_ptr this, void *key );
 
+void *LL_pop( list_ptr this);
+
 void *LL_search( list_ptr this, void *key );
 
 void **LL_export( list_ptr this );

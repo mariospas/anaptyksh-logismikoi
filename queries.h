@@ -66,5 +66,27 @@ double trust(ptr_entry node_i,ptr_entry node_j,ptr_graph graph,ptr_graph post_gr
 
 ptr_graph buildTrustGraph(int forumID,ptr_database database);
 
+double estimateTrust(ptr_entry a, ptr_entry b, ptr_graph trust_graph);
+
+
+
+typedef struct data_trust *ptr_data_trust;
+
+double data_trust_get_trust(ptr_data_trust data);
+
+int data_trust_get_id(ptr_data_trust data);
+
+int data_trust_get_level(ptr_data_trust data);
+
+int match_trust(const void *a, const void *key);
+
+ptr_data_trust create_data_trust(int id,double trust_so_far,int level);
+
+void destroy_data_trust(void* data);
+
+int check_to_insert_in_list(list_ptr fringe,ptr_edge edge,double trust_so_far,int level);
+
+double rec_trust_search(ptr_graph trust_graph,list_ptr fringe,int target_id,int *flag);
+
 
 #endif /* _QUERIES_ */

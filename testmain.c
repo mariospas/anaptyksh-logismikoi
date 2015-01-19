@@ -50,7 +50,8 @@ void printPersonProperties(ptr_entry n);
 
 void testBetweennessCentrality(int bucketsNumber, int bucketSize);
 void testClosenessCentrality(int bucketsNumber, int bucketSize);
-
+ptr_edge setEdgeTrustProperties(int startNodeID, int endNodeID, double trust);
+void testTidalTrust(int bucketsNumber, int bucketSize);
 
 /*
 char *cont[20] = {
@@ -327,7 +328,7 @@ int main( int argc, char *argv[] )
 
 #endif
 	///load and test///
-
+//#if 0
 	ptr_database database = DB_create();
 
 	g = DB_get_entity(database,PERSON);
@@ -455,7 +456,7 @@ int main( int argc, char *argv[] )
 
 	/************ TELOS Erothma 2 *************/
 
-//#endif
+#endif
 
 	/************ Erothma 3 *************/
 
@@ -482,8 +483,10 @@ int main( int argc, char *argv[] )
 		}
 		printf("MenTrend[%d] = %s\n",i,menTrends[i]);
 	}
-#endif
+//#endif
 	/************ TELOS Erothma 3 *************/
+
+	/************ Erothma 4 *************/
 
 	ptr_entry no = lookupNode(post_graph,4);
 	if(no == NULL) printf("NULL\n");
@@ -496,6 +499,23 @@ int main( int argc, char *argv[] )
 
 	print_graph(trust_graph);
 
+	int trustANodeId = 30;
+	int trustBNodeId = 9805;
+	int trustCNodeId = 9700;
+	ptr_entry ta = lookupNode(trust_graph, trustANodeId);
+	ptr_entry tb = lookupNode(trust_graph, trustBNodeId);
+	ptr_entry tc = lookupNode(trust_graph, trustCNodeId);
+	double trustAB = 0.0;
+	trustAB = estimateTrust(ta, tb, trust_graph);
+	printf("Trust between nodes (%d,%d) is %f\n\n", trustANodeId, trustBNodeId, trustAB);
+
+	double trustAC;
+	trustAC = estimateTrust(ta, tc, trust_graph);
+	printf("Trust between nodes (%d,%d) is %f\n", trustANodeId, trustCNodeId, trustAC);
+//#endif
+	testTidalTrust(4,4);
+
+	/************ TELOS Erothma 4 *************/
 
 }
 
@@ -735,4 +755,90 @@ void testClosenessCentrality(int bucketsNumber, int bucketSize) {
     CHECKDOUBLE("Small Graph closeness centrality node:7 ", closCentrty7, 3.33 / 6.0);
 
 }
+
+
+void testTidalTrust(int bucketsNumber, int bucketSize) {
+    //create small graph for testing tidal's trust algorithm result
+    ptr_graph gtt = createGraph(PERSON,bucketsNumber, bucketSize);
+
+    ptr_entry n1tt = create_entry(1,NULL,NULL);
+    ptr_entry n2tt = create_entry(2, NULL,NULL);
+    ptr_entry n3tt = create_entry(3, NULL,NULL);
+    ptr_entry n4tt = create_entry(4, NULL,NULL);
+    ptr_entry n5tt = create_entry(5, NULL,NULL);
+    ptr_entry n6tt = create_entry(6, NULL,NULL);
+    ptr_entry n7tt = create_entry(7, NULL,NULL);
+    ptr_entry n8tt = create_entry(8, NULL,NULL);
+    ptr_entry n9tt = create_entry(9, NULL,NULL);
+    ptr_entry n10tt = create_entry(10, NULL,NULL);
+    ptr_entry n11tt = create_entry(11, NULL,NULL);
+
+    insertNode(gtt, n1tt);
+    insertNode(gtt, n2tt);
+    insertNode(gtt, n3tt);
+    insertNode(gtt, n4tt);
+    insertNode(gtt, n5tt);
+    insertNode(gtt, n6tt);
+    insertNode(gtt, n7tt);
+    insertNode(gtt, n8tt);
+    insertNode(gtt, n9tt);
+    insertNode(gtt, n10tt);
+    insertNode(gtt, n11tt);
+
+
+    ptr_edge e1tt = setEdgeTrustProperties(1, 2, 1.0);
+    ptr_edge e2tt = setEdgeTrustProperties(1, 5, 1.0);
+    ptr_edge e3tt = setEdgeTrustProperties(2, 3, 0.9);
+    ptr_edge e4tt = setEdgeTrustProperties(2, 4, 0.9);
+    ptr_edge e5tt = setEdgeTrustProperties(3, 6, 0.8);
+    ptr_edge e6tt = setEdgeTrustProperties(4, 6, 0.3);
+    ptr_edge e7tt = setEdgeTrustProperties(4, 7, 0.9);
+    ptr_edge e8tt = setEdgeTrustProperties(5, 10, 0.9);
+    ptr_edge e9tt = setEdgeTrustProperties(6, 9, 1.0);
+    ptr_edge e10tt = setEdgeTrustProperties(7, 8, 1.0);
+    ptr_edge e11tt = setEdgeTrustProperties(8, 9, 1.0);
+    ptr_edge e12tt = setEdgeTrustProperties(9, 11, 1.0);
+    ptr_edge e13tt = setEdgeTrustProperties(10, 11, 0.4);
+
+    /* Insert edges in graph */
+    insertEdge(gtt, 1, e1tt);
+    insertEdge(gtt, 1, e2tt);
+    insertEdge(gtt, 2, e3tt);
+    insertEdge(gtt, 2, e4tt);
+    insertEdge(gtt, 3, e5tt);
+    insertEdge(gtt, 4, e6tt);
+    insertEdge(gtt, 4, e7tt);
+    insertEdge(gtt, 5, e8tt);
+    insertEdge(gtt, 6, e9tt);
+    insertEdge(gtt, 7, e10tt);
+    insertEdge(gtt, 8, e11tt);
+    insertEdge(gtt, 9, e12tt);
+    insertEdge(gtt, 10, e13tt);
+
+
+    ptr_entry att = lookupNode(gtt, 1);
+    printf("att->id = %d\n",att->id);
+
+    ptr_entry btt = lookupNode(gtt, 11);
+    printf("btt->id = %d\n\n",btt->id);
+    //Estimate trust(1,11)
+    double trust1_11 = estimateTrust(att, btt, gtt);
+    CHECKDOUBLE("Graph estimate trust (1,11)", trust1_11, 0.36);
+
+    //Estimate trust(1,9)
+    ptr_entry ctt = lookupNode(gtt, 9);
+    printf("ctt->id = %d\n\n",ctt->id);
+    double trust1_9 = estimateTrust(att, ctt, gtt);
+    CHECKDOUBLE("Graph estimate trust (1,9)", trust1_9, 0.72);
+
+}
+
+ptr_edge setEdgeTrustProperties(int startNodeID, int endNodeID, double trust) {
+
+    /*create an ptr_edge*/
+    ptr_edge e = create_edge("person_knows_person.csv",endNodeID,PERSON,trust,NULL);
+
+    return e;
+}
+
 

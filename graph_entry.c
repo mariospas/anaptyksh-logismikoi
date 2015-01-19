@@ -68,14 +68,14 @@ void destroy_entry(void *entry )
 	free(entry1);
 }
 
-ptr_edge create_edge(char edge_type[EDGE_TYPE_BUF], int target_id, int target_type, int weight, void *extra  )
+ptr_edge create_edge(char edge_type[EDGE_TYPE_BUF], int target_id, int target_type, double weight, void *extra  )
 {
 	ptr_edge new_edge = malloc(sizeof(struct edge));
 
     strcpy( new_edge->edge_type, edge_type );
 	new_edge->target_id = target_id;
 	new_edge->target_type = target_type;
-	new_edge->weight = 0;
+	new_edge->weight = weight;
 	new_edge->extra_data = extra;
 
 	return new_edge;
@@ -628,11 +628,11 @@ void print_list_of_edges(ptr_entry node)
 
 	iter = LL_iter_create(data_list->list);
 	data = LL_iter_data(iter);
-	printf("Edge ID = %d and Type = %s and Target_type = %d\n",data->target_id,data->edge_type,data->target_type);
+	printf("Edge ID = %d and Type = %s and Target_type = %d and WEIGHT = %f\n",data->target_id,data->edge_type,data->target_type,data->weight);
 	while(LL_iter_next(iter))
 	{
 		data = LL_iter_data(iter);
-		printf("Edge ID = %d and Type = %s and Target_type = %d\n",data->target_id,data->edge_type,data->target_type);
+		printf("Edge ID = %d and Type = %s and Target_type = %d and WEIGHT = %f\n",data->target_id,data->edge_type,data->target_type,data->weight);
 	}
 	LL_iter_destroy(iter);
 
@@ -641,11 +641,11 @@ void print_list_of_edges(ptr_entry node)
 		data_list = LL_iter_data(iterList);
 		iter = LL_iter_create(data_list->list);
 		data = LL_iter_data(iter);
-		printf("Edge ID = %d and Type = %s and Target_type = %d\n",data->target_id,data->edge_type,data->target_type);
+		printf("Edge ID = %d and Type = %s and Target_type = %d and WEIGHT = %f\n",data->target_id,data->edge_type,data->target_type,data->weight);
 		while(LL_iter_next(iter))
 		{
 			data = LL_iter_data(iter);
-			printf("Edge ID = %d and Type = %s and Target_type = %d\n",data->target_id,data->edge_type,data->target_type);
+			printf("Edge ID = %d and Type = %s and Target_type = %d and WEIGHT = %f\n",data->target_id,data->edge_type,data->target_type,data->weight);
 		}
 		LL_iter_destroy(iter);
 	}

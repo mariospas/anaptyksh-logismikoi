@@ -648,7 +648,7 @@ double trust(ptr_entry node_i,ptr_entry node_j,ptr_graph graph,ptr_graph post_gr
 	list_ptr list_posts_node_j;
 	list_ptr list_comments_node_i;
 
-
+	printf("node_i = %d  node_j = %d\n",node_i->id,node_j->id);
 
 	person_like_post_list = type_list(node_i,"person_likes_post.csv");
 
@@ -656,23 +656,24 @@ double trust(ptr_entry node_i,ptr_entry node_j,ptr_graph graph,ptr_graph post_gr
 	if(person_like_post_list != NULL)
 	{
 		list_size = LL_size(person_like_post_list);
-		//printf("If list_size_of_person_like_post = %d\n",list_size);
+		printf("If list_size_of_person_like_post = %d\n",list_size);
 		iterList = LL_iter_create(person_like_post_list);
 		//printf("If list_size_of_person_like_post > 0\n");
 		for(j=0;j<list_size;j++)
 		{
 			edge = ((ptr_edge)LL_iter_data(iterList));
 			post_id = edge->target_id;
+			printf("&&&&&& like post id = %d\n",post_id);
 
 			post_entry = lookupNode(post_graph,post_id);
 
 			if(post_entry != NULL)
 			{
-				//printf("post_id = %d\n",post_id);
+				printf("***** post_id = %d\n",post_id);
 				id_creator_of_post = creator_of_post(post_entry);
 				if(id_creator_of_post == node_j->id)
 				{
-					//printf("id_creator = %d\n",id_creator_of_post);
+					printf("***** id_creator = %d\n",id_creator_of_post);
 					countIlikeJ = countIlikeJ + 1;
 				}
 			}
@@ -709,6 +710,7 @@ double trust(ptr_entry node_i,ptr_entry node_j,ptr_graph graph,ptr_graph post_gr
 		for(i=0;i<list_com_size;i++)
 		{
 			comment = ((ptr_entry) LL_iter_data(iter_com));
+			printf("*****comment id = %d\n",comment->id);
 
 			list_comment_reply = type_list(comment,"comment_replyOf_post.csv");
 			if(list_comment_reply != NULL)
@@ -719,11 +721,13 @@ double trust(ptr_entry node_i,ptr_entry node_j,ptr_graph graph,ptr_graph post_gr
 				for(j=0;j<reply_size;j++)
 				{
 					edge_reply = LL_iter_data(iter_reply);
+					printf("******reply to post %d\n",edge_reply->target_id);
 
 					new = create_entry(edge_reply->target_id,NULL,NULL);
 					new1 = LL_search(list_posts_node_j,((void *) new));
 					if(new1 != NULL)
 					{
+						printf("^^^^^^ find this post %d in list_post_node_j\n",edge_reply->target_id);
 						countReplies = countReplies + 1;
 					}
 					destroy_entry(((void *) new));
@@ -771,7 +775,7 @@ ptr_graph buildTrustGraph(int forumID,ptr_database database)
 	ptr_graph comment_graph = DB_get_entity(database,COMMENT);
 
 
-
+/*
 	int trustANodeId = 30;
 	int trustBNodeId = 9805;
 	int trustCNodeId = 9700;
@@ -780,7 +784,7 @@ ptr_graph buildTrustGraph(int forumID,ptr_database database)
 	ptr_entry tc = lookupNode(graph,trustCNodeId);
 
 	trust(ta,tb,graph,post_graph,comment_graph);
-
+*/
 
 	ptr_graph trust_graph = createGraph(PERSON,TABLE_DEFAULT_SIZE, BUCKET_DEFAULT_SIZE);
 
@@ -827,6 +831,8 @@ ptr_graph buildTrustGraph(int forumID,ptr_database database)
 	ptr_edge trust_edge;
 
 	double trust_apotel;
+	ptr_entry node_i;
+	ptr_entry node_j;
 
 	iterHT = HT_iter_create(nodes);
 	//printf("In getTopStalkers\n");
@@ -846,8 +852,11 @@ ptr_graph buildTrustGraph(int forumID,ptr_database database)
 				new_one = lookupNode(trust_graph,trust_edge->target_id);
 				if(new_one != NULL)
 				{
+					node_i = lookupNode(graph,data_trust->id);
+					node_j = lookupNode(graph,new_one->id);
+
 					printf("Data id = %d with new one = %d\n",data_trust->id,new_one->id);
-					trust_apotel = trust(data_trust,new_one,graph,post_graph,comment_graph);
+					trust_apotel = trust(node_i,node_j,graph,post_graph,comment_graph);
 					edge_change_weight(trust_edge,trust_apotel);
 				}
 
@@ -867,5 +876,233 @@ ptr_graph buildTrustGraph(int forumID,ptr_database database)
 
 
 
+double estimateTrust(ptr_entry a, ptr_entry b, ptr_graph trust_graph)
+{
+	double trust_this = -1;
+
+	list_ptr list_a = type_list(a,"person_knows_person.csv");
+	LL_iter_ptr iter;
+	int i;
+	int list_size_a = 0;
+	ptr_edge edge;
+	list_ptr fringe = LL_create(match_trust);
+	int flag = 0 ;//not found
+
+	if(a->id == b->id)
+	{
+		return 1.0;
+	}
+
+
+	if(list_a != NULL)
+	{
+		printf("ESTIM list_a != NULL\n");
+		iter = LL_iter_create(list_a);
+		list_size_a = LL_size(list_a);
+		for(i=0;i<list_size_a;i++)
+		{
+			edge = ((ptr_edge) LL_iter_data(iter));
+			//printf("edge id = %d weight = %f\n",edge->target_id,edge->weight);
+
+			if((edge->weight != 0) && (edge->target_id != b->id))
+			{
+				//printf("edge id = %d\n",edge->target_id);
+				check_to_insert_in_list(fringe,edge,1.0,0);
+			}
+			else if(edge->target_id == b->id)
+			{
+				trust_this = edge->weight;
+				flag = 1;
+				break;
+			}
+
+			LL_iter_next(iter);
+		}
+		LL_iter_destroy(iter);
+
+	}
+
+	int size_fringe = 0;
+	size_fringe = LL_size(fringe);
+	while(size_fringe != 0 && flag != 1)
+	{
+		if(flag == 0)
+		{
+			trust_this = rec_trust_search(trust_graph,fringe,b->id,&flag);
+			size_fringe = LL_size(fringe);
+		}
+		else if(flag == 1)
+		{
+			break;
+		}
+
+
+	}
+
+	return trust_this;
+
+
+}
+
+
+/************ new struct for estimate trust *******************/
+
+struct data_trust
+{
+	int id;
+	double trust_so_far;
+	int level;
+};
+
+
+double data_trust_get_trust(ptr_data_trust data)
+{
+	return (data->trust_so_far);
+}
+
+int data_trust_get_id(ptr_data_trust data)
+{
+	return (data->id);
+}
+
+int data_trust_get_level(ptr_data_trust data)
+{
+	return (data->level);
+}
+
+
+int match_trust(const void *a, const void *key)
+{
+	if( ((ptr_data_trust)a)->id == *((int*)key) )
+	{
+		return 0;
+	}
+	else return 1;
+}
+
+
+ptr_data_trust create_data_trust(int id,double trust_so_far,int level)
+{
+	ptr_data_trust node;
+	node = malloc(sizeof(struct data_trust));
+
+	node->id = id;
+	node->level = level;
+	node->trust_so_far = trust_so_far;
+
+	return node;
+}
+
+void destroy_data_trust(void* data)
+{
+	free(data);
+}
+
+int check_to_insert_in_list(list_ptr fringe,ptr_edge edge,double trust_so_far,int level)
+{
+	ptr_data_trust new_one,already_in_list,temp;
+	double new_trust;
+	int id_prev,level_prev;
+	double trust_prev;
+	printf("^^^ check\n");
+
+	already_in_list = ( (ptr_data_trust) LL_search(fringe,((void *) &(edge->target_id))) );
+	if(already_in_list == NULL)
+	{
+		new_trust = trust_so_far * (edge->weight);
+		printf("*** Insert id = %d with weight = %f and trust = %f\n",edge->target_id,(edge->weight),new_trust);
+		new_one = create_data_trust(edge->target_id,new_trust,level);
+		LL_insert(fringe,((void *) new_one));
+		return 1;    //inserted
+	}
+	else if(already_in_list != NULL)
+	{
+		id_prev = data_trust_get_id(already_in_list);
+		level_prev = data_trust_get_level(already_in_list);
+		trust_prev = data_trust_get_trust(already_in_list);
+
+		if(level <= level_prev)
+		{
+			new_trust = trust_so_far * (edge->weight);
+			if(new_trust > trust_prev)
+			{
+				printf("*** Replace id = %d\n",edge->target_id);
+				printf("*** Insert id = %d with trust = %f\n",edge->target_id,new_trust);
+				temp = already_in_list;
+				new_one = create_data_trust(edge->target_id,new_trust,level);
+				already_in_list = new_one;
+				destroy_data_trust(((void *) temp));
+				return 1;   //replaced
+			}
+			printf("*** No Replace id = %d\n",edge->target_id);
+		}
+		printf("*** No Replace id = %d\n",edge->target_id);
+
+	}
+
+	return 0; //nothing
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+
+
+double rec_trust_search(ptr_graph trust_graph,list_ptr fringe,int target_id,int *flag)
+{
+	ptr_data_trust first_data;
+	ptr_data_trust new_one,already_in_list;
+	int id_first, level;
+	double trust_so_far,new_trust = 0.0;
+
+	ptr_entry node;
+	list_ptr list_node;
+	ptr_edge edge;
+	LL_iter_ptr iter;
+	int i;
+	int list_size_node = 0;
+
+	first_data = LL_pop(fringe);
+	id_first = data_trust_get_id(first_data);
+	level = data_trust_get_level(first_data);
+	trust_so_far = data_trust_get_trust(first_data);
+	printf("--- Del id = %d\n",id_first);
+
+	node = lookupNode(trust_graph,id_first);
+	if(node != NULL)
+	{
+		list_node = type_list(node,"person_knows_person.csv");
+		if(list_node != NULL)
+		{
+			iter = LL_iter_create(list_node);
+			list_size_node = LL_size(list_node);
+			for(i=0;i<list_size_node;i++)
+			{
+				edge = ((ptr_edge) LL_iter_data(iter));
+
+				if(edge->weight != 0 && edge->target_id != target_id)
+				{
+					level++;
+					check_to_insert_in_list(fringe,edge,trust_so_far,level);
+				}
+				else if(edge->target_id == target_id)
+				{
+					new_trust = trust_so_far * (edge->weight);
+					*flag = 1; //found target
+					destroy_data_trust(((void *) first_data));
+					return new_trust;
+				}
+
+				LL_iter_next(iter);
+
+			}
+			LL_iter_destroy(iter);
+		}
+	}
+
+
+	destroy_data_trust(((void *) first_data));
+	return new_trust;
+
+}
 
 
