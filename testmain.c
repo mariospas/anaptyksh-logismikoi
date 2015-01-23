@@ -10,6 +10,7 @@
 #include "database.h"
 #include "linked_list.h"
 #include "queries.h"
+#include "prejob.h"
 
 #define TRUST_GRAPH_REL_PROPERTIES_NUM 1
 
@@ -456,7 +457,7 @@ int main( int argc, char *argv[] )
 
 	/************ TELOS Erothma 2 *************/
 
-#endif
+/#endif
 
 	/************ Erothma 3 *************/
 
@@ -512,10 +513,26 @@ int main( int argc, char *argv[] )
 	double trustAC;
 	trustAC = estimateTrust(ta, tc, trust_graph);
 	printf("Trust between nodes (%d,%d) is %f\n", trustANodeId, trustCNodeId, trustAC);
-//#endif
+
 	testTidalTrust(4,4);
 
 	/************ TELOS Erothma 4 *************/
+#endif
+
+
+	/**************** Part 3 ******************/
+
+	int limit = 8;
+	double score;
+	ptr_array_matches array = find_topN_forums(forum_graph,limit);
+	int g1;
+	int forum_id;
+	for(g1=0;g1<(limit);g1++)
+	{
+		forum_id = get_match(g1,array,&score);
+		printf("\nForum id = %d and Members = %f\n",forum_id,score);
+	}
+
 
 }
 
