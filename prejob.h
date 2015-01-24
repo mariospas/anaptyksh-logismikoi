@@ -1,5 +1,6 @@
 #pragma once
 
+#include "queries.h"
 #include <signal.h>
 #include <stdio.h>
 #include <string.h>
@@ -14,20 +15,21 @@
 #include <sys/types.h>
 #include <pthread.h>
 #include <dirent.h>
-#include "queries.h"
 #include "database.h"
 #include "graph.h"
 #include "graph_stats.h"
 #include "graph_entry.h"
 
-#define perror2(s, e) fprintf(stderr, "%s: %s\n",s,strerror(e))
 
-typedef struct findTopN *ptr_findTopN;
+typedef struct data_forum *ptr_data_forum;
 
+ptr_data_forum DF_create(ptr_database database,int forum_id,ptr_forum_database forums_database);
 
-pthread_mutex_t mutex_find_top_n = PTHREAD_MUTEX_INITIALIZER;
+void DF_destroy(ptr_data_forum data);
 
 
 ptr_array_matches find_topN_forums(ptr_graph forum_graph,int N);
 
-void* array_thread_insert(void* topNdata);
+void* Forum_graph_create_insert(void *data);
+
+ptr_forum_database computeTopNForums(ptr_database database,int limit);

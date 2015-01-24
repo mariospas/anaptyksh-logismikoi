@@ -43,4 +43,25 @@ list_ptr list_of_post_from_person_node(ptr_entry data,ptr_graph post_graph);
 list_ptr list_of_comments_from_person_node(ptr_entry data,ptr_graph comment_graph);
 
 
+
+
+/********** forums ****************/
+
+typedef struct forum_database *ptr_forum_database;
+
+typedef struct forum_g *forum_g_ptr;
+
+ptr_forum_database DB_forum_create(int limit);
+
+void DB_forum_insert_graph(ptr_forum_database forum_database,int forum_id,ptr_graph forum_graph);
+
+void DB_forum_destroy( ptr_forum_database this );
+
+ptr_graph DB_forum_get_entity( ptr_forum_database this, int id );
+
+int DB_forum_get_size(ptr_forum_database database);
+
+int DB_forum_get_limit(ptr_forum_database database);
+
+
 #endif /* _DATABASE_ */

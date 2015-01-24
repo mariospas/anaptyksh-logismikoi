@@ -533,6 +533,13 @@ int main( int argc, char *argv[] )
 		printf("\nForum id = %d and Members = %f\n",forum_id,score);
 	}
 
+	ptr_forum_database forums_database;
+	forums_database = computeTopNForums(database,limit);
+
+	printf("*********** forum_database ready **********\n");
+
+	ptr_graph f = DB_forum_get_entity(forums_database,28520);
+	print_graph(f);
 
 }
 
