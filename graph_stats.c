@@ -490,41 +490,166 @@ double closeness_centrality( ptr_entry n, ptr_graph g )
     return sumdist / ( (double) (size - 1) );
 }
 
+#if 0
 double betweenness_centrality( ptr_entry n, ptr_graph g )
 {
     int size = Graph_size(g), alldist, betweendist;
-    int id, dist, i;
+    int id, dist, dist1, dist2, i, next;
     double ret = 0.0;
+    ht_ptr checked_nodes = HT_create( 8, 8, hash );
     HT_iter_ptr node_it = HT_iter_create( Graph_nodes(g) );
     ptr_entry node;
     ResultSet *set;
 
+    HT_insert( checked_nodes, (void*) 1, n->id );
+
     /* For each node in the graph */
     do {
         node = HT_iter_data( node_it );
+        if ( node->id == n->id ) {
+            continue;
+        }
+
         set = reachNodeN( g, node->id );
         alldist = 0;
         betweendist = 0;
 
         /* Check every shortest path */
-        for ( i = 0; i < size; ++i ) {
-        	ResultSet_next( set, &id, &dist );
-           // assert( ResultSet_next( set, &id, &dist ) );
-            if ( dist <= 0 || node->id == id ) {
-                continue;
-            }
-
-            ++alldist;
-            if ( dist == ( reachNode1( g, node->id, n->id ) + reachNode1( g, n->id, id ) ) ) {
-                ++betweendist;
+        while ( ( next = ResultSet_next( set, &id, &dist ) ) >= 0 ) {
+            do {
+                if ( node->id == id ) {
+                    break;
+                }
+                if ( HT_search( checked_nodes, id ) ) {
+                    break;
+                }
+                if ( ( dist1 = reachNode1( g, node->id, n->id ) ) < 0 ) {
+                    break;
+                }
+                if ( ( dist2 = reachNode1( g, n->id, id ) ) < 0 ) {
+                    break;
+                }
+                ++alldist;
+                if ( dist == ( dist1 + dist2 ) ) {
+                    ++betweendist;
+                }
+            } while (0);
+            if ( next == 0 ) {
+                break;
             }
         }
-
-        ret += (double) betweendist / alldist;
-        //free( set );
+        if ( alldist > 0 ) {
+            ret += ( ( (double) betweendist ) / alldist );
+            printf( "%d ret: %lf\n", n->id, ( ( (double) betweendist ) / alldist ) );
+        }
+        HT_insert( checked_nodes, (void*) 1, node->id );
     } while ( HT_iter_next( node_it ) );
+    HT_destroy( checked_nodes, NULL );
     HT_iter_destroy( node_it );
 
-    printf("****** Betweness result = %f\n",(( 2 * ret ) / ( (double) ( size - 1 ) * ( size - 2 ) )));
+    //fprintf( stderr, "%lf\n", ( 2 * ret ) / ( (doouble) ( size - 1 ) * ( size - 2 ) ) );
     return ( 2 * ret ) / ( (double) ( size - 1 ) * ( size - 2 ) );
+}
+#endif
+
+double betweenness_centrality( ptr_entry n, ptr_graph g )
+{
+    int size = Graph_size(g);
+    int id, dist, next, found, shortest_in, shortest_out;
+    double ret = 0.0;
+    ht_ptr checked_nodes = HT_create( 8, 8, hash );
+    list_ptr checked_paths;
+    HT_iter_ptr node_it = HT_iter_create( Graph_nodes(g) );
+    ptr_entry node;
+    ResultSet *set;
+
+    HT_insert( checked_nodes, n, n->id );
+
+    /* For each node in the graph */
+    do {
+        node = HT_iter_data( node_it );
+        if ( node->id == n->id ) {
+            continue;
+        }
+        set = reachNodeN( g, node->id );
+        checked_paths = LL_create( compare_ints );
+
+        /* For each possible pair of nodes */
+        while ( ( next = ResultSet_next( set, &id, &dist ) ) || 1 ) {
+            do {
+                if ( n->id == id || node->id == id ) {
+                    break;
+                }
+                if ( dist < 0 ) {
+                    break;
+                }
+                if ( HT_search( checked_nodes, id ) != NULL ) {
+                    break;
+                }
+                found = 0;
+                shortest_in = 0;
+                shortest_out = 0;
+                shortest_paths_rec_( g, node->id, id, n->id, &found, &shortest_in, &shortest_out, dist, checked_paths );
+                if ( shortest_in || shortest_out ) {
+                    ret += ( (double) shortest_in ) / ( shortest_in + shortest_out );
+                }
+            } while(0);
+            if ( next == 0 ) {
+                break;
+            }
+        }
+        HT_insert( checked_nodes, node, node->id );
+        LL_destroy( checked_paths, NULL );
+    } while ( HT_iter_next( node_it ) );
+    HT_destroy( checked_nodes, NULL );
+    HT_iter_destroy( node_it );
+
+    return ( 2 * ret ) / ( ( size - 1 ) * ( size - 2 ) );
+}
+
+void shortest_paths_rec_( ptr_graph g, int start, int end, int through, int *found, int *shortest_in, int *shortest_out, int dist, list_ptr checked )
+{
+    int temp, old_found, node_id;
+    ptr_entry starting_node;
+    ptr_edge edge;
+    list_ptr edges;
+    LL_iter_ptr edge_it;
+    double sum;
+
+    if ( dist == 0 ) {
+        if ( start == end ) {
+            if ( *found ) {
+                ++*shortest_in;
+            } else {
+                ++*shortest_out;
+            }
+        }
+        return;
+    }
+    if ( start == through ) {
+        *found = 1;
+    }
+    starting_node = lookupNode( g, start );
+    edges = (list_ptr) type_list( starting_node, "person_knows_person.csv" );
+    assert( edges != NULL );
+
+    edge_it = LL_iter_create( edges );
+    do {
+        edge = LL_iter_data( edge_it );
+        node_id = edge->target_id;
+        if ( LL_search( checked, (void*) node_id ) ) {
+            continue;
+        }
+        old_found = *found;
+        LL_insert( checked, (void*) node_id );
+        shortest_paths_rec_( g, node_id, end, through, found, shortest_in, shortest_out, dist - 1, checked );
+        LL_delete( checked, (void*) node_id );
+        *found = old_found;
+    } while ( LL_iter_next( edge_it ) );
+    LL_iter_destroy( edge_it );
+}
+
+int compare_ints( const void *a, const void *b )
+{
+    return ! ( a == b );
 }

@@ -105,7 +105,7 @@ int main( int argc, char *argv[] )
 	ptr_graph g;
 	g = createGraph(PERSON,m,c);
 
-#if 0
+//#if 0
 	printf("Set Person Properties\n");
 	/*create node and set node properties*/
 	ptr_entry n1 = setPersonProperties(5, "lonely", "loner", 29);
@@ -322,13 +322,13 @@ int main( int argc, char *argv[] )
 	printf("\nDensity = %f\n",denc);
 	*/
 
-	//testBetweennessCentrality(2,3);
+	testBetweennessCentrality(2,3);
 
-	testClosenessCentrality(2,3);
+	//testClosenessCentrality(2,3);
 
-#endif
+//#endif
 	///load and test///
-//#if 0
+#if 0
 	ptr_database database = DB_create();
 
 	g = DB_get_entity(database,PERSON);
@@ -352,7 +352,7 @@ int main( int argc, char *argv[] )
 	load_graph(comment_graph);
 	printf("\n\n\n^^^^^^^^^^^^^^ comment_graph finish load ^^^^^^^^^^^^^^^\n\n\n");
 
-#if 0
+//#if 0
 	//prepei na beltiothei gt einai argh
 	int reach8 = reachNode1(g,6906,4814);
 	printf("reach = %d start id = %d and end id = %d\n\n",reach8,6906,4814);
@@ -456,7 +456,7 @@ int main( int argc, char *argv[] )
 
 	/************ TELOS Erothma 2 *************/
 
-#endif
+//#endif
 
 	/************ Erothma 3 *************/
 
@@ -516,6 +516,8 @@ int main( int argc, char *argv[] )
 	testTidalTrust(4,4);
 
 	/************ TELOS Erothma 4 *************/
+
+#endif
 
 }
 
