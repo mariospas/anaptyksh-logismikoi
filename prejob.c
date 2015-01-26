@@ -145,8 +145,10 @@ void* Forum_graph_create_insert(void *data)
 			edge = LL_iter_data(iter);
 
 			person_entry = lookupNode(graph,edge->target_id);
+			//printf("TRY TO COPY forum ID = %d person_entry = %d\n",forum_entry->id,edge->target_id);
 			if(person_entry != NULL)
 			{
+				//printf("COPY forum ID = %d person_entry = %d\n",forum_entry->id,person_entry->id);
 				person_entry = copy_entry_person_knows_person(new_forum,person_entry);
 			}
 

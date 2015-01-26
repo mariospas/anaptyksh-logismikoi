@@ -11,6 +11,7 @@
 #include "linked_list.h"
 #include "queries.h"
 #include "prejob.h"
+#include "klikes.h"
 
 #define TRUST_GRAPH_REL_PROPERTIES_NUM 1
 
@@ -340,18 +341,18 @@ int main( int argc, char *argv[] )
 	printf("get_graph\n");
 
 	load_graph(g);
-	printf("\n\n\n^^^^^^^^^^^^^^ POST_graph load ^^^^^^^^^^^^^^^\n\n\n");
-	load_graph(post_graph);
-	printf("\n\n\n^^^^^^^^^^^^^^ POST_graph finish load ^^^^^^^^^^^^^^^\n\n\n");
+	//printf("\n\n\n^^^^^^^^^^^^^^ POST_graph load ^^^^^^^^^^^^^^^\n\n\n");
+	//load_graph(post_graph);
+	//printf("\n\n\n^^^^^^^^^^^^^^ POST_graph finish load ^^^^^^^^^^^^^^^\n\n\n");
 	printf("\n\n\n^^^^^^^^^^^^^^ FORUM_graph load ^^^^^^^^^^^^^^^\n\n\n");
 	load_graph(forum_graph);
 	printf("\n\n\n^^^^^^^^^^^^^^ FORUM_graph finish load ^^^^^^^^^^^^^^^\n\n\n");
-	printf("\n\n\n^^^^^^^^^^^^^^ tag_forum load ^^^^^^^^^^^^^^^\n\n\n");
-	load_graph(tag_forum);
-	printf("\n\n\n^^^^^^^^^^^^^^ tag_forum finish load ^^^^^^^^^^^^^^^\n\n\n");
-	printf("\n\n\n^^^^^^^^^^^^^^ comment_graph load ^^^^^^^^^^^^^^^\n\n\n");
-	load_graph(comment_graph);
-	printf("\n\n\n^^^^^^^^^^^^^^ comment_graph finish load ^^^^^^^^^^^^^^^\n\n\n");
+	//printf("\n\n\n^^^^^^^^^^^^^^ tag_forum load ^^^^^^^^^^^^^^^\n\n\n");
+	//load_graph(tag_forum);
+	//printf("\n\n\n^^^^^^^^^^^^^^ tag_forum finish load ^^^^^^^^^^^^^^^\n\n\n");
+	//printf("\n\n\n^^^^^^^^^^^^^^ comment_graph load ^^^^^^^^^^^^^^^\n\n\n");
+	//load_graph(comment_graph);
+	//printf("\n\n\n^^^^^^^^^^^^^^ comment_graph finish load ^^^^^^^^^^^^^^^\n\n\n");
 
 #if 0
 	//prepei na beltiothei gt einai argh
@@ -520,6 +521,7 @@ int main( int argc, char *argv[] )
 #endif
 
 
+	//print_graph(g);
 	/**************** Part 3 ******************/
 
 	int limit = 8;
@@ -538,8 +540,10 @@ int main( int argc, char *argv[] )
 
 	printf("*********** forum_database ready **********\n");
 
-	ptr_graph f = DB_forum_get_entity(forums_database,28520);
-	print_graph(f);
+	ptr_graph f = DB_forum_get_entity(forums_database,34680);
+	//print_graph(f);
+
+	computeCPMResults(f,3);
 
 }
 

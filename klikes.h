@@ -10,6 +10,7 @@
 #include "graph_stats.h"
 #include "graph_entry.h"
 #include "prejob.h"
+#include "linked_list.h"
 
 
 typedef struct community *ptr_community;
@@ -44,3 +45,5 @@ void KL_print(ptr_klika klika);
 
 
 list_ptr computeCPMResults(ptr_graph graph,int cliqueSize);
+
+int find_clique(ptr_graph graph,ptr_entry node,int* bhmata,int start,list_ptr klikes,int max_bhmata,ptr_klika klika);
