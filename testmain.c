@@ -11,7 +11,6 @@
 #include "linked_list.h"
 #include "queries.h"
 #include "prejob.h"
-#include "klikes.h"
 
 #define TRUST_GRAPH_REL_PROPERTIES_NUM 1
 
@@ -541,7 +540,7 @@ int main( int argc, char *argv[] )
 	printf("*********** forum_database ready **********\n");
 
 	ptr_graph f = DB_forum_get_entity(forums_database,34680);
-	//print_graph(f);
+	print_graph(f);
 
 	computeCPMResults(f,3);
 

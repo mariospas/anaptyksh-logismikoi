@@ -33,3 +33,47 @@ ptr_array_matches find_topN_forums(ptr_graph forum_graph,int N);
 void* Forum_graph_create_insert(void *data);
 
 ptr_forum_database computeTopNForums(ptr_database database,int limit);
+
+
+
+
+
+
+
+
+
+typedef struct community *ptr_community;
+
+
+ptr_community Com_create(int id,ptr_graph graph);
+
+void Com_destroy(ptr_community com);
+
+int Com_match(const void* a,const void* key);
+
+int Com_get_id_and_graph(ptr_community com,ptr_graph graph);
+
+
+/************ klikes struct ****************/
+
+typedef struct klika *ptr_klika;
+
+ptr_klika KL_create(int CliqueSize);
+
+void KL_destroy(ptr_klika klika);
+
+void KL_insert(ptr_klika klika,int id);
+
+int KL_match(const void* a,const void* b);
+
+int KL_isFull(ptr_klika klika);
+
+void KL_print(ptr_klika klika);
+
+/************ klika struct finish ***********/
+
+
+list_ptr computeCPMResults(ptr_graph graph,int cliqueSize);
+
+int find_clique(ptr_graph graph,ptr_entry node,int* bhmata,int start,list_ptr klikes,int max_bhmata,ptr_klika klika);
+
