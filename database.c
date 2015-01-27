@@ -259,7 +259,7 @@ void DB_forum_destroy( ptr_forum_database this )
 
 ptr_graph DB_forum_get_entity( ptr_forum_database this, int id )
 {
-	printf("GAMOOOOOO\n");
+
     int i = 0;
     int limit = this->limit;
     for(i=0;i<limit;i++)
@@ -270,7 +270,7 @@ ptr_graph DB_forum_get_entity( ptr_forum_database this, int id )
     		return this->forums[i].assignment;
     	}
     }
-    printf("GAMOOOOOO\n");
+
     return NULL;
 }
 
