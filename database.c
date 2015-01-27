@@ -208,3 +208,85 @@ list_ptr list_of_comments_from_person_node(ptr_entry data,ptr_graph comment_grap
 
 
 
+/********** forums ****************/
+
+
+
+struct forum_g {
+	int id;
+	ptr_graph assignment;
+};
+
+
+struct forum_database {
+	int size;
+	int limit;
+	forum_g_ptr forums;
+};
+
+
+ptr_forum_database DB_forum_create(int limit)
+{
+	//printf("insert DB_create\n");
+    int i;
+    ptr_forum_database retval = malloc( sizeof(struct forum_database) );
+    retval->size = 0;
+    retval->limit = limit;
+    retval->forums = malloc(limit * sizeof(struct forum_g));
+    //printf("exiting DB_create\n");
+    return retval;
+}
+
+void DB_forum_insert_graph(ptr_forum_database forum_database,int forum_id,ptr_graph forum_graph)
+{
+	int size = forum_database->size;
+	(forum_database->forums[size]).id = forum_id;
+	(forum_database->forums[size]).assignment = forum_graph;
+
+	(forum_database->size)++;
+}
+
+void DB_forum_destroy( ptr_forum_database this )
+{
+    int i;
+    int limit = this->size;
+    for ( i = 0; i < limit; ++i ) {
+        destroyGraph( this->forums[i].assignment );
+    }
+    free(this->forums);
+    free( this );
+}
+
+ptr_graph DB_forum_get_entity( ptr_forum_database this, int id )
+{
+    int i = 0;
+    int limit = this->limit;
+    for(i=0;i<limit;i++)
+    {
+    	printf("this->forums[i].id = %d   and id = %d\n",this->forums[id].id,id);
+    	if(this->forums[i].id == id)
+    	{
+    		return this->forums[i].assignment;
+    	}
+    }
+
+    return NULL;
+}
+
+
+int DB_forum_get_size(ptr_forum_database database)
+{
+	return database->size;
+}
+
+int DB_forum_get_limit(ptr_forum_database database)
+{
+	return database->limit;
+}
+
+
+
+
+
+
+

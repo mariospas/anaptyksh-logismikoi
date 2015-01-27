@@ -620,37 +620,42 @@ void print_list_of_edges(ptr_entry node)
 	LL_iter_ptr iter;
 
 	list = ((list_ptr) Entry_take_list(node));
-
-	iterList = LL_iter_create(list);
-
-	data_list = LL_iter_data(iterList);
-
-
-	iter = LL_iter_create(data_list->list);
-	data = LL_iter_data(iter);
-	printf("Edge ID = %d and Type = %s and Target_type = %d and WEIGHT = %f\n",data->target_id,data->edge_type,data->target_type,data->weight);
-	while(LL_iter_next(iter))
+	if(list != NULL && LL_size(list) != 0)
 	{
-		data = LL_iter_data(iter);
-		printf("Edge ID = %d and Type = %s and Target_type = %d and WEIGHT = %f\n",data->target_id,data->edge_type,data->target_type,data->weight);
-	}
-	LL_iter_destroy(iter);
 
-	while(LL_iter_next(iterList))
-	{
+		iterList = LL_iter_create(list);
+
 		data_list = LL_iter_data(iterList);
-		iter = LL_iter_create(data_list->list);
-		data = LL_iter_data(iter);
-		printf("Edge ID = %d and Type = %s and Target_type = %d and WEIGHT = %f\n",data->target_id,data->edge_type,data->target_type,data->weight);
-		while(LL_iter_next(iter))
+
+		if(data_list->list != NULL && LL_size(data_list->list) != 0)
 		{
+			iter = LL_iter_create(data_list->list);
 			data = LL_iter_data(iter);
 			printf("Edge ID = %d and Type = %s and Target_type = %d and WEIGHT = %f\n",data->target_id,data->edge_type,data->target_type,data->weight);
-		}
-		LL_iter_destroy(iter);
-	}
+			while(LL_iter_next(iter))
+			{
+				data = LL_iter_data(iter);
+				printf("Edge ID = %d and Type = %s and Target_type = %d and WEIGHT = %f\n",data->target_id,data->edge_type,data->target_type,data->weight);
+			}
+			LL_iter_destroy(iter);
 
-	LL_iter_destroy(iterList);
+			while(LL_iter_next(iterList))
+			{
+				data_list = LL_iter_data(iterList);
+				iter = LL_iter_create(data_list->list);
+				data = LL_iter_data(iter);
+				printf("Edge ID = %d and Type = %s and Target_type = %d and WEIGHT = %f\n",data->target_id,data->edge_type,data->target_type,data->weight);
+				while(LL_iter_next(iter))
+				{
+					data = LL_iter_data(iter);
+					printf("Edge ID = %d and Type = %s and Target_type = %d and WEIGHT = %f\n",data->target_id,data->edge_type,data->target_type,data->weight);
+				}
+				LL_iter_destroy(iter);
+			}
+
+			LL_iter_destroy(iterList);
+		}
+	}
 }
 
 void print_list(list_ptr list)

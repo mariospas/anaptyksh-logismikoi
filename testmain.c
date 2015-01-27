@@ -10,6 +10,7 @@
 #include "database.h"
 #include "linked_list.h"
 #include "queries.h"
+#include "prejob.h"
 
 #define TRUST_GRAPH_REL_PROPERTIES_NUM 1
 
@@ -339,18 +340,18 @@ int main( int argc, char *argv[] )
 	printf("get_graph\n");
 
 	load_graph(g);
-	printf("\n\n\n^^^^^^^^^^^^^^ POST_graph load ^^^^^^^^^^^^^^^\n\n\n");
-	load_graph(post_graph);
-	printf("\n\n\n^^^^^^^^^^^^^^ POST_graph finish load ^^^^^^^^^^^^^^^\n\n\n");
+	//printf("\n\n\n^^^^^^^^^^^^^^ POST_graph load ^^^^^^^^^^^^^^^\n\n\n");
+	//load_graph(post_graph);
+	//printf("\n\n\n^^^^^^^^^^^^^^ POST_graph finish load ^^^^^^^^^^^^^^^\n\n\n");
 	printf("\n\n\n^^^^^^^^^^^^^^ FORUM_graph load ^^^^^^^^^^^^^^^\n\n\n");
 	load_graph(forum_graph);
 	printf("\n\n\n^^^^^^^^^^^^^^ FORUM_graph finish load ^^^^^^^^^^^^^^^\n\n\n");
-	printf("\n\n\n^^^^^^^^^^^^^^ tag_forum load ^^^^^^^^^^^^^^^\n\n\n");
-	load_graph(tag_forum);
-	printf("\n\n\n^^^^^^^^^^^^^^ tag_forum finish load ^^^^^^^^^^^^^^^\n\n\n");
-	printf("\n\n\n^^^^^^^^^^^^^^ comment_graph load ^^^^^^^^^^^^^^^\n\n\n");
-	load_graph(comment_graph);
-	printf("\n\n\n^^^^^^^^^^^^^^ comment_graph finish load ^^^^^^^^^^^^^^^\n\n\n");
+	//printf("\n\n\n^^^^^^^^^^^^^^ tag_forum load ^^^^^^^^^^^^^^^\n\n\n");
+	//load_graph(tag_forum);
+	//printf("\n\n\n^^^^^^^^^^^^^^ tag_forum finish load ^^^^^^^^^^^^^^^\n\n\n");
+	//printf("\n\n\n^^^^^^^^^^^^^^ comment_graph load ^^^^^^^^^^^^^^^\n\n\n");
+	//load_graph(comment_graph);
+	//printf("\n\n\n^^^^^^^^^^^^^^ comment_graph finish load ^^^^^^^^^^^^^^^\n\n\n");
 
 //#if 0
 	//prepei na beltiothei gt einai argh
@@ -456,7 +457,11 @@ int main( int argc, char *argv[] )
 
 	/************ TELOS Erothma 2 *************/
 
+<<<<<<< HEAD
 //#endif
+=======
+/#endif
+>>>>>>> 519a5a2e2f31195f765d1b95efecc4ba9aa91cba
 
 	/************ Erothma 3 *************/
 
@@ -512,10 +517,37 @@ int main( int argc, char *argv[] )
 	double trustAC;
 	trustAC = estimateTrust(ta, tc, trust_graph);
 	printf("Trust between nodes (%d,%d) is %f\n", trustANodeId, trustCNodeId, trustAC);
-//#endif
+
 	testTidalTrust(4,4);
 
 	/************ TELOS Erothma 4 *************/
+#endif
+
+
+#if 0
+	//print_graph(g);
+	/**************** Part 3 ******************/
+
+	int limit = 8;
+	double score;
+	ptr_array_matches array = find_topN_forums(forum_graph,limit);
+	int g1;
+	int forum_id;
+	for(g1=0;g1<(limit);g1++)
+	{
+		forum_id = get_match(g1,array,&score);
+		printf("\nForum id = %d and Members = %f\n",forum_id,score);
+	}
+
+	ptr_forum_database forums_database;
+	forums_database = computeTopNForums(database,limit);
+
+	printf("*********** forum_database ready **********\n");
+
+	ptr_graph f = DB_forum_get_entity(forums_database,34680);
+	print_graph(f);
+
+	computeCPMResults(f,3);
 
 #endif
 
