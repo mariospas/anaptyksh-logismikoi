@@ -539,11 +539,34 @@ int main( int argc, char *argv[] )
 
 	printf("*********** forum_database ready **********\n");
 
-	ptr_graph f = DB_forum_get_entity(forums_database,34680);
+	ptr_graph f = DB_forum_get_entity(forums_database,228560);  //34680 , 228560
+	if(f == NULL) printf("NULL graph\n");
+	//printf("start print\n");
 	print_graph(f);
 
-	computeCPMResults(f,3);
+	/********** klikes ready ***************/
+	list_ptr communities;
+	int com_size,w;
+	ptr_community com;
+	int id_com=80;
+	ptr_graph com_graph;
+	LL_iter_ptr iter;
 
+	communities = computeCPMResults(f,3);
+	com_size = LL_size(communities);
+	iter = LL_iter_create(communities);
+
+	for(w=0;w<com_size;w++)
+	{
+		com = (ptr_community) LL_iter_data(iter);
+		id_com = Com_get_id(com);
+		com_graph = Com_get_graph(com);
+		printf("\nCOM ID=%d\n",id_com);
+		KL_print_graph(com_graph);
+		printf("\n");
+		LL_iter_next(iter);
+	}
+	LL_iter_destroy(iter);
 }
 
 

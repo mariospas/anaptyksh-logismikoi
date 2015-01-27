@@ -45,6 +45,8 @@ int ResultSet_next(Result_ptr result, int *id, int *distance);
 
 size_t Graph_size( ptr_graph graph );
 
+int Graph_id(ptr_graph graph);
+
 ht_ptr Graph_nodes( ptr_graph graph );
 
 void load_graph(ptr_graph graph);

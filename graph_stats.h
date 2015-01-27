@@ -45,6 +45,8 @@ int averagePathLength(ptr_graph g,double *apotel);
 
 typedef struct dataCC *dataCC_ptr;
 
+int dataCC_get_id(dataCC_ptr data);
+
 dataCC_ptr create_dataCC(int id);
 
 void destroy_dataCC(void* data);
