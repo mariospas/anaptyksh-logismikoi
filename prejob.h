@@ -51,7 +51,9 @@ void Com_destroy(ptr_community com);
 
 int Com_match(const void* a,const void* key);
 
-int Com_get_id_and_graph(ptr_community com,ptr_graph graph);
+int Com_get_id(ptr_community com);
+
+ptr_graph Com_get_graph(ptr_community com);
 
 
 /************ klikes struct ****************/
@@ -70,10 +72,24 @@ int KL_isFull(ptr_klika klika);
 
 void KL_print(ptr_klika klika);
 
+int KL_match_1(ptr_klika A,ptr_klika B);
+
+void KL_print_graph(ptr_graph graph);
+
+ptr_edge KL_copy_edge(ptr_edge data);
+
+ptr_entry KL_copy_entry_person_knows_person(ptr_graph graph,ptr_entry data);
+
+void KL_print_list_of_edges(ptr_entry node);
+
+ptr_entry Com_test_if_exist(list_ptr communities,int id);
+
+list_ptr KL_numberOfCCs(ptr_graph g);
+
 /************ klika struct finish ***********/
 
 
 list_ptr computeCPMResults(ptr_graph graph,int cliqueSize);
 
-int find_clique(ptr_graph graph,ptr_entry node,int* bhmata,int start,list_ptr klikes,int max_bhmata,ptr_klika klika);
+ptr_klika find_clique(ptr_graph graph,ptr_entry node,int* bhmata,int start,list_ptr klikes,int max_bhmata);
 

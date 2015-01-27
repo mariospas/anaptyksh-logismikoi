@@ -261,6 +261,11 @@ struct dataCC
 	int id;
 };
 
+int dataCC_get_id(dataCC_ptr data)
+{
+	return data->id;
+}
+
 dataCC_ptr create_dataCC(int id)
 {
 	dataCC_ptr data = malloc(sizeof(struct dataCC));

@@ -259,17 +259,18 @@ void DB_forum_destroy( ptr_forum_database this )
 
 ptr_graph DB_forum_get_entity( ptr_forum_database this, int id )
 {
+	printf("GAMOOOOOO\n");
     int i = 0;
     int limit = this->limit;
     for(i=0;i<limit;i++)
     {
-    	printf("this->forums[i].id = %d   and id = %d\n",this->forums[id].id,id);
+    	printf("this->forums[%d].id = %d   and id = %d\n",i,this->forums[i].id,id);
     	if(this->forums[i].id == id)
     	{
     		return this->forums[i].assignment;
     	}
     }
-
+    printf("GAMOOOOOO\n");
     return NULL;
 }
 

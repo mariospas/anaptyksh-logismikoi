@@ -1179,6 +1179,7 @@ size_t hash(int value, size_t size)
 
 void print_graph(ptr_graph graph)
 {
+	printf("In print_graph\n");
 	int i, graph_size = Graph_size(graph);
 	HT_iter_ptr iter;
 	ht_ptr nodes = Graph_nodes(graph);
@@ -1190,7 +1191,6 @@ void print_graph(ptr_graph graph)
 	if(graph != NULL)
 	{
 		iter = HT_iter_create(nodes);
-		//printf("In Diameter\n");
 		printf("****Graph id = %d and Size = %d\n",graph->id,graph->size);
 
 		for(i=0;i<graph_size;i++)
@@ -1311,6 +1311,11 @@ ptr_entry copy_entry_person_knows_person(ptr_graph graph,ptr_entry data)
 size_t Graph_size( ptr_graph graph )
 {
     return graph->size;
+}
+
+int Graph_id(ptr_graph graph)
+{
+	return graph->id;
 }
 
 ht_ptr Graph_nodes( ptr_graph graph )
