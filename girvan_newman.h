@@ -4,12 +4,12 @@
 
 struct Communities {
     size_t size;
-    struct community *array;
+    struct community **array;
 };
 
 struct community {
     int id;
-    int size;
+    size_t size;
     int *members;
 };
 

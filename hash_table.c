@@ -394,6 +394,10 @@ void HT_iter_reset( HT_iter_ptr it )
     it->bucket_index = 0;
     it->current_bucket = it->base->buckets[0];
     it->record_index = 0;
+
+    if ( it->base->buckets[0]->counter == 0 ) {
+        HT_iter_next( it );
+    }
 }
 
 void HT_iter_destroy( HT_iter_ptr it )

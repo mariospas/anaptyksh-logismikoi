@@ -22,6 +22,8 @@ void **LL_export( list_ptr this );
 
 int LL_size( list_ptr this );
 
+list_ptr LL_copy( list_ptr this );
+
 /* Iterator */
 LL_iter_ptr LL_iter_create( list_ptr this );
 

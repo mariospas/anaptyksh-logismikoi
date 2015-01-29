@@ -142,6 +142,20 @@ void **LL_export( list_ptr this )
 	return result;
 }
 
+list_ptr LL_copy( list_ptr this )
+{
+    list_ptr ret = LL_create( this->match );
+    LL_iter_ptr it = LL_iter_create( this );
+    do {
+        LL_insert( ret, LL_iter_data( it ) );
+    } while ( LL_iter_next( it ) );
+    LL_iter_destroy( it );
+
+    return ret;
+}
+
+
+
 int LL_size( list_ptr this )
 {
     return this->size;
