@@ -292,6 +292,20 @@ void KL_insert(ptr_klika klika,int id)
 	}
 }
 
+ptr_klika KL_copy_klika(ptr_klika klika)
+{
+	ptr_klika new_klika = KL_create(klika->max);
+	int i;
+	int current = klika->current;
+
+	new_klika->current = klika->current;
+	for(i=0;i<current;i++)
+	{
+		new_klika->pinakas[i] = klika->pinakas[i];
+	}
+
+	return new_klika;
+}
 
 int KL_match(const void* a,const void* b)
 {
@@ -331,6 +345,41 @@ int KL_isFull(ptr_klika klika)
 }
 
 
+ptr_klika KL_combine(int k,ptr_klika A,ptr_klika B)
+{
+	ptr_klika D = KL_create(k);
+	int i,current = A->max;
+	int j,curD;
+	int count = 0;
+
+	for(i=0;i<current;i++)
+	{
+		KL_insert(D,A->pinakas[i]);
+	}
+
+	curD = D->current;
+	current = B->max;
+	for(i=0;i<current;i++)
+	{
+		for(j=0;j<curD;j++)
+		{
+			if(D->pinakas[j] != B->pinakas[i])
+			{
+				count++;
+			}
+		}
+		if(count == curD)
+		{
+			KL_insert(D,B->pinakas[i]);
+			count = 0;
+		}
+		else count = 0;
+	}
+
+	return D;
+}
+
+
 void KL_print(ptr_klika klika)
 {
 	int i,current = klika->current;
@@ -361,6 +410,39 @@ int KL_match_1(ptr_klika A,ptr_klika B)
 		}
 	}
 	return count;   //posa koina epistefei
+}
+
+
+int KL_friends_each_other(ptr_klika A,ptr_graph graph)
+{
+	int limit = A->max;
+	int i,j;
+	int id;
+	ptr_entry entry;
+	list_ptr list_edges;
+	ptr_edge edge,new_edge = NULL;
+
+	for(i=0;i<limit;i++)
+	{
+		id = A->pinakas[i];
+		entry = lookupNode(graph,id);
+		list_edges = type_list(entry,"person_knows_person.csv");
+		for(j=0;j<limit;j++)
+		{
+			if(j == i) continue;
+			edge = create_edge("person_knows_person.csv",A->pinakas[j],PERSON,0,NULL);
+			new_edge = LL_search(list_edges,((void *) edge));
+			if(new_edge == NULL)
+			{
+				destroy_edge(((void *) edge));
+				return 0;   //0 den einai oloi filoi 1 einai ola ok
+			}
+			else destroy_edge(((void *) edge));
+		}
+	}
+
+	return 1;   //0 den einai oloi filoi 1 einai ola ok
+
 }
 
 
@@ -706,24 +788,33 @@ list_ptr computeCPMResults(ptr_graph graph,int cliqueSize)
 
 	for(i=0;i<graph_size;i++)
 	{
-		bhmata = cliqueSize;
+		bhmata = 3;//cliqueSize;
 		data = ((ptr_entry)HT_iter_data(iter));
 
-		find_clique(graph,data,&bhmata,data->id,klikes,cliqueSize);
+		find_clique(graph,data,&bhmata,data->id,klikes,3);
 
 
 		HT_iter_next(iter);
 	}
 	HT_iter_destroy(iter);
 
+	if(cliqueSize > 3)
+	{
+		for(i=4;i<=cliqueSize;i++)
+		{
+			klikes = If_max3_Then(graph,klikes,i);
+		}
+	}
+	//printf("//////////////////////////////////////\n");
+
 	size = LL_size(klikes);
 	if(size != 0)
 	{
 		export = (ptr_klika*) LL_export(klikes);
-		/*for(j=0;j<size;j++)
+		for(j=0;j<size;j++)
 		{
 			KL_print(export[j]);
-		}*/
+		}
 	}
 	/********** exo brei klikes poio pano *****************/
 
@@ -751,19 +842,113 @@ list_ptr computeCPMResults(ptr_graph graph,int cliqueSize)
 			}
 
 		}
+
+		KL_print_graph(super_graph);
+
+
+		/****************** ftiaxnoume sunektikous grafous ***************/
+
+		communities = KL_numberOfCCs(super_graph);
+		destroyGraph(super_graph);
+		//printf("CONNECT = %d\n",connect);
+
+		printf("### finish ComputeCPMResults ###\n");
+		return communities;
 	}
 
-	KL_print_graph(super_graph);
 
-	/****************** ftiaxnoume sunektikous grafous ***************/
-
-	communities = KL_numberOfCCs(super_graph);
-	destroyGraph(super_graph);
-	//printf("CONNECT = %d\n",connect);
-
-	printf("### finish ComputeCPMResults ###\n");
-	return communities;
+	return NULL;
 }
+
+
+
+list_ptr If_max3_Then(ptr_graph graph,list_ptr klikes,int k)
+{
+	ptr_klika klika,klika2;
+	LL_iter_ptr iter,iter2;
+	int i,j;
+	int koina = k - 2;
+	int good_friends;
+	int size_list;
+	int koina_max;
+	ptr_klika new_klika;
+	list_ptr new_klikes = LL_create(KL_match);
+	list_ptr new_klikes2;
+	ptr_klika temp;
+
+	size_list = LL_size(klikes);
+
+	if(size_list != 0)
+	{
+		printf("EDO\n");
+		iter = LL_iter_create(klikes);
+		iter2 = LL_iter_create(klikes);
+		for(i=0;i<size_list;i++)
+		{
+			klika = LL_iter_data(iter);
+			for(j=0;j<size_list;j++)
+			{
+				klika2 = LL_iter_data(iter2);
+				if(i == j)
+				{
+					LL_iter_next(iter2);
+					continue;
+				}
+
+				koina_max = KL_match_1(klika,klika2);
+				if(koina_max >= koina)
+				{
+					new_klika = KL_combine(k,klika,klika2);
+					temp = LL_search(new_klikes,((void *) new_klika));
+					if(temp == NULL)
+					{
+						LL_insert(new_klikes,((void *) new_klika));
+					}
+					else printf("NOT insert !!!!\n");
+				}
+
+
+				LL_iter_next(iter2);
+			}
+			LL_iter_reset(iter2);
+
+			LL_iter_next(iter);
+		}
+
+		LL_iter_destroy(iter);
+		LL_iter_destroy(iter2);
+	}
+
+	if(LL_size(new_klikes) != 0)
+	{
+		new_klikes2 = LL_create(KL_match);
+		iter = LL_iter_create(new_klikes);
+
+		for(i=0;i<LL_size(new_klikes);i++)
+		{
+			new_klika = LL_iter_data(iter);
+
+			good_friends = KL_friends_each_other(new_klika,graph);
+			if(good_friends == 1)
+			{
+				new_klika = KL_copy_klika(new_klika);
+				LL_insert(new_klikes2,((void *) new_klika));
+			}
+
+			LL_iter_next(iter);
+		}
+		LL_iter_destroy(iter);
+
+		LL_destroy(new_klikes,KL_destroy);
+		new_klikes = new_klikes2;
+	}
+
+	LL_destroy(klikes,KL_destroy);
+
+	return new_klikes;
+
+}
+
 
 
 ptr_klika find_clique(ptr_graph graph,ptr_entry node,int* bhmata,int start,list_ptr klikes,int max_bhmata)

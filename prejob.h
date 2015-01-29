@@ -66,13 +66,19 @@ void KL_destroy(ptr_klika klika);
 
 void KL_insert(ptr_klika klika,int id);
 
+ptr_klika KL_copy_klika(ptr_klika klika);
+
 int KL_match(const void* a,const void* b);
 
 int KL_isFull(ptr_klika klika);
 
+ptr_klika KL_combine(int k,ptr_klika A,ptr_klika B);
+
 void KL_print(ptr_klika klika);
 
 int KL_match_1(ptr_klika A,ptr_klika B);
+
+int KL_friends_each_other(ptr_klika A,ptr_graph graph);
 
 void KL_print_graph(ptr_graph graph);
 
@@ -90,6 +96,8 @@ list_ptr KL_numberOfCCs(ptr_graph g);
 
 
 list_ptr computeCPMResults(ptr_graph graph,int cliqueSize);
+
+list_ptr If_max3_Then(ptr_graph graph,list_ptr klikes,int k);
 
 ptr_klika find_clique(ptr_graph graph,ptr_entry node,int* bhmata,int start,list_ptr klikes,int max_bhmata);
 
