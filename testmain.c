@@ -532,7 +532,7 @@ int main( int argc, char *argv[] )
 	//print_graph(g);
 	/**************** Part 3 ******************/
 
-	int limit = 8;
+	int limit = 7;
 	double score;
 	ptr_array_matches array = find_topN_forums(forum_graph,limit);
 	int g1;
