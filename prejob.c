@@ -51,7 +51,7 @@ ptr_forum_database computeTopNForums(ptr_database database,int limit)
 	for(g1=0;g1<(limit);g1++)
 	{
 		forum_id = get_match(g1,array,&score);
-		printf("\nForum id = %d and Members = %f\n",forum_id,score);
+		//printf("\nForum id = %d and Members = %f\n",forum_id,score);
 
 		forum_data = DF_create(database,forum_id,forums_database);
 
@@ -259,14 +259,15 @@ ptr_klika KL_create(int CliqueSize)
 
 	klika->current = 0;
 	klika->max = CliqueSize;
-	printf("!!!!!!!!!! klika_max = %d, klika_cur = %d\n",klika->max,klika->current);
+	//printf("!!!!!!!!!! klika_max = %d, klika_cur = %d\n",klika->max,klika->current);
 	klika->pinakas = malloc(CliqueSize * sizeof(int));
 
 	return klika;
 }
 
-void KL_destroy(ptr_klika klika)
+void KL_destroy(void* klikaA)
 {
+	ptr_klika klika = (ptr_klika) klikaA;
 	if(klika != NULL)
 	{
 		free(klika->pinakas);
@@ -278,10 +279,10 @@ void KL_insert(ptr_klika klika,int id)
 {
 	int current = klika->current;
 
-	printf("Insert KL current = %d , max = %d\n",klika->current,klika->max);
+	//printf("Insert KL current = %d , max = %d\n",klika->current,klika->max);
 	if(current < klika->max)
 	{
-		printf("pinakas[%d] = %d\n",current,id);
+		//printf("pinakas[%d] = %d\n",current,id);
 		klika->pinakas[current] = id;
 		(klika->current)++;
 	}
@@ -679,14 +680,14 @@ list_ptr KL_numberOfCCs(ptr_graph g)
 					iterList = LL_iter_create(fringe);
 
 					data_CC = LL_iter_data(iterList);
-					printf("In fringe id = %d\n",dataCC_get_id(data_CC));
+					//printf("In fringe id = %d\n",dataCC_get_id(data_CC));
 					entry = lookupNode(g,dataCC_get_id(data_CC));
 					KL_copy_entry_person_knows_person(new_graph,entry);
 
 					while(LL_iter_next(iterList))
 					{
 						data_CC = LL_iter_data(iterList);
-						printf("In fringe id = %d\n",dataCC_get_id(data_CC));
+						//printf("In fringe id = %d\n",dataCC_get_id(data_CC));
 						entry = lookupNode(g,dataCC_get_id(data_CC));
 						KL_copy_entry_person_knows_person(new_graph,entry);
 					}
@@ -727,7 +728,7 @@ list_ptr KL_numberOfCCs(ptr_graph g)
 
 			iterList = LL_iter_create(fringe);
 			data_CC = LL_iter_data(iterList);
-			printf("In fringe id = %d\n",dataCC_get_id(data_CC));
+			//printf("In fringe id = %d\n",dataCC_get_id(data_CC));
 			test = Com_test_if_exist(communities,dataCC_get_id(data_CC));
 			if(test == NULL)
 			{
@@ -738,7 +739,7 @@ list_ptr KL_numberOfCCs(ptr_graph g)
 				while(LL_iter_next(iterList))
 				{
 					data_CC = LL_iter_data(iterList);
-					printf("In fringe id = %d\n",dataCC_get_id(data_CC));
+					//printf("In fringe id = %d\n",dataCC_get_id(data_CC));
 					entry = lookupNode(g,dataCC_get_id(data_CC));
 					KL_copy_entry_person_knows_person(new_graph,entry);
 				}
@@ -811,10 +812,10 @@ list_ptr computeCPMResults(ptr_graph graph,int cliqueSize)
 	if(size != 0)
 	{
 		export = (ptr_klika*) LL_export(klikes);
-		for(j=0;j<size;j++)
+		/*for(j=0;j<size;j++)
 		{
 			KL_print(export[j]);
-		}
+		}*/
 	}
 	/********** exo brei klikes poio pano *****************/
 
@@ -843,7 +844,7 @@ list_ptr computeCPMResults(ptr_graph graph,int cliqueSize)
 
 		}
 
-		KL_print_graph(super_graph);
+		//KL_print_graph(super_graph);
 
 
 		/****************** ftiaxnoume sunektikous grafous ***************/
@@ -880,7 +881,6 @@ list_ptr If_max3_Then(ptr_graph graph,list_ptr klikes,int k)
 
 	if(size_list != 0)
 	{
-		printf("EDO\n");
 		iter = LL_iter_create(klikes);
 		iter2 = LL_iter_create(klikes);
 		for(i=0;i<size_list;i++)
@@ -904,7 +904,7 @@ list_ptr If_max3_Then(ptr_graph graph,list_ptr klikes,int k)
 					{
 						LL_insert(new_klikes,((void *) new_klika));
 					}
-					else printf("NOT insert !!!!\n");
+					//else printf("NOT insert !!!!\n");
 				}
 
 
@@ -953,7 +953,7 @@ list_ptr If_max3_Then(ptr_graph graph,list_ptr klikes,int k)
 
 ptr_klika find_clique(ptr_graph graph,ptr_entry node,int* bhmata,int start,list_ptr klikes,int max_bhmata)
 {
-	printf("### find_clique ###\n");
+	//printf("### find_clique ###\n");
 	list_ptr friends = type_list(node,"person_knows_person.csv");
 	LL_iter_ptr iter;
 	int size;
@@ -973,7 +973,7 @@ ptr_klika find_clique(ptr_graph graph,ptr_entry node,int* bhmata,int start,list_
 		for(i=0;i<size;i++)
 		{
 			edge = LL_iter_data(iter);
-			printf("bhma = %d , start = %d and edge->target_id = %d\n",*bhmata,start,edge->target_id);
+			//printf("bhma = %d , start = %d and edge->target_id = %d\n",*bhmata,start,edge->target_id);
 			if(*bhmata == 1)
 			{
 				if(start == edge->target_id)
@@ -1022,7 +1022,7 @@ ptr_klika find_clique(ptr_graph graph,ptr_entry node,int* bhmata,int start,list_
 		return NULL;
 
 	}
-	printf("### finish find_clique ###\n");
+	//printf("### finish find_clique ###\n");
 
 	return klika;
 

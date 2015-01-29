@@ -37,11 +37,8 @@ void insert_match (ptr_array_matches array,ptr_matches match)
 	{
 		array->current_size++;
 		array->pinakas[array->current_size] = match;
-		//printf("array match id = %d and match id = %d\n",(array->pinakas[array->current_size])->id,match->id);
-		//printf("current = %d\n",array->current_size);
 
 		qsort (array->pinakas, ((array->current_size)+1), sizeof(struct Matches *), compare_match);
-		//printf("array match id = %d and match id = %d\n",(array->pinakas[array->current_size])->id,match->id);
 	}
 	else if( (array->current_size) == (array->limit) )
 	{
@@ -49,10 +46,8 @@ void insert_match (ptr_array_matches array,ptr_matches match)
 		{
 			delete_match(array->pinakas[array->limit]);
 			array->pinakas[array->limit] = match;
-			//printf("array match id = %d and match id = %d\n",(array->pinakas[array->current_size])->id,match->id);
 
 			qsort (array->pinakas, ((array->current_size)+1), sizeof(struct Matches *), compare_match);
-			//printf("array match id = %d and match id = %d\n",(array->pinakas[array->current_size])->id,match->id);
 		}
 	}
 
@@ -92,7 +87,7 @@ void delete_array_matches(ptr_array_matches array)
 
 	for(i=0;i<limit;i++)
 	{
-		printf("only one\n");
+		//printf("only one\n");
 		delete_match((array->pinakas[i]));
 	}
 	free(array);
@@ -105,8 +100,8 @@ int get_match(int pos,ptr_array_matches array,double *score)
 		printf("Wrong pos !!!\n");
 		return -1;
 	}
-	//printf("In get_match\n");
-	//printf("ID = %d\n",(array->pinakas[pos])->id);
+	printf("In get_match\n");
+	printf("ID = %d\n",(array->pinakas[pos])->id);
 
 	*score = ((array->pinakas[pos])->similarity_score);
 	return ((array->pinakas[pos])->id);
@@ -144,7 +139,11 @@ ptr_array_matches matchSuggestion(ptr_entry node, int commonInterest, int hops, 
 	for(i=0;i<graph_size;i++)
 	{
 		data = ((ptr_entry)HT_iter_data(iter));
-		if(data->id == node->id) continue;
+		if(data->id == node->id)
+		{
+			HT_iter_next(iter);
+			continue;
+		}
 		//printf("Node id = %d and Data id = %d\n",node->id,data->id);
 
 		location_node2 = location_of_entry(data);
@@ -161,30 +160,6 @@ ptr_array_matches matchSuggestion(ptr_entry node, int commonInterest, int hops, 
 		//printf("same_sex\n");
 		apostash = 1;//reachNode1(graph,node->id,data->id);
 		//printf("apostash\n");
-
-
-		/*
-		printf("((location_node == location_node2) = %d || (study == study2) = %d )\n(koinaEndiaf >= commonInterest) = %d\n(gap <= ageDiff) = %d\n(!same_sex) = %d\n(apostash <= hops) = %d\n",
-				(location_node == location_node2),(study == study2),
-				(koinaEndiaf >= commonInterest),
-				(gap <= ageDiff),
-				(!same_sex),
-				(apostash <= hops));
-		printf("((location_node == location_node2) = %d || (work == work2) = %d )\n(koinaEndiaf >= commonInterest) = %d\n(gap <= ageDiff) = %d\n(!same_sex) = %d\n(apostash <= hops) = %d\n",
-				(location_node == location_node2),(work == work2),
-				(koinaEndiaf >= commonInterest),
-				(gap <= ageDiff),
-				(!same_sex),
-				(apostash <= hops));
-
-		printf("WORK -1\n");
-		printf("((location_node == location_node2) = %d || (study == study2) = %d || (work == work2) = %d )\n(koinaEndiaf >= commonInterest) = %d\n(gap <= ageDiff) = %d\n(!same_sex) = %d\n(apostash <= hops) = %d\n",
-			(location_node == location_node2),(study == study2),(work == work2),
-			(koinaEndiaf >= commonInterest),
-			(gap <= ageDiff),
-			(!same_sex),
-			(apostash <= hops));
-		*/
 
 		if( ((location_node == location_node2) || (study == study2) || (work == work2))
 			&& (koinaEndiaf >= commonInterest)
@@ -333,7 +308,7 @@ ptr_graph getTopStalkers(int stalkersNum,int likesNumber,int centralityMode,ptr_
 
 	ptr_matches stalker;
 	double centrality = 0.0;
-	stalkersCloseCentr = create_array_match(stalkersNum);
+	//stalkersCloseCentr = create_array_match(stalkersNum);
 
 	ptr_graph stalker_graph = Create_Stalkers_Graph(stalkersNum,likesNumber,centralityMode,database);
 
@@ -469,7 +444,7 @@ void delete_array_trends(ptr_array_trends array)
 
 	for(i=0;i<limit;i++)
 	{
-		printf("only one\n");
+		//printf("only one\n");
 		delete_trend((array->pinakas[i]));
 	}
 	free(array);
@@ -648,7 +623,7 @@ double trust(ptr_entry node_i,ptr_entry node_j,ptr_graph graph,ptr_graph post_gr
 	list_ptr list_posts_node_j;
 	list_ptr list_comments_node_i;
 
-	printf("node_i = %d  node_j = %d\n",node_i->id,node_j->id);
+	//printf("node_i = %d  node_j = %d\n",node_i->id,node_j->id);
 
 	person_like_post_list = type_list(node_i,"person_likes_post.csv");
 
@@ -656,24 +631,24 @@ double trust(ptr_entry node_i,ptr_entry node_j,ptr_graph graph,ptr_graph post_gr
 	if(person_like_post_list != NULL)
 	{
 		list_size = LL_size(person_like_post_list);
-		printf("If list_size_of_person_like_post = %d\n",list_size);
+		//printf("If list_size_of_person_like_post = %d\n",list_size);
 		iterList = LL_iter_create(person_like_post_list);
 		//printf("If list_size_of_person_like_post > 0\n");
 		for(j=0;j<list_size;j++)
 		{
 			edge = ((ptr_edge)LL_iter_data(iterList));
 			post_id = edge->target_id;
-			printf("&&&&&& like post id = %d\n",post_id);
+			//printf("&&&&&& like post id = %d\n",post_id);
 
 			post_entry = lookupNode(post_graph,post_id);
 
 			if(post_entry != NULL)
 			{
-				printf("***** post_id = %d\n",post_id);
+				//printf("***** post_id = %d\n",post_id);
 				id_creator_of_post = creator_of_post(post_entry);
 				if(id_creator_of_post == node_j->id)
 				{
-					printf("***** id_creator = %d\n",id_creator_of_post);
+					//printf("***** id_creator = %d\n",id_creator_of_post);
 					countIlikeJ = countIlikeJ + 1;
 				}
 			}
@@ -710,7 +685,7 @@ double trust(ptr_entry node_i,ptr_entry node_j,ptr_graph graph,ptr_graph post_gr
 		for(i=0;i<list_com_size;i++)
 		{
 			comment = ((ptr_entry) LL_iter_data(iter_com));
-			printf("*****comment id = %d\n",comment->id);
+			//printf("*****comment id = %d\n",comment->id);
 
 			list_comment_reply = type_list(comment,"comment_replyOf_post.csv");
 			if(list_comment_reply != NULL)
@@ -721,13 +696,13 @@ double trust(ptr_entry node_i,ptr_entry node_j,ptr_graph graph,ptr_graph post_gr
 				for(j=0;j<reply_size;j++)
 				{
 					edge_reply = LL_iter_data(iter_reply);
-					printf("******reply to post %d\n",edge_reply->target_id);
+					//printf("******reply to post %d\n",edge_reply->target_id);
 
 					new = create_entry(edge_reply->target_id,NULL,NULL);
 					new1 = LL_search(list_posts_node_j,((void *) new));
 					if(new1 != NULL)
 					{
-						printf("^^^^^^ find this post %d in list_post_node_j\n",edge_reply->target_id);
+						//printf("^^^^^^ find this post %d in list_post_node_j\n",edge_reply->target_id);
 						countReplies = countReplies + 1;
 					}
 					destroy_entry(((void *) new));
@@ -743,8 +718,8 @@ double trust(ptr_entry node_i,ptr_entry node_j,ptr_graph graph,ptr_graph post_gr
 		LL_iter_destroy(iter_com);
 	}
 
-	printf("countLike = %d   and   countReply = %d\n",countIlikeJ,countReplies);
-	printf("listSize = %d   and   reply_size_all = %d\n",list_size,reply_size_all);
+	//printf("countLike = %d   and   countReply = %d\n",countIlikeJ,countReplies);
+	//printf("listSize = %d   and   reply_size_all = %d\n",list_size,reply_size_all);
 
 	double apotel = 0.0;
 	double first = 0.0;
@@ -752,15 +727,15 @@ double trust(ptr_entry node_i,ptr_entry node_j,ptr_graph graph,ptr_graph post_gr
 	if(list_size != 0 )
 	{
 		first = ( 0.3*(((double)countIlikeJ)/((double)list_size)) );
-		printf("**** first = %f\n",first);
+		//printf("**** first = %f\n",first);
 	}
 	if(reply_size_all != 0)
 	{
 		second = ( 0.7*(((double)countReplies)/((double) reply_size_all)) );
-		printf("**** second = %f\n",second);
+		//printf("**** second = %f\n",second);
 	}
 	apotel = first + second;
-	printf("apotel = %f\n",apotel);
+	//printf("apotel = %f\n",apotel);
 
 	return apotel;
 
@@ -855,7 +830,7 @@ ptr_graph buildTrustGraph(int forumID,ptr_database database)
 					node_i = lookupNode(graph,data_trust->id);
 					node_j = lookupNode(graph,new_one->id);
 
-					printf("Data id = %d with new one = %d\n",data_trust->id,new_one->id);
+					//printf("Data id = %d with new one = %d\n",data_trust->id,new_one->id);
 					trust_apotel = trust(node_i,node_j,graph,post_graph,comment_graph);
 					edge_change_weight(trust_edge,trust_apotel);
 				}
@@ -896,7 +871,7 @@ double estimateTrust(ptr_entry a, ptr_entry b, ptr_graph trust_graph)
 
 	if(list_a != NULL)
 	{
-		printf("ESTIM list_a != NULL\n");
+		//printf("ESTIM list_a != NULL\n");
 		iter = LL_iter_create(list_a);
 		list_size_a = LL_size(list_a);
 		for(i=0;i<list_size_a;i++)
@@ -1004,13 +979,13 @@ int check_to_insert_in_list(list_ptr fringe,ptr_edge edge,double trust_so_far,in
 	double new_trust;
 	int id_prev,level_prev;
 	double trust_prev;
-	printf("^^^ check\n");
+	//printf("^^^ check\n");
 
 	already_in_list = ( (ptr_data_trust) LL_search(fringe,((void *) &(edge->target_id))) );
 	if(already_in_list == NULL)
 	{
 		new_trust = trust_so_far * (edge->weight);
-		printf("*** Insert id = %d with weight = %f and trust = %f\n",edge->target_id,(edge->weight),new_trust);
+		//printf("*** Insert id = %d with weight = %f and trust = %f\n",edge->target_id,(edge->weight),new_trust);
 		new_one = create_data_trust(edge->target_id,new_trust,level);
 		LL_insert(fringe,((void *) new_one));
 		return 1;    //inserted
@@ -1026,17 +1001,17 @@ int check_to_insert_in_list(list_ptr fringe,ptr_edge edge,double trust_so_far,in
 			new_trust = trust_so_far * (edge->weight);
 			if(new_trust > trust_prev)
 			{
-				printf("*** Replace id = %d\n",edge->target_id);
-				printf("*** Insert id = %d with trust = %f\n",edge->target_id,new_trust);
+				//printf("*** Replace id = %d\n",edge->target_id);
+				//printf("*** Insert id = %d with trust = %f\n",edge->target_id,new_trust);
 				temp = already_in_list;
 				new_one = create_data_trust(edge->target_id,new_trust,level);
 				already_in_list = new_one;
 				destroy_data_trust(((void *) temp));
 				return 1;   //replaced
 			}
-			printf("*** No Replace id = %d\n",edge->target_id);
+			//printf("*** No Replace id = %d\n",edge->target_id);
 		}
-		printf("*** No Replace id = %d\n",edge->target_id);
+		//printf("*** No Replace id = %d\n",edge->target_id);
 
 	}
 
@@ -1065,7 +1040,7 @@ double rec_trust_search(ptr_graph trust_graph,list_ptr fringe,int target_id,int 
 	id_first = data_trust_get_id(first_data);
 	level = data_trust_get_level(first_data);
 	trust_so_far = data_trust_get_trust(first_data);
-	printf("--- Del id = %d\n",id_first);
+	//printf("--- Del id = %d\n",id_first);
 
 	node = lookupNode(trust_graph,id_first);
 	if(node != NULL)

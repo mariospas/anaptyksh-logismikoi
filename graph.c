@@ -158,12 +158,12 @@ static int expand_( ptr_graph this, ht_ptr *frontier, ht_ptr visited, int *level
     LL_iter_ptr edge_it;
     ptr_entry node_tryout;
     ptr_edge edge_tryout;
-    int node_id, node_id2, advance = 0;
+    long node_id, node_id2, advance = 0;
     list_ptr list_person;
 
     /* Iterate over the frontier nodes */
     do {
-        node_id = (int) HT_iter_data( frontier_it );
+        node_id = (long) HT_iter_data( frontier_it );
         node_tryout = lookupNode( this, node_id );
         if(node_tryout != NULL)
         {
@@ -210,12 +210,12 @@ static int expand_reversed_( ptr_graph this, ht_ptr *frontier, ht_ptr visited, i
     LL_iter_ptr edge_it;
     ptr_entry node_tryout;
     ptr_edge edge_tryout;
-    int node_id, advance = 0;
+    long node_id, advance = 0;
     list_ptr list_person;
 
     /* Iterate over the nodes on the frontier */
     do {
-        node_id = (int) HT_iter_data( frontier_it );
+        node_id = (long) HT_iter_data( frontier_it );
 
         /* For each such node search for other nodes that point to it */
         do {
@@ -237,8 +237,8 @@ static int expand_reversed_( ptr_graph this, ht_ptr *frontier, ht_ptr visited, i
 					}
 					if ( edge_tryout->target_id == node_id ) {
 						advance = 1;
-						HT_insert( visited, (void*) node_tryout->id, node_tryout->id );
-						HT_insert( new_frontier, (void*) node_tryout->id, node_tryout->id );
+						HT_insert( visited, (void*) ((long) node_tryout->id), node_tryout->id );
+						HT_insert( new_frontier, (void*) ((long) node_tryout->id), node_tryout->id );
 						break;
 					}
 				} while ( LL_iter_next( edge_it ) );
@@ -258,16 +258,16 @@ static int expand_reversed_( ptr_graph this, ht_ptr *frontier, ht_ptr visited, i
 
 static int match_found_( ht_ptr frontier1, ht_ptr frontier2 )
 {
-    int found = 0, id1, id2;
+    long found = 0, id1, id2;
     HT_iter_ptr it1, it2;
 
     it1 = HT_iter_create( frontier1 );
     it2 = HT_iter_create( frontier2 );
 
     do {
-        id1 = (int) HT_iter_data( it1 );
+        id1 = (long) HT_iter_data( it1 );
         do {
-            id2 = (int) HT_iter_data( it2 );
+            id2 = (long) HT_iter_data( it2 );
             if ( HT_search( frontier1, id2 ) != NULL ) {
                 found = 1;
                 break;

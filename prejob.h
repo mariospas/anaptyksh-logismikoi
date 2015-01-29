@@ -62,7 +62,7 @@ typedef struct klika *ptr_klika;
 
 ptr_klika KL_create(int CliqueSize);
 
-void KL_destroy(ptr_klika klika);
+void KL_destroy(void* klikaA);
 
 void KL_insert(ptr_klika klika,int id);
 

@@ -37,7 +37,7 @@ void DB_destroy( ptr_database this )
 
 ptr_graph DB_get_entity( ptr_database this, entity_type id )
 {
-	printf("this->entities[id].id = %d   and id = %d\n",this->entities[id].id,id);
+	//printf("this->entities[id].id = %d   and id = %d\n",this->entities[id].id,id);
     return this->entities[id].assignment;
 }
 

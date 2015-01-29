@@ -53,6 +53,7 @@ void testBetweennessCentrality(int bucketsNumber, int bucketSize);
 void testClosenessCentrality(int bucketsNumber, int bucketSize);
 ptr_edge setEdgeTrustProperties(int startNodeID, int endNodeID, double trust);
 void testTidalTrust(int bucketsNumber, int bucketSize);
+void stalkersGraphRunMetrics(ptr_graph g);
 
 /*
 char *cont[20] = {
@@ -340,18 +341,19 @@ int main( int argc, char *argv[] )
 	printf("get_graph\n");
 
 	load_graph(g);
-	//printf("\n\n\n^^^^^^^^^^^^^^ POST_graph load ^^^^^^^^^^^^^^^\n\n\n");
-	//load_graph(post_graph);
-	//printf("\n\n\n^^^^^^^^^^^^^^ POST_graph finish load ^^^^^^^^^^^^^^^\n\n\n");
+	printf("\n\n\n^^^^^^^^^^^^^^ POST_graph load ^^^^^^^^^^^^^^^\n\n\n");
+	load_graph(post_graph);
+	printf("\n\n\n^^^^^^^^^^^^^^ POST_graph finish load ^^^^^^^^^^^^^^^\n\n\n");
 	printf("\n\n\n^^^^^^^^^^^^^^ FORUM_graph load ^^^^^^^^^^^^^^^\n\n\n");
 	load_graph(forum_graph);
 	printf("\n\n\n^^^^^^^^^^^^^^ FORUM_graph finish load ^^^^^^^^^^^^^^^\n\n\n");
-	//printf("\n\n\n^^^^^^^^^^^^^^ tag_forum load ^^^^^^^^^^^^^^^\n\n\n");
-	//load_graph(tag_forum);
-	//printf("\n\n\n^^^^^^^^^^^^^^ tag_forum finish load ^^^^^^^^^^^^^^^\n\n\n");
-	//printf("\n\n\n^^^^^^^^^^^^^^ comment_graph load ^^^^^^^^^^^^^^^\n\n\n");
-	//load_graph(comment_graph);
-	//printf("\n\n\n^^^^^^^^^^^^^^ comment_graph finish load ^^^^^^^^^^^^^^^\n\n\n");
+	printf("\n\n\n^^^^^^^^^^^^^^ tag_forum load ^^^^^^^^^^^^^^^\n\n\n");
+	load_graph(tag_forum);
+	printf("\n\n\n^^^^^^^^^^^^^^ tag_forum finish load ^^^^^^^^^^^^^^^\n\n\n");
+	printf("\n\n\n^^^^^^^^^^^^^^ comment_graph load ^^^^^^^^^^^^^^^\n\n\n");
+	load_graph(comment_graph);
+	printf("\n\n\n^^^^^^^^^^^^^^ comment_graph finish load ^^^^^^^^^^^^^^^\n\n\n");
+//#endif
 
 #if 0
 	//prepei na beltiothei gt einai argh
@@ -417,9 +419,11 @@ int main( int argc, char *argv[] )
 	closeness_centrality(N80,g);
 
 	betweenness_centrality(N80,g);
+#endif
 
-	/************ Erothma 1 *************/
+#if 0	/************ Erothma 1 *************/
 
+	printf("\nmatchSugg\n");
 	ptr_array_matches array = matchSuggestion(N80,1,400,40,5,g);
 	printf("finish matchSugg\n");
 
@@ -430,24 +434,27 @@ int main( int argc, char *argv[] )
 
 	printf("\n");
 
-	/************ TELOS Erothma 1 *************/
+#endif	/************ TELOS Erothma 1 *************/
 
-	/************ Erothma 2 *************/
+#if 0	/************ Erothma 2 *************/
 
+	ptr_array_matches arraySt;
 	int stalkersNum = 7, likesNumber = 1, centralityMode = 1;
-	ptr_array_matches array_stalker;
+	ptr_array_matches array_stalker = create_array_match(stalkersNum);;
 	ptr_graph stalker_graph = getTopStalkers(stalkersNum,likesNumber,centralityMode,database,array_stalker);
 
 	double score = 0.0;
 	int w;
 	for(w=0;w<(stalkersNum);w++)
 	{
-		int id_stalker = get_match(w,array,&score);
+		int id_stalker = get_match(w,array_stalker,&score);
 		printf("\nStalker id = %d and Score = %f\n",id_stalker,score);
 	}
 
 	int reach9 = reachNode1(stalker_graph,495,347);
 	printf("reach9 = %d \n",reach9);
+
+	stalkersGraphRunMetrics(stalker_graph);
 
 	//print_graph(stalker_graph);
 
@@ -457,8 +464,8 @@ int main( int argc, char *argv[] )
 
 	/************ TELOS Erothma 2 *************/
 
-/#endif
-
+#endif
+#if 0
 	/************ Erothma 3 *************/
 
 	int trendsNum = 4;
@@ -484,9 +491,9 @@ int main( int argc, char *argv[] )
 		}
 		printf("MenTrend[%d] = %s\n",i,menTrends[i]);
 	}
-//#endif
+#endif
 	/************ TELOS Erothma 3 *************/
-
+#if 0
 	/************ Erothma 4 *************/
 
 	ptr_entry no = lookupNode(post_graph,4);
@@ -520,6 +527,8 @@ int main( int argc, char *argv[] )
 #endif
 
 
+	//change dataset part3 to dataset
+//#if 0
 	//print_graph(g);
 	/**************** Part 3 ******************/
 
@@ -542,6 +551,7 @@ int main( int argc, char *argv[] )
 	ptr_graph f = DB_forum_get_entity(forums_database,34680);  //34680 , 228560 , 228280
 	if(f == NULL) printf("NULL graph\n");
 	//printf("start print\n");
+
 	print_graph(f);
 
 	/********** klikes ready ***************/
@@ -552,7 +562,7 @@ int main( int argc, char *argv[] )
 	ptr_graph com_graph;
 	LL_iter_ptr iter;
 
-	communities = computeCPMResults(f,4);
+	communities = computeCPMResults(f,3);
 	if(communities != NULL)
 	{
 		com_size = LL_size(communities);
@@ -571,6 +581,8 @@ int main( int argc, char *argv[] )
 		LL_iter_destroy(iter);
 	}
 	else printf("There aren't communities\n");
+
+//#endif
 }
 
 
@@ -895,4 +907,23 @@ ptr_edge setEdgeTrustProperties(int startNodeID, int endNodeID, double trust) {
     return e;
 }
 
+void stalkersGraphRunMetrics(ptr_graph g)
+{
+	int diam = diameter(g);
+	printf("\nDIAMETER = %d\n",diam);
 
+	int aver = 0;
+	double apotel = 0.0;
+	aver = averagePathLength(g,&apotel);
+	printf("\nAVERAGE PATH = %f\n",apotel);
+
+	int numofCC = numberOfCCs(g);
+	printf("\nNumber of Connected Comp = %d\n",numofCC);
+
+	int max = maxCC(g);
+	printf("\nMax Connected Comp = %d\n",max);
+
+	double denc = 1.0;
+	int ok = density(g,&denc);
+	printf("\nDensity = %f\n",denc);
+}

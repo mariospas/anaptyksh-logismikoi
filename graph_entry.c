@@ -364,7 +364,6 @@ int common_interests_two_entries(ptr_entry node1,ptr_entry node2,int *interest1,
 	*interest1 = LL_size(list1);
 	*interest2 = LL_size(list2);
 
-	printf("HERe again\n");
 	iterList1 = LL_iter_create(list1);
 
 	iterList2 = LL_iter_create(list2);
