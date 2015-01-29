@@ -270,7 +270,6 @@ ptr_graph DB_forum_get_entity( ptr_forum_database this, int id )
     		return this->forums[i].assignment;
     	}
     }
-
     return NULL;
 }
 
