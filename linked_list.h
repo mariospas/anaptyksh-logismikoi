@@ -5,8 +5,10 @@ struct linked_list;
 typedef struct linked_list *list_ptr;
 typedef struct LL_iterator *LL_iter_ptr;
 
+typedef int (*match_f)(const void *a, const void *b );
+
 /* Interface */
-list_ptr LL_create( int (*match)( const void *a, const void *b) );
+list_ptr LL_create( match_f match );
 
 void LL_destroy( list_ptr this, void (*destroy)(void*) );
 
@@ -21,6 +23,10 @@ void *LL_search( list_ptr this, void *key );
 void **LL_export( list_ptr this );
 
 int LL_size( list_ptr this );
+
+list_ptr LL_copy( list_ptr this );
+
+match_f LL_match( list_ptr this );
 
 /* Iterator */
 LL_iter_ptr LL_iter_create( list_ptr this );

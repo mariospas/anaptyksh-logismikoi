@@ -69,5 +69,9 @@ double closeness_centrality( ptr_entry n, ptr_graph g );
 
 double betweenness_centrality( ptr_entry n, ptr_graph g );
 
+void shortest_paths_rec_( ptr_graph g, int start, int end, int through, int *found, int *shortest_in, int *shortest_out, int dist, list_ptr checked );
+
+int compare_ints( const void *a, const void *b );
+
 #endif /* _GRAPH_STATS_ */
 

@@ -98,7 +98,11 @@ ptr_array_matches find_topN_forums(ptr_graph forum_graph,int N)
 		data = ((ptr_entry)HT_iter_data(iter));
 		member_list = type_list(data,"forum_hasMember_person.csv");
 
-		if(member_list == NULL) continue;
+		if(member_list == NULL)
+		{
+			HT_iter_next(iter);
+			continue;
+		}
 
 		members = LL_size(member_list);
 		match = create_match(data->id,members);
@@ -675,28 +679,39 @@ list_ptr KL_numberOfCCs(ptr_graph g)
 				size = 0;
 				if(LL_size(fringe) != 0)
 				{
-					new_graph = createGraph(PERSON,TABLE_DEFAULT_SIZE, BUCKET_DEFAULT_SIZE);
-
-					iterList = LL_iter_create(fringe);
-
-					data_CC = LL_iter_data(iterList);
-					//printf("In fringe id = %d\n",dataCC_get_id(data_CC));
-					entry = lookupNode(g,dataCC_get_id(data_CC));
-					KL_copy_entry_person_knows_person(new_graph,entry);
-
-					while(LL_iter_next(iterList))
+					if(LL_size(communities) != 0)
 					{
+						iterList = LL_iter_create(fringe);
+						data_CC = LL_iter_data(iterList);
+						printf("In fringe id = %d\n",dataCC_get_id(data_CC));
+						test = Com_test_if_exist(communities,dataCC_get_id(data_CC));
+					}
+					else test = NULL;
+					if(test == NULL)
+					{
+						new_graph = createGraph(PERSON,TABLE_DEFAULT_SIZE, BUCKET_DEFAULT_SIZE);
+
+						iterList = LL_iter_create(fringe);
+
 						data_CC = LL_iter_data(iterList);
 						//printf("In fringe id = %d\n",dataCC_get_id(data_CC));
 						entry = lookupNode(g,dataCC_get_id(data_CC));
 						KL_copy_entry_person_knows_person(new_graph,entry);
+
+						while(LL_iter_next(iterList))
+						{
+							data_CC = LL_iter_data(iterList);
+							//printf("In fringe id = %d\n",dataCC_get_id(data_CC));
+							entry = lookupNode(g,dataCC_get_id(data_CC));
+							KL_copy_entry_person_knows_person(new_graph,entry);
+						}
+
+						community = Com_create(num_of_graphs,new_graph);
+						LL_insert(communities,((void *) community));
+
+						LL_destroy(fringe,destroy_dataCC);
+						fringe = LL_create(match_id);
 					}
-
-					community = Com_create(num_of_graphs,new_graph);
-					LL_insert(communities,((void *) community));
-
-					LL_destroy(fringe,destroy_dataCC);
-					fringe = LL_create(match_id);
 				}
 				num_of_graphs++;
 				rec_search_dfs(g,fringe,node,&size);

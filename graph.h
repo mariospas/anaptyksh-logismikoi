@@ -67,7 +67,7 @@ static int expand_reversed_( ptr_graph this, ht_ptr *frontier, ht_ptr visited, i
 static int match_found_( ht_ptr frontier1, ht_ptr frontier2 );
 
 
-static size_t hash(int value, size_t size);
+size_t hash(int value, size_t size);
 
 void print_graph(ptr_graph graph);
 

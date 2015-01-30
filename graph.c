@@ -168,7 +168,8 @@ static int expand_( ptr_graph this, ht_ptr *frontier, ht_ptr visited, int *level
         if(node_tryout != NULL)
         {
         	list_person = type_list(node_tryout,"person_knows_person.csv");
-			if ( list_person == NULL ) {
+			if ( list_person == NULL 
+				|| LL_size( list_person ) == 0) {
 				continue;
 			}
 			edge_it = LL_iter_create( list_person );
@@ -225,6 +226,7 @@ static int expand_reversed_( ptr_graph this, ht_ptr *frontier, ht_ptr visited, i
             	list_person = type_list(node_tryout,"person_knows_person.csv");
 
 				if ( list_person == NULL
+				  || LL_size( list_person ) == 0
 				  || HT_search( visited, node_tryout->id ) != NULL ) {
 					continue;
 				}

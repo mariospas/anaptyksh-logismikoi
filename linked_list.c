@@ -24,7 +24,7 @@ struct LL_iterator {
 };
 
 /* Constructor; will return a fully allocated pointer */
-list_ptr LL_create( int (*match)( const void *a, const void *b) )
+list_ptr LL_create( match_f match )
 {
 	list_ptr this = malloc( sizeof(struct linked_list) );
 	
@@ -141,6 +141,30 @@ void **LL_export( list_ptr this )
 	}
 	return result;
 }
+
+list_ptr LL_copy( list_ptr this )
+{
+    list_ptr ret;
+    LL_iter_ptr it;
+
+    assert( this );
+    ret = LL_create( this->match );
+    if ( this->size ) {
+        it = LL_iter_create( this );
+        do {
+            LL_insert( ret, LL_iter_data( it ) );
+        } while ( LL_iter_next( it ) );
+        LL_iter_destroy( it );
+    }
+
+    return ret;
+}
+
+match_f LL_match( list_ptr this )
+{
+    return this->match;
+}
+
 
 int LL_size( list_ptr this )
 {
