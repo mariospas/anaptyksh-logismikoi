@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#include <float.h>
 
 #include "graph.h"
 #include "graph_entry.h"
@@ -11,6 +12,7 @@
 #include "linked_list.h"
 #include "queries.h"
 #include "prejob.h"
+#include "girvan_newman.h"
 
 #define TRUST_GRAPH_REL_PROPERTIES_NUM 1
 
@@ -528,6 +530,8 @@ int main( int argc, char *argv[] )
 	ptr_array_matches array = find_topN_forums(forum_graph,limit);
 	int g1;
 	int forum_id;
+    struct Communities *result;
+
 	for(g1=0;g1<(limit);g1++)
 	{
 		forum_id = get_match(g1,array,&score);
@@ -539,11 +543,16 @@ int main( int argc, char *argv[] )
 
 	printf("*********** forum_database ready **********\n");
 
-	ptr_graph f = DB_forum_get_entity(forums_database,34680);  //34680 , 228560 , 228280
+	ptr_graph f = DB_forum_get_entity(forums_database,228560);  //34680 , 228560 , 228280
 	if(f == NULL) printf("NULL graph\n");
 	//printf("start print\n");
 	print_graph(f);
 
+    result = girvan_newman_method( 0.3, f );
+    communities_print( result );
+
+
+#if 0
 	/********** klikes ready ***************/
 	list_ptr communities;
 	int com_size,w;
@@ -571,6 +580,7 @@ int main( int argc, char *argv[] )
 		LL_iter_destroy(iter);
 	}
 	else printf("There aren't communities\n");
+#endif
 }
 
 
