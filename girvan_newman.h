@@ -14,3 +14,5 @@ struct community {
 };
 
 struct Communities *girvan_newman_method( double limit, ptr_graph g );
+
+list_ptr GI_numberOfCCs(ptr_graph g);

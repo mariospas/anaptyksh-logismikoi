@@ -548,9 +548,38 @@ int main( int argc, char *argv[] )
 	//printf("start print\n");
 	print_graph(f);
 
-    result = girvan_newman_method( 0.3, f );
-    communities_print( result );
+//#if 0
+	/********** girvan_newman ***************/
 
+	list_ptr communities;
+	int com_size,w;
+	ptr_community com;
+	int id_com=80;
+	ptr_graph com_graph;
+	LL_iter_ptr iter;
+
+
+	communities = girvan_newman_method( 0.3, f );
+    //communities_print( result );
+    if(communities != NULL)
+	{
+		com_size = LL_size(communities);
+		iter = LL_iter_create(communities);
+
+		for(w=0;w<com_size;w++)
+		{
+			com = (ptr_community) LL_iter_data(iter);
+			id_com = Com_get_id(com);
+			com_graph = Com_get_graph(com);
+			printf("\nGirvan COM ID=%d\n",id_com);
+			print_graph(com_graph);
+			printf("\n");
+			LL_iter_next(iter);
+		}
+		LL_iter_destroy(iter);
+	}
+	else printf("There aren't communities\n");
+//#endif
 
 #if 0
 	/********** klikes ready ***************/

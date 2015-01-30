@@ -8,6 +8,8 @@
 #include "graph_stats.h"
 #include "database.h"
 #include "girvan_newman.h"
+#include "linked_list.h"
+#include "prejob.h"
 
 #define min_(A, B) ( ( (A) <= (B) ) ? (A) : (B) )
 
@@ -22,7 +24,7 @@ char *edge_type = "person_knows_person.csv";
 double calculate_modularity( ptr_graph g, size_t size );
 int detect_edge( const void *a, const void *b );
 int compare_edges( const void *a, const void *b );
-struct Communities *construct_communities( ptr_graph g );
+list_ptr construct_communities( ptr_graph g );
 struct community *create_community( ptr_graph g, list_ptr left );
 ptr_graph copy_graph( ptr_graph g, char *edge_type );
 double edge_betweenness( ptr_graph g, int from, int to );
@@ -191,7 +193,7 @@ int compare_edges( const void *a, const void *b )
     return (*((struct edge_measuring**) a) )->measure - ( *((struct edge_measuring**) b) )->measure;
 }
 
-struct Communities *construct_communities( ptr_graph g )
+list_ptr construct_communities( ptr_graph g )
 {
     struct Communities *ret;
     struct community *init_assign[ Graph_size( g ) ];
@@ -209,17 +211,21 @@ struct Communities *construct_communities( ptr_graph g )
     HT_iter_destroy( node_it );
 
     /* Create communities while there are still nodes left */
-    do {
+    /*do {
         init_assign[ count++ ] = create_community( g, left );
     } while ( LL_size( left ) );
+    */
 
-    ret = malloc( sizeof(struct Communities) );
+    /*ret = malloc( sizeof(struct Communities) );
     ret->size = count;
     ret->array = malloc( count * sizeof(struct community*) );
     memcpy( ret->array, init_assign, count * sizeof(struct community*) );
     LL_destroy( left, NULL );
+    */
+    list_ptr communities;
+    communities = GI_numberOfCCs(g);
 
-    return ret;
+    return communities;
 }
 
 struct community *create_community( ptr_graph g, list_ptr left )
@@ -432,4 +438,125 @@ void array_print( int *array, int size )
         printf( "%d ", array[i] );
     }
     fputc( '\n', stdout );
+}
+
+
+
+
+list_ptr GI_numberOfCCs(ptr_graph g)
+{
+	int i, graph_size = Graph_size(g);
+	list_ptr fringe;
+	HT_iter_ptr iter;
+    ht_ptr nodes = Graph_nodes(g);
+	ptr_entry node,test = NULL;
+	int size = 0;
+	int num_of_graphs = 0;
+	fringe = LL_create(match_id);
+
+	LL_iter_ptr iterList;
+	dataCC_ptr data_CC;
+	ptr_community community;
+	ptr_entry entry;
+	ptr_graph new_graph;
+	list_ptr communities = LL_create(Com_match);
+
+	if(g != NULL)
+	{
+		iter = HT_iter_create(nodes);
+
+		for(i=0;i<graph_size;i++)
+		{
+			node = ((ptr_entry)HT_iter_data(iter));
+			//printf("node id = %d\n",node->id);
+
+			if(!(node_exist(fringe,node)) )
+			{
+				//printf("node id = %d insert\n\n",node->id);
+				size = 0;
+				if(LL_size(fringe) != 0)
+				{
+					new_graph = createGraph(PERSON,TABLE_DEFAULT_SIZE, BUCKET_DEFAULT_SIZE);
+
+					iterList = LL_iter_create(fringe);
+
+					data_CC = LL_iter_data(iterList);
+					printf("In fringe id = %d\n",dataCC_get_id(data_CC));
+					entry = lookupNode(g,dataCC_get_id(data_CC));
+					copy_entry_person_knows_person(new_graph,entry);
+
+					while(LL_iter_next(iterList))
+					{
+						data_CC = LL_iter_data(iterList);
+						printf("In fringe id = %d\n",dataCC_get_id(data_CC));
+						entry = lookupNode(g,dataCC_get_id(data_CC));
+						copy_entry_person_knows_person(new_graph,entry);
+					}
+
+					community = Com_create(num_of_graphs,new_graph);
+					LL_insert(communities,((void *) community));
+
+					LL_destroy(fringe,destroy_dataCC);
+					fringe = LL_create(match_id);
+				}
+				num_of_graphs++;
+				rec_search_dfs(g,fringe,node,&size);
+			}
+
+
+			HT_iter_next(iter);
+		}
+
+
+		HT_iter_destroy(iter);
+
+		/*
+		 * iterList = LL_iter_create(fringe);
+
+		data_CC = LL_iter_data(iterList);
+		printf("In fringe id = %d\n",data_CC->id);
+		while(LL_iter_next(iterList))
+		{
+			data_CC = LL_iter_data(iterList);
+			printf("In fringe id = %d\n",data_CC->id);
+		}
+		LL_iter_destroy(iterList);
+		*/
+
+
+		if(LL_size(fringe) != 0)
+		{
+
+			iterList = LL_iter_create(fringe);
+			data_CC = LL_iter_data(iterList);
+			printf("In fringe id = %d\n",dataCC_get_id(data_CC));
+			test = Com_test_if_exist(communities,dataCC_get_id(data_CC));
+			if(test == NULL)
+			{
+				new_graph = createGraph(PERSON,TABLE_DEFAULT_SIZE, BUCKET_DEFAULT_SIZE);
+				entry = lookupNode(g,dataCC_get_id(data_CC));
+				copy_entry_person_knows_person(new_graph,entry);
+
+				while(LL_iter_next(iterList))
+				{
+					data_CC = LL_iter_data(iterList);
+					printf("In fringe id = %d\n",dataCC_get_id(data_CC));
+					entry = lookupNode(g,dataCC_get_id(data_CC));
+					copy_entry_person_knows_person(new_graph,entry);
+				}
+
+				community = Com_create(num_of_graphs,new_graph);
+				LL_insert(communities,((void *) community));
+
+				LL_destroy(fringe,destroy_dataCC);
+				fringe = LL_create(match_id);
+			}
+		}
+
+
+		LL_destroy(fringe,destroy_dataCC);
+	}
+
+	return communities;
+
 }
